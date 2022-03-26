@@ -31,3 +31,42 @@
 /quick-books-ui/plugins
 /quick-books-ui/www
 
+/quick-books/HELP.md
+/quick-books/target/
+/quick-books/!.mvn/wrapper/maven-wrapper.jar
+/quick-books/!**/src/main/**/target/
+/quick-books/!**/src/test/**/target/
+
+### STS ###
+/quick-books/.apt_generated
+/quick-books/.classpath
+/quick-books/.factorypath
+/quick-books/.project
+/quick-books/.settings
+/quick-books/.springBeans
+/quick-books/.sts4-cache
+
+### IntelliJ IDEA ###
+/quick-books/.idea
+/quick-books/*.iws
+/quick-books/*.iml
+/quick-books/*.ipr
+
+### NetBeans ###
+/quick-books/nbproject/private/
+/quick-books/nbbuild/
+/quick-books/dist/
+/quick-books/nbdist/
+/quick-books/.nb-gradle/
+/quick-books/build/
+/quick-books/!**/src/main/**/build/
+/quick-books/!**/src/test/**/build/
+/quick-books/mvnw
+/quick-books/mvnw.cmd
+/quick-books/.mvn
+
+### VS Code ###
+/quick-books/.vscode/
+
+
+
