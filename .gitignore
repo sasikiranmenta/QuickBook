@@ -1,0 +1,33 @@
+# Specifies intentionally untracked files to ignore when using Git
+# http://git-scm.com/docs/gitignore
+
+/quick-books-ui*~
+/quick-books-ui*.sw[mnpcod]
+/quick-books-ui.tmp
+/quick-books-ui*.tmp
+/quick-books-ui*.tmp.*
+/quick-books-ui*.sublime-project
+/quick-books-ui*.sublime-workspace
+/quick-books-ui.DS_Store
+/quick-books-uiThumbs.db
+/quick-books-uiUserInterfaceState.xcuserstate
+/quick-books-ui$RECYCLE.BIN/
+
+/quick-books-ui*.log
+/quick-books-uilog.txt
+/quick-books-uinpm-debug.log*
+
+/quick-books-ui/.angular
+/quick-books-ui/.idea
+/quick-books-ui/.ionic
+/quick-books-ui/.sass-cache
+/quick-books-ui/.sourcemaps
+/quick-books-ui/.versions
+/quick-books-ui/.vscode
+/quick-books-ui/coverage
+/quick-books-ui/dist
+/quick-books-ui/node_modules
+/quick-books-ui/platforms
+/quick-books-ui/plugins
+/quick-books-ui/www
+
