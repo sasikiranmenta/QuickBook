@@ -1,0 +1,203 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Invoice</ion-title>
+      <ion-button slot="end" type="submit" color="primary" (click)="onSubmit()">Save</ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="invoiceForm">
+    <ion-grid class="ion-text-center ion-no-padding-bottom">
+      <ion-row>
+        <ion-col >
+          <ion-grid class="customer-details">
+            <ion-row>
+              <ion-col class="ion-text-start margin-left">
+                <h6 class="invoice-label">
+                  <ion-icon name="person-outline"></ion-icon>
+                  Bill To
+                </h6>
+              </ion-col>
+            </ion-row>
+            <ion-row class="no-border-bottom border-top-radius">
+              <ion-col>
+                <ion-item lines="inset">
+                  <ion-label position="floating">Customer Name</ion-label>
+                  <ion-input formControlName="customerName"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row class="border-left-right">
+              <ion-col>
+                <ion-item lines="inset">
+                  <ion-label position="floating">Customer Address</ion-label>
+                  <ion-textarea formControlName="address"></ion-textarea>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row class="border-left-right">
+              <ion-col>
+                <ion-item lines="inset">
+                  <ion-label position="floating">State</ion-label>
+                  <ion-input formControlName="state"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col>
+                <ion-item lines="inset">
+                  <ion-label position="floating">State Code</ion-label>
+                  <ion-input type="number" formControlName="stateCode"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row class="border-left-right border-bottom">
+              <ion-col class="margin-bottom">
+                <ion-item lines="inset">
+                  <ion-label position="floating">Gstin / Pan</ion-label>
+                  <ion-input formControlName="gstin"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+        </ion-col>
+        <ion-col class="invoice">
+          <ion-grid>
+            <ion-row>
+              <ion-col class="ion-text-start margin-left">
+                <h6 class="invoice-label">
+                  <ion-icon name="document-text-outline"></ion-icon>
+                  Invoice Details
+                </h6>
+              </ion-col>
+            </ion-row>
+            <ion-row class="invoice-row ion-align-items-baseline">
+              <ion-col size="2">
+                <ion-label>Invoice No.</ion-label>
+              </ion-col>
+              <ion-col size="2">
+                <ion-label color="danger">{{ invoiceId }}</ion-label>
+              </ion-col>
+              <ion-col size="3" class="calendar calendar-col">
+                <ion-label>
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  Date
+                </ion-label>
+              </ion-col>
+              <ion-col size="auto" class="calendar">
+                <ion-input type="date" formControlName="billDate"></ion-input>
+              </ion-col>
+            </ion-row>
+            <ion-row class="hsn-row ion-align-items-baseline">
+              <ion-col class="hsn-col">
+                <ion-label>HSN</ion-label>
+              </ion-col>
+              <ion-col>
+                <ion-radio-group value="GOLD">
+                  <div class="hsn">
+                    <ion-radio color="danger" slot="start" value="GOLD"></ion-radio>
+                    <ion-label color="primary">7113</ion-label>
+                  </div>
+                  <div class="hsn">
+                    <ion-radio color="danger" slot="start" value="SILVER"></ion-radio>
+                    <ion-label color="primary">7114</ion-label>
+                  </div>
+                </ion-radio-group>
+              </ion-col>
+            </ion-row>
+            <ion-row class="summary ion-text-start">
+              <ion-col>
+                <ion-icon src="assets/icon/rupee.svg"></ion-icon>
+                <ion-label>Summary</ion-label>
+              </ion-col>
+            </ion-row>
+            <div class="summary-amount  ion-text-start">
+              <ion-row class="ion-align-items-baseline before-tax">
+                <ion-col size="4">
+                  <ion-label position="floating">Amount before tax</ion-label>
+                </ion-col>
+                <ion-col size="auto" class="ion-text-center">
+                  <ion-input formControlName="amountBeforeTax" readonly="true"></ion-input>
+                </ion-col>
+              </ion-row>
+              <ion-row class="gst ion-align-items-baseline">
+                <ion-col size="2">
+                  <ion-label>cgst 1.5%</ion-label>
+                </ion-col>
+                <ion-col size="2" class="ion-text-center">
+                  <ion-input formControlName="cgstAmount" readonly="true"></ion-input>
+                </ion-col>
+                <ion-col size="2" class="border-left">
+                  <ion-label>sgst 1.5%</ion-label>
+                </ion-col>
+                <ion-col size="2" class="ion-text-center">
+                  <ion-input formControlName="sgstAmount" readonly="true"></ion-input>
+                </ion-col>
+                <ion-col size="2" class="border-left">
+                  <ion-label>igst 3.0%</ion-label>
+                </ion-col>
+                <ion-col size="2" class="ion-text-center">
+                  <ion-input formControlName="igstAmount" readonly="true"></ion-input>
+                </ion-col>
+              </ion-row>
+              <ion-row class="ion-align-items-baseline">
+                <ion-col>
+                  <ion-label>Total amount after tax</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-input formControlName="totalAmountAfterTax" readonly="true"></ion-input>
+                </ion-col>
+              </ion-row>
+            </div>
+          </ion-grid>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="ion-text-center item border-all border-top-radius item-details-margin-left-right item-details-margin-top">
+        <ion-col size="1">
+          <ion-label>#</ion-label>
+        </ion-col>
+        <ion-col size="5" class="border-left">
+          <ion-label>Description of goods</ion-label>
+        </ion-col>
+        <ion-col size="2" class="border-left">
+          <ion-label>Gross weight (gm)</ion-label>
+        </ion-col>
+        <ion-col size="2" class="border-left">
+          <ion-label>Rate per gram</ion-label>
+        </ion-col>
+        <ion-col size="2" class="border-left">
+          <ion-label>Amount</ion-label>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="item-details-margin-left-right border-left-right border-bottom default-font-style" *ngFor="let item of itemDetailsArray">
+        <ion-col size="1">
+          <ion-label>1</ion-label>
+        </ion-col>
+        <ion-col size="5" class="border-left">
+          <ion-label>{{ item.descriptionOfItem }}</ion-label>
+        </ion-col>
+        <ion-col size="2" class="border-left">
+          <ion-label>{{ item.grossWeight }}</ion-label>
+        </ion-col>
+        <ion-col size="2" class="border-left">
+          <ion-label>{{ item.ratePerGram }}</ion-label>
+        </ion-col>
+        <ion-col size="2" class="border-left">
+          <ion-label>{{ item.amount }}</ion-label>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="ion-text-center item-details-margin-left-right" >
+        <ion-col>
+          <ion-button class="border-dashed-all" expand="block" (click)="onAddItem()"><ion-icon name="add-outline"></ion-icon>Add item</ion-button>
+        </ion-col>
+      </ion-row>
+      <ion-row >
+<!--        <ion-col>-->
+
+<!--        </ion-col>-->
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>

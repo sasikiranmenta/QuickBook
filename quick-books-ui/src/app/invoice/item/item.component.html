@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Item Details</ion-title>
+    <ion-buttons slot="primary">
+      <ion-button (click)="onCancel()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding ion-text-center">
+  <form [formGroup]="itemInvoiceForm" (ngSubmit)="onSubmit()">
+    <ion-item>
+      <ion-label position="floating">Goods description</ion-label>
+      <ion-input formControlName="goodsDescription"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Gross Weight</ion-label>
+      <ion-input (ionBlur)="autoInsertValues()" type="number" formControlName="itemWeight"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Rate Per Gram</ion-label>
+      <ion-input (ionBlur)="autoInsertValues()" type="number" formControlName="weightPerGram"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Amount</ion-label>
+      <ion-input (ionBlur)="autoInsertValues()" type="number" formControlName="amount"></ion-input>
+    </ion-item>
+
+    <ion-button type="submit"
+                color="primary"
+                expand="block">Add</ion-button>
+  </form>
+</ion-content>
