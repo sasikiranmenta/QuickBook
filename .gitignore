@@ -33,9 +33,9 @@
 
 /quick-books/HELP.md
 /quick-books/target/
-/quick-books/!.mvn/wrapper/maven-wrapper.jar
-/quick-books/!**/src/main/**/target/
-/quick-books/!**/src/test/**/target/
+!/quick-books/.mvn/wrapper/maven-wrapper.jar
+!/quick-books/**/src/main/**/target/
+!/quick-books/**/src/test/**/target/
 
 ### STS ###
 /quick-books/.apt_generated
