@@ -17,7 +17,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java-version>11</java-version>
-        <frontend-bundle-dir>${project.parent.basedir}/quick-books-ui/target/frontend/</frontend-bundle-dir>
+        <frontend-bundle-dir>${project.parent.basedir}/quick-books-ui/static/</frontend-bundle-dir>
         <start-class>com.sasi.quickbooks.QuickBooksApplication</start-class>
     </properties>
     <dependencies>
@@ -70,15 +70,6 @@
             <artifactId>kernel</artifactId>
             <version>7.2.1</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.itextpdf/html2pdf -->
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>html2pdf</artifactId>
-            <version>4.0.1</version>
-        </dependency>
-
-
     </dependencies>
 
     <build>
