@@ -2,6 +2,7 @@ package com.sasi.quickbooks;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.draw.DottedLineSeparator;
 
 import java.text.SimpleDateFormat;
@@ -214,6 +215,19 @@ public class PDFUtil {
         return cell;
     }
 
+    public static PdfPCell getCellInputCellCenterAlignTopAndLeftNoBorder(String content) {
+        PdfPCell cell = new PdfPCell(new Phrase(content, getInputFontColorSize()));
+        setCellBorderColor(setNoLeftBorder(setNoTopBorder(cell)));
+        return cell;
+    }
+
+    public static PdfPCell getCellInputCellCenterAlignTopAndRightNoBorder(String content) {
+        PdfPCell cell = new PdfPCell(new Phrase(content, getInputFontColorSize()));
+        setCellBorderColor(setNoRightBorder(setNoTopBorder(cell)));
+        return cell;
+    }
+
+
     public static PdfPCell getCellInputCellCenterAlignLeftAndRightBorderColored(String content) {
         PdfPCell cell = new PdfPCell(new Phrase(content, getInputFontColorSize()));
         return setCellBorderColor(setCenterAlign(setLeftRightBorder(cell)));
@@ -227,6 +241,26 @@ public class PDFUtil {
     public static PdfPCell getCellInputCellCenterAlignLeftRightBorderColored(String content) {
         PdfPCell cell = new PdfPCell(new Phrase(content, getInputFontColorSize()));
         return setCellBorderColor(setCenterAlign(setLeftRightBorder(cell)));
+    }
+
+    public static PdfPCell getCellInputCellCenterAlignOnlyRightBorderColored(String content) {
+        PdfPCell cell = new PdfPCell(new Phrase(content, getInputFontColorSize()));
+        return setCellBorderColor(setOnlyRightBorder(setCenterAlign(cell)));
+    }
+
+    public static PdfPCell getCellInputCellCenterAlignOnlyLeftBorderColored(String content) {
+        PdfPCell cell = new PdfPCell(new Phrase(content, getInputFontColorSize()));
+        return setCellBorderColor(setCenterAlign(setOnlyLeftBorder(cell)));
+    }
+
+    public static PdfPCell getCellInputCellCenterAlignNoRightBorderColored(String content) {
+        PdfPCell cell = new PdfPCell(new Phrase(content, getInputFontColorSize()));
+        return setCellBorderColor(setNoRightBorder(setCenterAlign(cell)));
+    }
+
+    public static PdfPCell getCellInputCellCenterAlignNoLeftBorderColored(String content) {
+        PdfPCell cell = new PdfPCell(new Phrase(content, getInputFontColorSize()));
+        return setCellBorderColor(setCenterAlign(setNoLeftBorder(cell)));
     }
 
     public static PdfPCell getCellInputCellCenterAlignColored(String content) {
@@ -254,8 +288,9 @@ public class PDFUtil {
         return setCellBorderColor(setCenterAlign(setNoLeftBorder(cell)));
     }
 
-    public static PdfPCell getInputCellLeftAlignNoBorderRedColor(String content) {
+    public static PdfPCell getCellInputCellLeftAlignNoBorderRedColor(String content) {
         PdfPCell cell = new PdfPCell(new Phrase(content, getInputRedFontColorSize()));
         return setCellNoBorder(setLeftAlign(cell));
     }
+
 }
