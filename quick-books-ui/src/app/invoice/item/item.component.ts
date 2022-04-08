@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {Item} from './item';
 import {ModalController} from '@ionic/angular';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
@@ -9,6 +9,8 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
   styleUrls: ['./item.component.scss'],
 })
 export class ItemComponent implements OnInit {
+  @Input() isEditMode = false;
+  @Input() editItemData: Item;
 
   itemInvoiceForm: FormGroup;
 
@@ -27,18 +29,18 @@ export class ItemComponent implements OnInit {
   autoInsertValues() {
     if (this.itemInvoiceForm.controls.itemWeight.value !== 0 &&
       this.itemInvoiceForm.controls.weightPerGram.value !== 0) {
-      this.itemInvoiceForm.controls.amount.setValue(this.itemInvoiceForm.controls.itemWeight.value *
-        this.itemInvoiceForm.controls.weightPerGram.value);
+      this.itemInvoiceForm.controls.amount.setValue(Math.round(this.itemInvoiceForm.controls.itemWeight.value *
+        this.itemInvoiceForm.controls.weightPerGram.value));
     } else if (this.itemInvoiceForm.controls.itemWeight.value !== 0 &&
       this.itemInvoiceForm.controls.weightPerGram.value === 0
       && this.itemInvoiceForm.controls.amount.value !== 0) {
-      this.itemInvoiceForm.controls.weightPerGram.setValue(this.itemInvoiceForm.controls.amount.value *
-        this.itemInvoiceForm.controls.itemWeight.value);
+      this.itemInvoiceForm.controls.weightPerGram.setValue(Math.round(this.itemInvoiceForm.controls.amount.value *
+        this.itemInvoiceForm.controls.itemWeight.value));
     } else if (this.itemInvoiceForm.controls.itemWeight.value === 0 &&
       this.itemInvoiceForm.controls.weightPerGram.value !== 0
       && this.itemInvoiceForm.controls.amount.value !== 0) {
-      this.itemInvoiceForm.controls.itemWeight.setValue(this.itemInvoiceForm.controls.amount.value *
-        this.itemInvoiceForm.controls.weightPerGram.value);
+      this.itemInvoiceForm.controls.itemWeight.setValue(Math.round(this.itemInvoiceForm.controls.amount.value *
+        this.itemInvoiceForm.controls.weightPerGram.value));
     }
   }
 
@@ -56,11 +58,22 @@ export class ItemComponent implements OnInit {
   }
 
   private initForm() {
-    this.itemInvoiceForm = new FormGroup({
-      goodsDescription: new FormControl('', Validators.required),
-      itemWeight: new FormControl(undefined),
-      weightPerGram: new FormControl(undefined),
-      amount: new FormControl(0)
+    let goodsDescription = '';
+    let itemWeight;
+    let ratePerGram;
+    let totalAmount;
+
+    if(this.isEditMode === true) {
+      goodsDescription = this.editItemData.descriptionOfItem;
+      itemWeight = this.editItemData.grossWeight;
+      ratePerGram = this.editItemData.ratePerGram;
+      totalAmount = this.editItemData.amount;
+    }
+      this.itemInvoiceForm = new FormGroup({
+      goodsDescription: new FormControl(goodsDescription, Validators.required),
+      itemWeight: new FormControl(itemWeight),
+      weightPerGram: new FormControl(ratePerGram),
+      amount: new FormControl(totalAmount)
     });
   }
 

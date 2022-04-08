@@ -1,3 +1,29 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <ion-menu side="start" menuId="m1" contentId="menuContent">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="6" offset="4">Quick Book</ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-title>
+      </ion-toolbar>
+      <ion-list>
+        <ion-menu-toggle>
+          <ion-item lines="none" [routerLink]="['/invoice']">
+            <ion-icon name="bookmark-outline"></ion-icon>
+            <ion-label>Generate new bill</ion-label>
+          </ion-item >
+          <ion-item lines="none" [routerLink]="['/viewInvoices']">
+            <ion-icon name="apps-outline"></ion-icon>
+            <ion-label>Show old bills</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+      </ion-list>
+
+    </ion-header>
+  </ion-menu>
+  <ion-router-outlet id="menuContent"></ion-router-outlet>
 </ion-app>

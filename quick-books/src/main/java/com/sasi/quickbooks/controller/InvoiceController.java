@@ -19,6 +19,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("quick-book")
@@ -36,7 +38,11 @@ public class InvoiceController {
     public ResponseEntity saveInvoice(@RequestBody @Valid QuickBookInvoice quickBookInvoice, HttpServletRequest request, HttpServletResponse response) throws DocumentException, IOException {
         this.quickBookInvoiceService.saveInvoice(quickBookInvoice, response);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).build();
+    }
 
+    @RequestMapping(value = "/getAllInvoiceInBetween", method = RequestMethod.GET)
+    public ResponseEntity<List<QuickBookInvoice>> getAllInvoice(@RequestParam(name = "fromDate") String fromDate, @RequestParam(name = "toDate") String toDate ) {
+        return ResponseEntity.ok(this.quickBookInvoiceService.getInvoicesInBetweenDates(fromDate, toDate));
     }
 
     @RequestMapping(value = "/getInvoiceNumber", method = RequestMethod.GET)

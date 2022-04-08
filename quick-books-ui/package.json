@@ -21,10 +21,11 @@
     "@angular/platform-browser-dynamic": "~13.2.2",
     "@angular/router": "~13.2.2",
     "@ionic/angular": "^6.0.0",
+    "ag-grid-angular": "^27.1.1",
+    "ag-grid-community": "^27.1.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.2.0",
     "zone.js": "~0.11.4"
-
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~13.2.3",

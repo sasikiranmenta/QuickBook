@@ -14,6 +14,18 @@ export interface Invoice {
   igstAmount: number;
   totalAmountAfterTax: number;
   invoiceType: string;
-  paymentType?: string;
+  paymentType: string;
+  paymentMode: string;
+  totalWeight: number;
   invoiceItems: Array<Item>;
+  phoneNumber: number;
+}
+
+export interface TotalValue {
+  totalBeforeTax: number;
+  totalCgst: number;
+  totalSgst: number;
+  totalIgst: number;
+  totalAfterTax: number;
+  totalWeight: number;
 }

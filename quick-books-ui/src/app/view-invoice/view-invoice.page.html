@@ -1,0 +1,97 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="m1"></ion-menu-button>
+    </ion-buttons>
+    <form [formGroup]="dateGroup">
+    <ion-grid>
+      <ion-row>
+          <ion-col size="2"><ion-title>View Invoices</ion-title></ion-col>
+          <ion-col  size="0.5"></ion-col>
+          <ion-col offset="5" size="2"><ion-item>
+            <ion-label position="stacked">From</ion-label><ion-input type="date"  (ionChange)="onDateChange()" formControlName="fromDate"></ion-input>
+          </ion-item></ion-col>
+          <ion-col size="2"><ion-item><ion-label position="stacked">To</ion-label>
+            <ion-input type="date" (ionChange)="onDateChange()" formControlName="toDate"></ion-input>
+          </ion-item></ion-col>
+      </ion-row>
+    </ion-grid>
+    </form>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+   <ag-grid-angular (filterChanged) ="onFilterChange($event)"
+                    style="width: 100%; height: 80%;"
+                    class="ag-theme-alpine"
+                    [columnDefs]="columnDefs"
+                    [defaultColDef]="defaultColDef"
+                    [rowData]="rowData"
+                    rowSelection="single"
+                    (rowDataChanged)="onRowDataChanged($event)"
+                    (gridReady)="onGridReady($event)"
+                    (rowDoubleClicked) ="onRowEdit($event)"
+                    #agGrid></ag-grid-angular>
+  <div>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          Type
+        </ion-col>
+        <ion-col>
+          Total Weight
+        </ion-col>
+        <ion-col>
+          Total before tax
+        </ion-col>
+        <ion-col>
+          Total CGST
+        </ion-col> <ion-col>
+        Total SGST
+      </ion-col>
+        <ion-col>
+          Total after tax
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          GOLD
+        </ion-col>
+        <ion-col>
+       {{goldDetails.totalWeight}}
+        </ion-col>
+        <ion-col>
+   {{goldDetails.totalBeforeTax | indianCurrency}}
+        </ion-col>
+        <ion-col>
+         {{ goldDetails.totalCgst |  indianCurrency}}
+        </ion-col> <ion-col>
+ {{goldDetails.totalSgst | indianCurrency}}
+      </ion-col>
+        <ion-col>
+        {{goldDetails.totalAfterTax | indianCurrency}}
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          SILVER
+        </ion-col>
+        <ion-col>
+   {{silverDetails.totalWeight}}
+        </ion-col>
+        <ion-col>
+     {{silverDetails.totalBeforeTax | indianCurrency}}
+        </ion-col>
+        <ion-col>
+      {{ silverDetails.totalCgst |  indianCurrency}}
+        </ion-col> <ion-col>
+        {{ silverDetails.totalSgst | indianCurrency}}
+      </ion-col>
+        <ion-col>
+           {{ silverDetails.totalAfterTax | indianCurrency}}
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+</ion-content>

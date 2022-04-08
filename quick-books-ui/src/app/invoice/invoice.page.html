@@ -1,6 +1,10 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="m1"></ion-menu-button>
+    </ion-buttons>
     <ion-title>Invoice</ion-title>
+      <ion-button slot="end" color="danger" (click)="ngOnInit()">Reset</ion-button>
       <ion-button slot="end" type="submit" color="primary" (click)="onSubmit()">Save</ion-button>
   </ion-toolbar>
 </ion-header>
@@ -15,7 +19,7 @@
               <ion-col class="ion-text-start margin-left">
                 <h6 class="invoice-label">
                   <ion-icon name="person-outline"></ion-icon>
-                  Bill To
+                  Bill Details
                 </h6>
               </ion-col>
             </ion-row>
@@ -52,8 +56,14 @@
             <ion-row class="border-left-right border-bottom">
               <ion-col class="margin-bottom">
                 <ion-item lines="inset">
-                  <ion-label position="floating">Gstin / Pan</ion-label>
+                  <ion-label position="floating">GSTIN / PAN</ion-label>
                   <ion-input formControlName="gstin"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col class="margin-bottom">
+                <ion-item lines="inset">
+                  <ion-label position="floating">Phone Number</ion-label>
+                  <ion-input formControlName="phoneNumber"></ion-input>
                 </ion-item>
               </ion-col>
             </ion-row>
@@ -70,29 +80,41 @@
                 </h6>
               </ion-col>
             </ion-row>
-            <ion-row class="invoice-row ion-align-items-baseline">
+            <ion-row class="invoice-row ion-align-items-center">
               <ion-col size="2">
                 <ion-label>Invoice No.</ion-label>
               </ion-col>
-              <ion-col size="2">
+              <ion-col size="1" class="show-right-border">
                 <ion-label color="danger">{{ invoiceId }}</ion-label>
               </ion-col>
-              <ion-col size="3" class="calendar calendar-col">
+              <ion-col size="2" class="calendar calendar-col">
                 <ion-label>
                   <ion-icon name="calendar-outline"></ion-icon>
                   Date
                 </ion-label>
               </ion-col>
-              <ion-col size="auto" class="calendar">
+              <ion-col size="auto" class="calendar" class = "show-right-border">
                 <ion-input type="date" formControlName="billDate"></ion-input>
+              </ion-col>
+              <ion-col size="3">
+                <ion-radio-group formControlName="paymentType">
+                  <div class="hsn">
+                    <ion-radio color="danger" slot="start" value="CASH"></ion-radio>
+                    <ion-label color="primary">Cash</ion-label>
+                  </div>
+                  <div class="hsn">
+                    <ion-radio color="danger" slot="start" value="CREDIT"></ion-radio>
+                    <ion-label color="primary">Credit</ion-label>
+                  </div>
+                </ion-radio-group>
               </ion-col>
             </ion-row>
             <ion-row class="hsn-row ion-align-items-baseline">
-              <ion-col class="hsn-col">
+              <ion-col size="1" class="radio-label hsn-col">
                 <ion-label>HSN</ion-label>
               </ion-col>
-              <ion-col>
-                <ion-radio-group value="GOLD">
+              <ion-col size="3" class="show-right-border">
+                <ion-radio-group formControlName="invoiceType">
                   <div class="hsn">
                     <ion-radio color="danger" slot="start" value="GOLD"></ion-radio>
                     <ion-label color="primary">7113</ion-label>
@@ -102,6 +124,17 @@
                     <ion-label color="primary">7114</ion-label>
                   </div>
                 </ion-radio-group>
+              </ion-col>
+              <ion-col size="3">
+                <ion-label>Payment mode:</ion-label>
+              </ion-col>
+              <ion-col size="3" class="ion-justify-content-center">
+                <select name="payment-type" id="payment" formControlName="paymentMode">
+                    <option value="CASH">Cash</option>
+                    <option value="CARD">Card</option>
+                    <option value="UPI">UPI</option>
+                    <option value="BANK_TRANSFER">Bank Transfer</option>
+                </select>
               </ion-col>
             </ion-row>
             <ion-row class="summary ion-text-start">
@@ -156,7 +189,7 @@
         <ion-col size="1">
           <ion-label>#</ion-label>
         </ion-col>
-        <ion-col size="5" class="border-left">
+        <ion-col size="4" class="border-left">
           <ion-label>Description of goods</ion-label>
         </ion-col>
         <ion-col size="2" class="border-left">
@@ -168,13 +201,16 @@
         <ion-col size="2" class="border-left">
           <ion-label>Amount</ion-label>
         </ion-col>
+        <ion-col size="1" class="border-left">
+
+        </ion-col>
       </ion-row>
 
-      <ion-row class="item-details-margin-left-right border-left-right border-bottom default-font-style" *ngFor="let item of itemDetailsArray">
+      <ion-row class="item-details-margin-left-right border-left-right border-bottom default-font-style" *ngFor="let item of itemDetailsArray; let i = index">
         <ion-col size="1">
           <ion-label>1</ion-label>
         </ion-col>
-        <ion-col size="5" class="border-left">
+        <ion-col size="4" class="border-left">
           <ion-label>{{ item.descriptionOfItem }}</ion-label>
         </ion-col>
         <ion-col size="2" class="border-left">
@@ -186,6 +222,12 @@
         <ion-col size="2" class="border-left">
           <ion-label>{{ item.amount }}</ion-label>
         </ion-col>
+        <ion-col size="0.5" class="border-left edit-clear" (click)="editItem(i)">
+          <ion-icon name="create-outline" color="primary"></ion-icon>
+        </ion-col>
+        <ion-col size="0.5" class="edit-clear" (click)="deleteItem(i)" >
+            <ion-icon color="danger" name="trash-outline" title="delete"></ion-icon>
+        </ion-col>
       </ion-row>
 
       <ion-row class="ion-text-center item-details-margin-left-right" >
@@ -194,9 +236,6 @@
         </ion-col>
       </ion-row>
       <ion-row >
-<!--        <ion-col>-->
-
-<!--        </ion-col>-->
       </ion-row>
     </ion-grid>
   </form>

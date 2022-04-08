@@ -16,7 +16,7 @@
     </parent>
 
     <modules>
-        <module>quick-books</module>
         <module>quick-books-ui</module>
+        <module>quick-books</module>
     </modules>
 </project>

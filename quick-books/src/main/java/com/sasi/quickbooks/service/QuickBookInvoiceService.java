@@ -17,6 +17,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -56,5 +63,25 @@ public class QuickBookInvoiceService {
         Query invoiceTypedQuery = em.createNativeQuery(invoiceNumberQuery);
         BigInteger invoiceNumber = (BigInteger) invoiceTypedQuery.getSingleResult();
         return invoiceNumber.intValue();
+    }
+
+    public List<QuickBookInvoice> getInvoicesInBetweenDates(String fromDate, String toDate) {
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+
+        String inBetweenQuery = "select I from QuickBookInvoice I where I.billDate >= :fromDate and I.billDate <= :toDate";
+        TypedQuery<QuickBookInvoice> typedQuery = em.createQuery(inBetweenQuery, QuickBookInvoice.class);
+        try {
+            Calendar toCalendar = Calendar.getInstance();
+            toCalendar.setTime(format.parse(toDate));
+            toCalendar.add(Calendar.DAY_OF_WEEK, 1);
+            toDate = format.format(toCalendar.getTime());
+            typedQuery.setParameter("fromDate", format.parse(fromDate));
+            typedQuery.setParameter("toDate", format.parse(toDate));
+        } catch (ParseException e) {
+            log.error(e.getMessage());
+        }
+
+        List<QuickBookInvoice> invoices = typedQuery.getResultList();
+        return invoices;
     }
 }

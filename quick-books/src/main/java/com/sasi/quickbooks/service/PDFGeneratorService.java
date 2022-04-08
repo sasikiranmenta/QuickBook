@@ -3,9 +3,13 @@ package com.sasi.quickbooks.service;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfNumber;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPRow;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfPage;
+import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.sasi.quickbooks.PDFUtil;
 import com.sasi.quickbooks.model.InvoiceItem;
@@ -14,9 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -26,7 +27,7 @@ public class PDFGeneratorService {
 
     public static PdfPTable getDetailsTable(QuickBookInvoice quickBookInvoice) throws DocumentException {
         PdfPTable detailsTable = new PdfPTable(1);
-        detailsTable.setWidthPercentage(80);
+        detailsTable.setWidthPercentage(95);
 
         detailsTable.addCell(getCustomerNameTable(quickBookInvoice.getCustomerName()));
         detailsTable.addCell(getCustomerAddressTable(quickBookInvoice.getAddress()));
@@ -56,7 +57,7 @@ public class PDFGeneratorService {
         PdfPTable customerNameTable = new PdfPTable(2);
         float[] columnWidths = {0.55f, 2f};
         customerNameTable.setWidths(columnWidths);
-        customerNameTable.setWidthPercentage(80);
+        customerNameTable.setWidthPercentage(95);
         customerNameTable.addCell(PDFUtil.getCellLeftAlignNoBorder("Customer's Name"));
         customerNameTable.addCell(PDFUtil.getCellInputCellLeftAlignBottomBorderColored(customerName));
         return customerNameTable;
@@ -66,7 +67,7 @@ public class PDFGeneratorService {
         PdfPTable customerAddressTable = new PdfPTable(2);
         float[] columnWidths = {0.25f, 2f};
         customerAddressTable.setWidths(columnWidths);
-        customerAddressTable.setWidthPercentage(80);
+        customerAddressTable.setWidthPercentage(95);
 
         customerAddressTable.addCell(PDFUtil.getCellLeftAlignNoBorder("Address"));
         customerAddressTable.addCell(PDFUtil.getCellInputCellLeftAlignBottomBorderColored(address));
@@ -77,7 +78,7 @@ public class PDFGeneratorService {
         PdfPTable stateTable = new PdfPTable(4);
         float[] columnWidths = {0.42f, 2f, 0.75f, 2f};
         stateTable.setWidths(columnWidths);
-        stateTable.setWidthPercentage(80);
+        stateTable.setWidthPercentage(95);
 
         stateTable.addCell(PDFUtil.getCellLeftAlignNoBorder("State"));
         stateTable.addCell(PDFUtil.getCellInputCellLeftAlignBottomBorderColored(state));
@@ -90,7 +91,7 @@ public class PDFGeneratorService {
         PdfPTable GstinTable = new PdfPTable(2);
         float[] columnWidths = {0.4f, 2f};
         GstinTable.setWidths(columnWidths);
-        GstinTable.setWidthPercentage(80);
+        GstinTable.setWidthPercentage(95);
 
         GstinTable.addCell(PDFUtil.getCellLeftAlignNoBorder("GSTIN / PAN"));
         GstinTable.addCell(PDFUtil.getCellInputCellLeftAlignBottomBorderColored(gstin));
@@ -99,7 +100,7 @@ public class PDFGeneratorService {
 
     public static PdfPTable getItemDetails(QuickBookInvoice quickBookInvoice) throws DocumentException {
         PdfPTable itemDetailsTable = new PdfPTable(5);
-        itemDetailsTable.setWidthPercentage(80);
+        itemDetailsTable.setWidthPercentage(95);
         itemDetailsTable.setSpacingBefore(10f);
         float[] columnWidths = {4f, 1f, 2f, 1.2f, 1.5f};
         itemDetailsTable.setWidths(columnWidths);
@@ -146,7 +147,7 @@ public class PDFGeneratorService {
 
     public static PdfPTable getAmountDetailsTable(QuickBookInvoice quickBookInvoice) throws DocumentException {
         PdfPTable amountDetailsTable = new PdfPTable(2);
-        amountDetailsTable.setWidthPercentage(80);
+        amountDetailsTable.setWidthPercentage(95);
         float[] columnWidths = {2f, 1f};
         amountDetailsTable.setWidths(columnWidths);
 
@@ -169,7 +170,7 @@ public class PDFGeneratorService {
 
     public static PdfPTable getInvoiceAndDateTable(QuickBookInvoice quickBookInvoice) throws DocumentException {
         PdfPTable invoiceDateTable = new PdfPTable(4);
-        invoiceDateTable.setWidthPercentage(80);
+        invoiceDateTable.setWidthPercentage(95);
         float[] columnWidths = {1.2f, 2f, 2f, 1.5f};
         invoiceDateTable.setWidths(columnWidths);
         invoiceDateTable.addCell(PDFUtil.getCellLeftAlignNoBorder("INVOICE No."));
@@ -181,18 +182,34 @@ public class PDFGeneratorService {
     }
 
     public void generateInvoiceFile(QuickBookInvoice quickBookInvoice, HttpServletResponse response) throws IOException, DocumentException {
-        Document document = new Document(PageSize.A5, 10f, 10f, 10f, 0f);
+        Document document = new Document(PageSize.A5, 1f, 1f, 1f, 0f);
 
         String headerKey = "file_name";
         String headerValue = "invoice_" + quickBookInvoice.getInvoiceId() + ".pdf";
         response.setHeader(headerKey, headerValue);
         response.setHeader("Access-Control-Expose-Headers","file_name");
-        PdfWriter.getInstance(document,
+        PdfWriter writer = PdfWriter.getInstance(document,
                 response.getOutputStream());
+        Rotate event = new Rotate();
+        writer.setPageEvent(event);
         document.open();
         document.add(getInvoiceAndDateTable(quickBookInvoice));
         document.add(getDetailsTable(quickBookInvoice));
         document.add(getItemDetails(quickBookInvoice));
         document.close();
+    }
+}
+
+    class Rotate extends PdfPageEventHelper {
+
+    protected PdfNumber orientation = PdfPage.LANDSCAPE;
+
+    public void setOrientation(PdfNumber orientation) {
+        this.orientation = orientation;
+    }
+
+    @Override
+    public void onStartPage(PdfWriter writer, Document document) {
+        writer.addPageDictEntry(PdfName.ROTATE, orientation);
     }
 }

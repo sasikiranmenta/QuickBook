@@ -8,13 +8,16 @@ ion-item{
 
 .hsn {
   display: inline-block;
-  padding-left: 3rem;
   font-weight: 600;
 
   ion-label {
     padding: 0.6rem;
     vertical-align: text-bottom;
   }
+}
+
+.radio-label {
+  vertical-align: center;
 }
 
 .border-all {
@@ -25,6 +28,12 @@ ion-item{
 
 .border-left {
   border-left-style: solid;
+  border-width: 0.1rem;
+  border-color: silver;
+}
+
+.show-right-border {
+  border-right-style: solid;
   border-width: 0.1rem;
   border-color: silver;
 }
@@ -66,11 +75,7 @@ ion-item{
 
   ion-input {
     font-weight: 600;
-    opacity: 1;
     --ion-color-base: #ff0025;
-    input:disabled {
-      opacity: 1;
-    }
   }
 }
 
@@ -83,13 +88,23 @@ ion-item{
     font-size: 1rem;
     font-weight: 600;
     color: var(--ion-color-primary);
+    --padding-top: 0;
+    --padding-bottom: 0;
   }
 }
 
-
+select {
+  width: 100%;
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
+  color: red;
+  font-size: 16px;
+  font-weight: 600;
+}
 
 .calendar-col {
-  @extend .border-left;
+  //@extend .border-left;
 }
 
 .invoice-label {
@@ -194,3 +209,12 @@ ion-radio {
   margin-left: 70px;
   margin-right: 70px;
 }
+
+ion-icon {
+  pointer-events: none;
+}
+
+  .edit-clear {
+  cursor: pointer;
+  }
+

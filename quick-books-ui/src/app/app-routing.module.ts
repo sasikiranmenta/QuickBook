@@ -10,6 +10,10 @@ const routes: Routes = [
     path: '',
     redirectTo: 'invoice',
     pathMatch: 'full'
+  },
+  {
+    path: 'viewInvoices',
+    loadChildren: () => import('./view-invoice/view-invoice.module').then( m => m.ViewInvoicePageModule)
   }
 ];
 

@@ -7,16 +7,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -65,9 +56,9 @@ public class QuickBookInvoice implements Serializable {
     @Enumerated(EnumType.ORDINAL)
     private QuickBookHSNEnum invoiceType;
 
-    @Column(name = "PAYMENT_TYPE")
+    @Column(name = "PAYMENT_MODE")
     @Enumerated(EnumType.STRING)
-    private PaymentTypeEnum paymentType;
+    private PaymentModeEnum paymentMode;
 
     @Column(name = "AMOUNT_BEFORE_TAX")
     private Float amountBeforeTax;
@@ -83,6 +74,21 @@ public class QuickBookInvoice implements Serializable {
 
     @Column(name = "TOTAL_AMOUNT_AFTER_TAX")
     private Float totalAmountAfterTax;
+
+    @Column(name = "TOTAL_WEIGHT")
+    private Float totalWeight;
+
+    @Column(name = "PHONE_NUMBER")
+    @Transient
+    private String phoneNumber;
+
+    @Column(name = "PAYMENT_TYPE")
+    @Enumerated(EnumType.STRING)
+    private PaymentTypeEnum paymentType;
+
+    @Column(name = "QUICK_BOOK_UPDATE_TIME")
+    @Transient
+    private Date quickBookUpdatedTime;
 
     @OneToMany(mappedBy = "quickBookInvoice", cascade = CascadeType.ALL)
     private List<InvoiceItem> invoiceItems;

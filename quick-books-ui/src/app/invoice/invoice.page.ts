@@ -4,9 +4,8 @@ import {ModalController} from '@ionic/angular';
 import {ItemComponent} from './item/item.component';
 import {Item} from './item/item';
 import {HttpService} from '../services/http.service';
-import {CurrencyPipe, formatDate} from '@angular/common';
+import {formatDate} from '@angular/common';
 import {Invoice} from './invoice';
-import {HttpClient, HttpResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-invoice',
@@ -18,7 +17,8 @@ export class InvoicePage implements OnInit {
   itemDetailsArray: Array<Item>;
   invoiceId = '';
 
-  constructor(private modalController: ModalController, private httpService: HttpService, private currencyPipe: CurrencyPipe, private httpClient: HttpClient) {
+  constructor(private modalController: ModalController,
+              private httpService: HttpService) {
   }
 
   ngOnInit() {
@@ -28,7 +28,7 @@ export class InvoicePage implements OnInit {
 
 
   onSubmit() {
-    if (this.invoiceForm.invalid) {
+    if (this.invoiceForm.invalid || this.itemDetailsArray.length === 0) {
       console.log('invalid');
       return;
     }
@@ -49,8 +49,26 @@ export class InvoicePage implements OnInit {
     });
   }
 
+  editItem(i: number) {
+    this.modalController.create({component: ItemComponent, componentProps: {isEditMode: true, editItemData: this.itemDetailsArray[i]}})
+      .then(modalElement => {
+        modalElement.present();
+        return modalElement.onDidDismiss();
+      }).then(resultData => {
+      if (resultData.role === 'confirm') {
+        this.itemDetailsArray[i] = resultData.data.invoiceItem;
+        this.setSummaryDetails();
+      }
+    });
+  }
+
+  deleteItem(i: number) {
+    this.itemDetailsArray.splice(i, 1);
+    this.setSummaryDetails();
+  }
+
   getInvoiceNumber() {
-    this.httpService.get('http://localhost:8080/quick-book/getInvoiceNumber').subscribe((invoiceId) => {
+    this.httpService.get('/quick-book/getInvoiceNumber').subscribe((invoiceId) => {
       this.invoiceId = invoiceId;
     });
   }
@@ -64,9 +82,9 @@ export class InvoicePage implements OnInit {
       totalAmountBeforeTax += item.amount;
     });
 
-    cgst = totalAmountBeforeTax * 1.5 / 100;
-    sgst = totalAmountBeforeTax * 1.5 / 100;
-    totalAmountAfterTax = totalAmountBeforeTax + cgst + sgst;
+    cgst = Math.round(totalAmountBeforeTax * 1.5 / 100);
+    sgst = Math.round(totalAmountBeforeTax * 1.5 / 100);
+    totalAmountAfterTax = Math.round(totalAmountBeforeTax + cgst + sgst);
     this.invoiceForm.controls.amountBeforeTax.setValue(totalAmountBeforeTax);
     this.invoiceForm.controls.cgstAmount.setValue(cgst);
     this.invoiceForm.controls.sgstAmount.setValue(sgst);
@@ -80,14 +98,13 @@ export class InvoicePage implements OnInit {
   private saveIntoDb() {
     const invoice: Invoice = this.invoiceForm.value;
     invoice.invoiceItems = this.itemDetailsArray;
-    invoice.invoiceType = 'GOLD';
-    invoice.paymentType = 'CARD';
     invoice.amountBeforeTax = this.invoiceForm.controls.amountBeforeTax.value;
     invoice.cgstAmount = this.invoiceForm.controls.cgstAmount.value;
     invoice.sgstAmount = this.invoiceForm.controls.sgstAmount.value;
     invoice.igstAmount = this.invoiceForm.controls.igstAmount.value;
     invoice.totalAmountAfterTax = this.invoiceForm.controls.totalAmountAfterTax.value;
-    this.httpClient.post('http://localhost:8080/quick-book/saveInvoice', invoice, {
+    invoice.totalWeight = this.getTotalWeight(invoice.invoiceItems);
+    this.httpService.post('/quick-book/saveInvoice', invoice, {
       observe: 'response',
       responseType: 'blob'
     })
@@ -102,6 +119,7 @@ export class InvoicePage implements OnInit {
         a.download = response.headers.get('file_name');
         document.body.appendChild(a);
         a.click();
+        this.ngOnInit();
       });
   }
 
@@ -111,13 +129,17 @@ export class InvoicePage implements OnInit {
       address: new FormControl(undefined, Validators.maxLength(254)),
       state: new FormControl(undefined, Validators.required),
       stateCode: new FormControl(undefined, Validators.required),
-      gstin: new FormControl(undefined, Validators.required),
+      gstin: new FormControl(undefined),
       billDate: new FormControl(formatDate(new Date(), 'yyyy-MM-dd', 'en'), Validators.required),
       amountBeforeTax: new FormControl(0, Validators.required),
+      paymentType: new FormControl('CASH', Validators.required),
+      paymentMode: new FormControl('CASH', Validators.required),
       cgstAmount: new FormControl(0, Validators.required),
       sgstAmount: new FormControl(0, Validators.required),
       igstAmount: new FormControl(0, Validators.required),
-      totalAmountAfterTax: new FormControl(0, Validators.required)
+      invoiceType: new FormControl('GOLD', Validators.required),
+      totalAmountAfterTax: new FormControl(0, Validators.required),
+      phoneNumber: new FormControl(undefined, )
     });
     this.getInvoiceNumber();
 
@@ -138,4 +160,17 @@ export class InvoicePage implements OnInit {
     // );
     // });
   }
+
+  private getTotalWeight(items: Array<Item>): number {
+    let totalWeight = 0;
+    items.forEach((item) => {
+      totalWeight += item.grossWeight;
+    });
+    return totalWeight;
+  }
+
+
+
+
+
 }
