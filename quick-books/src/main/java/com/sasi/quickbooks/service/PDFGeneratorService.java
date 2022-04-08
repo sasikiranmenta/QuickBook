@@ -28,7 +28,8 @@ public class PDFGeneratorService {
     public static PdfPTable getDetailsTable(QuickBookInvoice quickBookInvoice) throws DocumentException {
         PdfPTable detailsTable = new PdfPTable(1);
         detailsTable.setWidthPercentage(95);
-
+        detailsTable.getDefaultCell().setBorderWidthRight(0);
+        detailsTable.getDefaultCell().setBorderWidthLeft(0);
         detailsTable.addCell(getCustomerNameTable(quickBookInvoice.getCustomerName()));
         detailsTable.addCell(getCustomerAddressTable(quickBookInvoice.getAddress()));
         detailsTable.addCell(getStateTable(quickBookInvoice.getState(), quickBookInvoice.getStateCode()));
@@ -105,41 +106,42 @@ public class PDFGeneratorService {
         float[] columnWidths = {4f, 1f, 2f, 1.2f, 1.5f};
         itemDetailsTable.setWidths(columnWidths);
 
-        itemDetailsTable.addCell(PDFUtil.getLabelCellCenterAlignColored("DESCRIPTION OF GOODS"));
+        itemDetailsTable.addCell(PDFUtil.getLabelCellCenterAlignNoLeftBorderColored("DESCRIPTION OF GOODS"));
         itemDetailsTable.addCell(PDFUtil.getLabelCellCenterAlignColored("HSN CODE"));
         itemDetailsTable.addCell(PDFUtil.getLabelCellCenterAlignColored("GROSS WEIGHT"));
         itemDetailsTable.addCell(PDFUtil.getLabelCellCenterAlignColored("RATE PER GRAM"));
-        itemDetailsTable.addCell(PDFUtil.getLabelCellCenterAlignColored("AMOUNT Rs."));
+        itemDetailsTable.addCell(PDFUtil.getLabelCellCenterAlignNoRightBorderColored("AMOUNT Rs."));
 
         for (InvoiceItem item : quickBookInvoice.getInvoiceItems()) {
-            itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(item.getDescriptionOfItem()));
+            itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignOnlyRightBorderColored(item.getDescriptionOfItem()));
             itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(Integer.toString(quickBookInvoice.getInvoiceType().getValue())));
             itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(Float.toString(item.getGrossWeight())));
             itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(Float.toString(item.getRatePerGram())));
-            itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(Float.toString(item.getAmount())));
+            itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignOnlyLeftBorderColored(Float.toString(item.getAmount())));
         }
 
         for (int i = 0; i < 5; i++) {
+            itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignOnlyRightBorderColored(" "));
             itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(" "));
             itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(" "));
             itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(" "));
-            itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(" "));
-            itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(" "));
+            itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignOnlyLeftBorderColored(" "));
         }
 
-        itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignTopNoBorder(" "));
+        itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignTopAndLeftNoBorder(" "));
         itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignColored(" "));
         PdfPCell cell = new PdfPCell(getAmountDetailsTable(quickBookInvoice));
+        cell = PDFUtil.setNoRightBorder(cell);
         cell.setColspan(3);
         cell.setRowspan(3);
         itemDetailsTable.addCell(PDFUtil.setCellBorderColor(cell));
-        PdfPCell inWordsCell = PDFUtil.getLabelCellCenterAlignColored("Rupees in words");
+        PdfPCell inWordsCell = PDFUtil.getLabelCellCenterAlignNoLeftBorderColored("Rupees in words");
 //        PdfPCell inWordsCell = new PdfPCell(getInWordsTable(quickBookInvoice));
 //        inWordsCell.setFixedHeight(100f);
         inWordsCell.setColspan(2);
         itemDetailsTable.addCell(inWordsCell);
 
-        inWordsCell = PDFUtil.getCellInputCellCenterAlignColored(PDFUtil.NumberToWord(quickBookInvoice.getTotalAmountAfterTax().intValue()));
+        inWordsCell = PDFUtil.getCellInputCellCenterAlignNoLeftBorderColored(PDFUtil.NumberToWord(quickBookInvoice.getTotalAmountAfterTax().intValue()));
         inWordsCell.setColspan(2);
         itemDetailsTable.addCell(inWordsCell);
         return itemDetailsTable;
@@ -152,18 +154,18 @@ public class PDFGeneratorService {
         amountDetailsTable.setWidths(columnWidths);
 
         amountDetailsTable.addCell(PDFUtil.getLabelCellLeftAlignColored("TOTAL AMOUNT BEFORE TAX"));
-        amountDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignColored(Float.toString(quickBookInvoice.getAmountBeforeTax())));
+        amountDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignNoRightBorderColored(Float.toString(quickBookInvoice.getAmountBeforeTax())));
         amountDetailsTable.addCell(PDFUtil.getLabelCellLeftAlignColored("CGST 1.5 %"));
-        amountDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignColored(Float.toString(quickBookInvoice.getCgstAmount())));
+        amountDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignNoRightBorderColored(Float.toString(quickBookInvoice.getCgstAmount())));
 
         amountDetailsTable.addCell(PDFUtil.getLabelCellLeftAlignColored("SGST 1.5 %"));
-        amountDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignColored(Float.toString(quickBookInvoice.getSgstAmount())));
+        amountDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignNoRightBorderColored(Float.toString(quickBookInvoice.getSgstAmount())));
 
         amountDetailsTable.addCell(PDFUtil.getLabelCellLeftAlignColored("IGST 3.0 %"));
-        amountDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignColored(Float.toString(quickBookInvoice.getIgstAmount())));
+        amountDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignNoRightBorderColored(Float.toString(quickBookInvoice.getIgstAmount())));
 
         amountDetailsTable.addCell(PDFUtil.getLabelCellLeftAlignColored("TOTAL AMOUNT AFTER TAX"));
-        amountDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignColored(Integer.toString(quickBookInvoice.getTotalAmountAfterTax().intValue())));
+        amountDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignNoRightBorderColored(Integer.toString(quickBookInvoice.getTotalAmountAfterTax().intValue())));
         return amountDetailsTable;
     }
 
@@ -174,7 +176,7 @@ public class PDFGeneratorService {
         float[] columnWidths = {1.2f, 2f, 2f, 1.5f};
         invoiceDateTable.setWidths(columnWidths);
         invoiceDateTable.addCell(PDFUtil.getCellLeftAlignNoBorder("INVOICE No."));
-        invoiceDateTable.addCell(PDFUtil.getInputCellLeftAlignNoBorderRedColor(Long.toString(quickBookInvoice.getInvoiceId())));
+        invoiceDateTable.addCell(PDFUtil.getCellInputCellLeftAlignNoBorderRedColor(Long.toString(quickBookInvoice.getInvoiceId())));
         invoiceDateTable.addCell(PDFUtil.getCellRightAlignNoBorder("DATE"));
         invoiceDateTable.addCell(PDFUtil.getCellInputCellLeftAlignBottomBorderColored(PDFUtil.getDisplayFormatDate(quickBookInvoice.getBillDate())));
         invoiceDateTable.setSpacingAfter(5f);
