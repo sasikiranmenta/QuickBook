@@ -12,6 +12,7 @@ export class ItemComponent implements OnInit {
   @Input() isEditMode = false;
   @Input() editItemData: Item;
 
+  isInvalid = false;
   itemInvoiceForm: FormGroup;
 
   constructor(private modalController: ModalController) {
@@ -45,6 +46,10 @@ export class ItemComponent implements OnInit {
   }
 
   onSubmit() {
+    if (this.itemInvoiceForm.invalid) {
+      this.isInvalid = true;
+      return;
+    }
     this.autoInsertValues();
     const newItem: Item = {
       amount: this.itemInvoiceForm.controls.amount.value,
@@ -71,8 +76,8 @@ export class ItemComponent implements OnInit {
     }
       this.itemInvoiceForm = new FormGroup({
       goodsDescription: new FormControl(goodsDescription, Validators.required),
-      itemWeight: new FormControl(itemWeight),
-      weightPerGram: new FormControl(ratePerGram),
+      itemWeight: new FormControl(itemWeight, Validators.required),
+      weightPerGram: new FormControl(ratePerGram, Validators.required),
       amount: new FormControl(totalAmount)
     });
   }

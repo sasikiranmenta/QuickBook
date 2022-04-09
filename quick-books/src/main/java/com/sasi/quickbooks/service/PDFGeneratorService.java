@@ -108,6 +108,7 @@ public class PDFGeneratorService {
         PdfPTable itemDetailsTable = new PdfPTable(5);
         itemDetailsTable.setWidthPercentage(95);
         itemDetailsTable.setSpacingBefore(10f);
+        int defaultNumItems = 13;
         float[] columnWidths = {4f, 1f, 2f, 1.2f, 1.5f};
         itemDetailsTable.setWidths(columnWidths);
 
@@ -123,9 +124,10 @@ public class PDFGeneratorService {
             itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(Float.toString(item.getGrossWeight())));
             itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(Float.toString(item.getRatePerGram())));
             itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignOnlyLeftBorderColored(Float.toString(item.getAmount())));
+            defaultNumItems--;
         }
 
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < defaultNumItems; i++) {
             itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignOnlyRightBorderColored(" "));
             itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(" "));
             itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(" "));

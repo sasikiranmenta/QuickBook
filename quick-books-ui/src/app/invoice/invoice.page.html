@@ -26,7 +26,8 @@
             <ion-row class="no-border-bottom border-top-radius">
               <ion-col>
                 <ion-item lines="inset">
-                  <ion-label position="floating">Customer Name</ion-label>
+                  <ion-label position="floating">Customer Name <span *ngIf="isInvalid && invoiceForm.controls.customerName.invalid" color="danger">*required</span></ion-label>
+
                   <ion-input formControlName="customerName"></ion-input>
                 </ion-item>
               </ion-col>
@@ -42,13 +43,15 @@
             <ion-row class="border-left-right">
               <ion-col>
                 <ion-item lines="inset">
-                  <ion-label position="floating">State</ion-label>
+                  <ion-label position="floating">State <span *ngIf="isInvalid && invoiceForm.controls.state.invalid" color="danger">*required</span></ion-label>
+
                   <ion-input formControlName="state"></ion-input>
                 </ion-item>
               </ion-col>
               <ion-col>
                 <ion-item lines="inset">
-                  <ion-label position="floating">State Code</ion-label>
+                  <ion-label position="floating">State Code <span *ngIf="isInvalid && invoiceForm.controls.stateCode.invalid" color="danger">*required</span></ion-label>
+
                   <ion-input type="number" formControlName="stateCode"></ion-input>
                 </ion-item>
               </ion-col>
@@ -229,8 +232,8 @@
             <ion-icon color="danger" name="trash-outline" title="delete"></ion-icon>
         </ion-col>
       </ion-row>
-
-      <ion-row class="ion-text-center item-details-margin-left-right" >
+      <span *ngIf="isInvalid && itemDetailsArray.length === 0" color="danger">*required</span>
+      <ion-row class="ion-text-center item-details-margin-left-right">
         <ion-col>
           <ion-button class="border-dashed-all" expand="block" (click)="onAddItem()"><ion-icon name="add-outline"></ion-icon>Add item</ion-button>
         </ion-col>

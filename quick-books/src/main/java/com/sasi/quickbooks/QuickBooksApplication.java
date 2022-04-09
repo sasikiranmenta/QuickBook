@@ -22,7 +22,7 @@ public class QuickBooksApplication extends SpringBootServletInitializer {
 
     private static void openHome() throws IOException {
         Runtime rt = Runtime.getRuntime();
-        rt.exec("rundll32 url.dll,FileProtocolHandler "+"http://localhost:8082/#/invoice");
+        rt.exec("rundll32 url.dll,FileProtocolHandler "+"http://localhost:8081/#/invoice");
     }
 
 }

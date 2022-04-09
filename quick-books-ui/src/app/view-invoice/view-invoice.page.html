@@ -5,8 +5,8 @@
     </ion-buttons>
     <form [formGroup]="dateGroup">
     <ion-grid>
-      <ion-row>
-          <ion-col size="2"><ion-title>View Invoices</ion-title></ion-col>
+      <ion-row class="ion-align-items-center">
+          <ion-col size="2"><ion-title>View Bill</ion-title></ion-col>
           <ion-col  size="0.5"></ion-col>
           <ion-col offset="5" size="2"><ion-item>
             <ion-label position="stacked">From</ion-label><ion-input type="date"  (ionChange)="onDateChange()" formControlName="fromDate"></ion-input>
@@ -33,9 +33,9 @@
                     (rowDoubleClicked) ="onRowEdit($event)"
                     #agGrid></ag-grid-angular>
   <div>
-    <ion-grid>
+    <ion-grid class="summary">
       <ion-row>
-        <ion-col>
+        <ion-col >
           Type
         </ion-col>
         <ion-col>

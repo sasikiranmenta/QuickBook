@@ -16,6 +16,7 @@ export class InvoicePage implements OnInit {
   invoiceForm: FormGroup;
   itemDetailsArray: Array<Item>;
   invoiceId = '';
+  isInvalid = false;
 
   constructor(private modalController: ModalController,
               private httpService: HttpService) {
@@ -24,12 +25,13 @@ export class InvoicePage implements OnInit {
   ngOnInit() {
     this.itemDetailsArray = new Array<Item>();
     this.initForm();
+    this.isInvalid = false;
   }
 
 
   onSubmit() {
     if (this.invoiceForm.invalid || this.itemDetailsArray.length === 0) {
-      console.log('invalid');
+      this.isInvalid = true;
       return;
     }
     this.saveIntoDb();
