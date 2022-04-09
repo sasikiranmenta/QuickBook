@@ -2,7 +2,6 @@ package com.sasi.quickbooks;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.draw.DottedLineSeparator;
 
 import java.text.SimpleDateFormat;
@@ -73,7 +72,7 @@ public class PDFUtil {
     }
 
     public static BaseColor getGreenColor() {
-        return new BaseColor(50,136,50);
+        return new BaseColor(63,125,129);
     }
 
     public static PdfPCell setCellBorderColor(PdfPCell cell) {
@@ -169,8 +168,15 @@ public class PDFUtil {
         return font;
     }
 
+    public static Font getFooterFontColorSize() {
+        Font font = new Font();
+        font.setColor(getGreenColor());
+        font.setSize(7);
+        return font;
+    }
+
     public static PdfPCell getCellLeftAlignNoBorder(String content) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, getLabelFontColorSize()));
+        PdfPCell cell = getCell(content, getLabelFontColorSize());
         setCellNoBorder(cell);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         setLeftAlign(cell);
@@ -178,7 +184,7 @@ public class PDFUtil {
     }
 
     public static PdfPCell getCellRightAlignNoBorder(String content) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, getLabelFontColorSize()));
+        PdfPCell cell = getCell(content, getLabelFontColorSize());
         setCellNoBorder(cell);
         setRightAlign(cell);
         return cell;
@@ -204,93 +210,120 @@ public class PDFUtil {
     }
 
     public static PdfPCell getCellInputCellLeftAlignBottomBorderColored(String content) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, getInputFontColorSize()));
+        PdfPCell cell = getCell(content, getInputFontColorSize());
         setCellBorderColor(setOnlyBottomBorder(setLeftAlign(cell)));
         return cell;
     }
 
     public static PdfPCell getCellInputCellCenterAlignTopNoBorder(String content) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, getInputFontColorSize()));
+        PdfPCell cell = getCell(content, getInputFontColorSize());
         setCellBorderColor(setNoTopBorder(cell));
         return cell;
     }
 
     public static PdfPCell getCellInputCellCenterAlignTopAndLeftNoBorder(String content) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, getInputFontColorSize()));
+        PdfPCell cell = getCell(content, getInputFontColorSize());
         setCellBorderColor(setNoLeftBorder(setNoTopBorder(cell)));
         return cell;
     }
 
     public static PdfPCell getCellInputCellCenterAlignTopAndRightNoBorder(String content) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, getInputFontColorSize()));
+        PdfPCell cell = getCell(content, getInputFontColorSize());
         setCellBorderColor(setNoRightBorder(setNoTopBorder(cell)));
         return cell;
     }
 
 
     public static PdfPCell getCellInputCellCenterAlignLeftAndRightBorderColored(String content) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, getInputFontColorSize()));
+        PdfPCell cell = getCell(content, getInputFontColorSize());
         return setCellBorderColor(setCenterAlign(setLeftRightBorder(cell)));
     }
 
     public static PdfPCell getCellInputCellCenterAlignBorderColored(String content) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, getInputFontColorSize()));
+        PdfPCell cell = getCell(content, getInputFontColorSize());
         return setCellBorderColor(setCenterAlign(cell));
     }
 
     public static PdfPCell getCellInputCellCenterAlignLeftRightBorderColored(String content) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, getInputFontColorSize()));
+        PdfPCell cell = getCell(content, getInputFontColorSize());
         return setCellBorderColor(setCenterAlign(setLeftRightBorder(cell)));
     }
 
     public static PdfPCell getCellInputCellCenterAlignOnlyRightBorderColored(String content) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, getInputFontColorSize()));
+        PdfPCell cell = getCell(content, getInputFontColorSize());
         return setCellBorderColor(setOnlyRightBorder(setCenterAlign(cell)));
     }
 
     public static PdfPCell getCellInputCellCenterAlignOnlyLeftBorderColored(String content) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, getInputFontColorSize()));
+        PdfPCell cell = getCell(content, getInputFontColorSize());
         return setCellBorderColor(setCenterAlign(setOnlyLeftBorder(cell)));
     }
 
     public static PdfPCell getCellInputCellCenterAlignNoRightBorderColored(String content) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, getInputFontColorSize()));
+        PdfPCell cell = getCell(content, getInputFontColorSize());
         return setCellBorderColor(setNoRightBorder(setCenterAlign(cell)));
     }
 
     public static PdfPCell getCellInputCellCenterAlignNoLeftBorderColored(String content) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, getInputFontColorSize()));
+        PdfPCell cell = getCell(content, getInputFontColorSize());
         return setCellBorderColor(setCenterAlign(setNoLeftBorder(cell)));
     }
 
     public static PdfPCell getCellInputCellCenterAlignColored(String content) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, getInputFontColorSize()));
+        PdfPCell cell = getCell(content, getInputFontColorSize());
         return setCellBorderColor(setCenterAlign(cell));
     }
 
+    public static PdfPCell getCellInputCellLeftAlignNoBorderRedColor(String content) {
+        PdfPCell cell = getCell(content, getInputRedFontColorSize());
+        return setCellNoBorder(setLeftAlign(cell));
+    }
+
     public static PdfPCell getLabelCellCenterAlignColored(String content) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, getLabelFontColorSize()));
+        PdfPCell cell = getCell(content, getLabelFontColorSize());
         return setCellBorderColor(setCenterAlign(cell));
     }
 
     public static PdfPCell getLabelCellLeftAlignColored(String content) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, getLabelFontColorSize()));
+        PdfPCell cell = getCell(content, getLabelFontColorSize());
         return setCellBorderColor(setLeftAlign(cell));
     }
 
+    public static PdfPCell getLabelCellRightAlignColored(String content) {
+        PdfPCell cell = getCell(content, getLabelFontColorSize());
+        return setCellBorderColor(setRightAlign(cell));
+    }
+
     public static PdfPCell getLabelCellCenterAlignNoRightBorderColored(String content) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, getLabelFontColorSize()));
+        PdfPCell cell = getCell(content, getLabelFontColorSize());
         return setCellBorderColor(setCenterAlign(setNoRightBorder(cell)));
     }
 
     public static PdfPCell getLabelCellCenterAlignNoLeftBorderColored(String content) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, getLabelFontColorSize()));
+        PdfPCell cell = getCell(content, getLabelFontColorSize());
         return setCellBorderColor(setCenterAlign(setNoLeftBorder(cell)));
     }
 
-    public static PdfPCell getCellInputCellLeftAlignNoBorderRedColor(String content) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, getInputRedFontColorSize()));
-        return setCellNoBorder(setLeftAlign(cell));
+    public static PdfPCell getFooterCellSmallFontLeftAlignNoBorderColored(String content){
+        PdfPCell cell = getCell(content, getFooterFontColorSize());
+        return setLeftAlign(setCellNoBorder(cell));
+    }
+
+    public static PdfPCell getFooterCellSmallFontRightAlignNoBorderColored(String content){
+        PdfPCell cell = getCell(content, getFooterFontColorSize());
+        return setRightAlign(setCellNoBorder(cell));
+    }
+
+    public static PdfPCell getFooterCellBigFontRightAlignNoBorderColored(String content){
+        PdfPCell cell = getCell(content, getLabelFontColorSize());
+        return setRightAlign(setCellNoBorder(cell));
+    }
+
+    public static PdfPCell getCell(String content, Font font) {
+       PdfPCell cell = new PdfPCell(new Phrase(content, font));
+       cell.setPaddingTop(3f);
+       cell.setPaddingBottom(3f);
+       return cell;
     }
 
 }

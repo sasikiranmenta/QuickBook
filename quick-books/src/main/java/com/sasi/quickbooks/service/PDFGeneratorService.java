@@ -1,8 +1,6 @@
 package com.sasi.quickbooks.service;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
+import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfNumber;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -19,7 +17,9 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -59,8 +59,13 @@ public class PDFGeneratorService {
         float[] columnWidths = {0.55f, 2f};
         customerNameTable.setWidths(columnWidths);
         customerNameTable.setWidthPercentage(95);
-        customerNameTable.addCell(PDFUtil.getCellLeftAlignNoBorder("Customer's Name"));
-        customerNameTable.addCell(PDFUtil.getCellInputCellLeftAlignBottomBorderColored(customerName));
+        PdfPCell cell = PDFUtil.getCellLeftAlignNoBorder("Customer's Name");
+        cell.setPaddingTop(10f);
+        customerNameTable.addCell(cell);
+        cell = PDFUtil.getCellInputCellLeftAlignBottomBorderColored(customerName);
+        cell.setPaddingTop(10f);
+        customerNameTable.addCell(cell);
+
         return customerNameTable;
     }
 
@@ -120,7 +125,7 @@ public class PDFGeneratorService {
             itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignOnlyLeftBorderColored(Float.toString(item.getAmount())));
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 12; i++) {
             itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignOnlyRightBorderColored(" "));
             itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(" "));
             itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(" "));
@@ -153,18 +158,18 @@ public class PDFGeneratorService {
         float[] columnWidths = {2f, 1f};
         amountDetailsTable.setWidths(columnWidths);
 
-        amountDetailsTable.addCell(PDFUtil.getLabelCellLeftAlignColored("TOTAL AMOUNT BEFORE TAX"));
+        amountDetailsTable.addCell(PDFUtil.getLabelCellRightAlignColored("TOTAL AMOUNT BEFORE TAX"));
         amountDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignNoRightBorderColored(Float.toString(quickBookInvoice.getAmountBeforeTax())));
-        amountDetailsTable.addCell(PDFUtil.getLabelCellLeftAlignColored("CGST 1.5 %"));
+        amountDetailsTable.addCell(PDFUtil.getLabelCellRightAlignColored("CGST 1.5 %"));
         amountDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignNoRightBorderColored(Float.toString(quickBookInvoice.getCgstAmount())));
 
-        amountDetailsTable.addCell(PDFUtil.getLabelCellLeftAlignColored("SGST 1.5 %"));
+        amountDetailsTable.addCell(PDFUtil.getLabelCellRightAlignColored("SGST 1.5 %"));
         amountDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignNoRightBorderColored(Float.toString(quickBookInvoice.getSgstAmount())));
 
-        amountDetailsTable.addCell(PDFUtil.getLabelCellLeftAlignColored("IGST 3.0 %"));
+        amountDetailsTable.addCell(PDFUtil.getLabelCellRightAlignColored("IGST 3.0 %"));
         amountDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignNoRightBorderColored(Float.toString(quickBookInvoice.getIgstAmount())));
 
-        amountDetailsTable.addCell(PDFUtil.getLabelCellLeftAlignColored("TOTAL AMOUNT AFTER TAX"));
+        amountDetailsTable.addCell(PDFUtil.getLabelCellRightAlignColored("TOTAL AMOUNT AFTER TAX"));
         amountDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignNoRightBorderColored(Integer.toString(quickBookInvoice.getTotalAmountAfterTax().intValue())));
         return amountDetailsTable;
     }
@@ -195,10 +200,44 @@ public class PDFGeneratorService {
         Rotate event = new Rotate();
         writer.setPageEvent(event);
         document.open();
+        document.add(getHeaderTable());
         document.add(getInvoiceAndDateTable(quickBookInvoice));
         document.add(getDetailsTable(quickBookInvoice));
         document.add(getItemDetails(quickBookInvoice));
+        document.add(getFooterDetailsTable());
         document.close();
+    }
+
+    private PdfPTable getHeaderTable() throws BadElementException, IOException {
+        PdfPTable headerTable = new PdfPTable(1);
+        headerTable.setWidthPercentage(95);
+        headerTable.getDefaultCell().setBorder(0);
+
+        Image image = Image.getInstance("quick-books/src/main/resources/header.PNG");
+        PdfPCell imageCell = new PdfPCell(image, true);
+        imageCell.setPaddingTop(15f);
+        headerTable.addCell(PDFUtil.setCellNoBorder(imageCell));
+        return headerTable;
+    }
+
+    private PdfPTable getFooterDetailsTable() throws DocumentException {
+        PdfPTable footerTable = new PdfPTable(2);
+        footerTable.getDefaultCell().setBorder(0);
+        footerTable.setWidthPercentage(95);
+        float[] columnWidths = {1f, 1f};
+        footerTable.setWidths(columnWidths);
+
+        footerTable.addCell(PDFUtil.getFooterCellSmallFontLeftAlignNoBorderColored("All disputes subject to Nellore jurisdiction"));
+        footerTable.addCell(PDFUtil.getFooterCellSmallFontRightAlignNoBorderColored("Certified that the particulars given above are true and correct"));
+        footerTable.addCell(PDFUtil.getFooterCellSmallFontLeftAlignNoBorderColored(""));
+        footerTable.addCell(PDFUtil.getFooterCellBigFontRightAlignNoBorderColored("For DEEPTHI JEWELLERS"));
+        footerTable.addCell(PDFUtil.getFooterCellBigFontRightAlignNoBorderColored(" "));
+        footerTable.addCell(PDFUtil.getFooterCellBigFontRightAlignNoBorderColored(" "));
+
+        footerTable.addCell(PDFUtil.getFooterCellBigFontRightAlignNoBorderColored("Receiver's Signature"));
+        footerTable.addCell(PDFUtil.getFooterCellBigFontRightAlignNoBorderColored("Authorised Signatory"));
+
+        return footerTable;
     }
 }
 
