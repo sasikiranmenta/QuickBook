@@ -38,8 +38,11 @@ export class InvoicePage implements OnInit {
   }
 
   onAddItem() {
-    console.log('hi');
-    this.modalController.create({component: ItemComponent, componentProps: {selectedMode: 'add'}})
+    this.modalController.create({
+      component: ItemComponent,
+      componentProps: {selectedMode: 'add'},
+      backdropDismiss: false
+    })
       .then(modalElement => {
         modalElement.present();
         return modalElement.onDidDismiss();
@@ -52,7 +55,11 @@ export class InvoicePage implements OnInit {
   }
 
   editItem(i: number) {
-    this.modalController.create({component: ItemComponent, componentProps: {isEditMode: true, editItemData: this.itemDetailsArray[i]}})
+    this.modalController.create({
+      backdropDismiss: false,
+      component: ItemComponent,
+      componentProps: {isEditMode: true, editItemData: this.itemDetailsArray[i]}
+    })
       .then(modalElement => {
         modalElement.present();
         return modalElement.onDidDismiss();
@@ -128,9 +135,9 @@ export class InvoicePage implements OnInit {
   private initForm() {
     this.invoiceForm = new FormGroup({
       customerName: new FormControl(undefined, Validators.required),
-      address: new FormControl(undefined, Validators.maxLength(254)),
-      state: new FormControl(undefined, Validators.required),
-      stateCode: new FormControl(undefined, Validators.required),
+      address: new FormControl('Nellore', Validators.maxLength(254)),
+      state: new FormControl('AP', Validators.required),
+      stateCode: new FormControl(37, Validators.required),
       gstin: new FormControl(undefined),
       billDate: new FormControl(formatDate(new Date(), 'yyyy-MM-dd', 'en'), Validators.required),
       amountBeforeTax: new FormControl(0, Validators.required),

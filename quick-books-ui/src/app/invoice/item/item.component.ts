@@ -28,20 +28,20 @@ export class ItemComponent implements OnInit {
   }
 
   autoInsertValues() {
-    if (this.itemInvoiceForm.controls.itemWeight.value !== 0 &&
-      this.itemInvoiceForm.controls.weightPerGram.value !== 0) {
+    if (!!this.itemInvoiceForm.controls.itemWeight.value && !!this.itemInvoiceForm.controls.weightPerGram.value) {
       this.itemInvoiceForm.controls.amount.setValue(Math.round(this.itemInvoiceForm.controls.itemWeight.value *
         this.itemInvoiceForm.controls.weightPerGram.value));
-    } else if (this.itemInvoiceForm.controls.itemWeight.value !== 0 &&
-      this.itemInvoiceForm.controls.weightPerGram.value === 0
-      && this.itemInvoiceForm.controls.amount.value !== 0) {
-      this.itemInvoiceForm.controls.weightPerGram.setValue(Math.round(this.itemInvoiceForm.controls.amount.value *
-        this.itemInvoiceForm.controls.itemWeight.value));
-    } else if (this.itemInvoiceForm.controls.itemWeight.value === 0 &&
-      this.itemInvoiceForm.controls.weightPerGram.value !== 0
-      && this.itemInvoiceForm.controls.amount.value !== 0) {
-      this.itemInvoiceForm.controls.itemWeight.setValue(Math.round(this.itemInvoiceForm.controls.amount.value *
-        this.itemInvoiceForm.controls.weightPerGram.value));
+    } else if (!!this.itemInvoiceForm.controls.itemWeight.value && !!!this.itemInvoiceForm.controls.weightPerGram.value
+      && !!this.itemInvoiceForm.controls.amount.value) {
+      let wpg = this.itemInvoiceForm.controls.amount.value / this.itemInvoiceForm.controls.itemWeight.value;
+      wpg = +(Math.round(wpg * 100) / 100).toFixed(2);
+      this.itemInvoiceForm.controls.weightPerGram.setValue(wpg);
+    } else if (!!!this.itemInvoiceForm.controls.itemWeight.value && !!this.itemInvoiceForm.controls.weightPerGram.value
+      && !!this.itemInvoiceForm.controls.amount.value) {
+      let itemWeight = this.itemInvoiceForm.controls.amount.value / this.itemInvoiceForm.controls.weightPerGram.value;
+      itemWeight = +(Math.round(itemWeight * 100) / 100).toFixed(3);
+      itemWeight.toFixed(3);
+      this.itemInvoiceForm.controls.itemWeight.setValue(itemWeight);
     }
   }
 
@@ -60,6 +60,12 @@ export class ItemComponent implements OnInit {
     console.log(this.itemInvoiceForm.controls.itemWeight.value, this.itemInvoiceForm.controls.weightPerGram.value);
     this.modalController.dismiss({invoiceItem: newItem}, 'confirm');
 
+  }
+
+  resetValues() {
+    this.itemInvoiceForm.controls.amount.setValue(undefined);
+    this.itemInvoiceForm.controls.weightPerGram.setValue(undefined);
+    this.itemInvoiceForm.controls.itemWeight.setValue(undefined);
   }
 
   private initForm() {
@@ -81,6 +87,4 @@ export class ItemComponent implements OnInit {
       amount: new FormControl(totalAmount)
     });
   }
-
-
 }
