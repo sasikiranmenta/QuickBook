@@ -35,9 +35,14 @@ public class InvoiceController {
     }
 
     @RequestMapping(value = "/saveInvoice", method = RequestMethod.POST)
-    public ResponseEntity saveInvoice(@RequestBody @Valid QuickBookInvoice quickBookInvoice, HttpServletRequest request, HttpServletResponse response) throws DocumentException, IOException {
-        this.quickBookInvoiceService.saveInvoice(quickBookInvoice, response);
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).build();
+    public ResponseEntity saveInvoice(@RequestBody @Valid QuickBookInvoice quickBookInvoice, @RequestParam(name = "print") Boolean print,
+                                      HttpServletRequest request, HttpServletResponse response) throws DocumentException, IOException {
+        this.quickBookInvoiceService.saveInvoice(quickBookInvoice, print, response);
+        if(print) {
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).build();
+        }
+        return ResponseEntity.ok().build();
+
     }
 
     @RequestMapping(value = "/getAllInvoiceInBetween", method = RequestMethod.GET)

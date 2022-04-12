@@ -41,10 +41,12 @@ public class QuickBookInvoiceService {
         this.em = em;
     }
 
-    public void saveInvoice(QuickBookInvoice quickBookInvoice, HttpServletResponse response) throws DocumentException, IOException {
+    public void saveInvoice(QuickBookInvoice quickBookInvoice, Boolean print, HttpServletResponse response) throws DocumentException, IOException {
         setInvoiceForItem(quickBookInvoice);
         this.quickBookInvoiceRepository.save(quickBookInvoice);
-        this.pdfGeneratorService.generateInvoiceFile(quickBookInvoice, response);
+        if(print) {
+            this.pdfGeneratorService.generateInvoiceFile(quickBookInvoice, response);
+        }
     }
 
     public File getInvoice() throws DocumentException, FileNotFoundException {
