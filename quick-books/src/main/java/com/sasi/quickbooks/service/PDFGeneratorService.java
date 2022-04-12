@@ -9,7 +9,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPage;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.sasi.quickbooks.PDFUtil;
+import com.sasi.quickbooks.util.PDFUtil;
 import com.sasi.quickbooks.model.InvoiceItem;
 import com.sasi.quickbooks.model.QuickBookInvoice;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Objects;
 
 @Service
 @Slf4j
@@ -108,7 +106,7 @@ public class PDFGeneratorService {
         PdfPTable itemDetailsTable = new PdfPTable(5);
         itemDetailsTable.setWidthPercentage(95);
         itemDetailsTable.setSpacingBefore(10f);
-        int defaultNumItems = 13;
+        int defaultNumItems = 11;
         float[] columnWidths = {4f, 1f, 2f, 1.2f, 1.5f};
         itemDetailsTable.setWidths(columnWidths);
 
@@ -217,7 +215,7 @@ public class PDFGeneratorService {
 
         Image image = Image.getInstance("quick-books/src/main/resources/header.PNG");
         PdfPCell imageCell = new PdfPCell(image, true);
-        imageCell.setPaddingTop(15f);
+        imageCell.setPaddingTop(5f);
         headerTable.addCell(PDFUtil.setCellNoBorder(imageCell));
         return headerTable;
     }

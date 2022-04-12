@@ -1,4 +1,4 @@
-package com.sasi.quickbooks;
+package com.sasi.quickbooks.util;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -155,9 +155,8 @@ public class PDFUtil {
     }
 
     public static Font getInputFontColorSize() {
-        Font font = new Font();
+        Font font = new Font(Font.FontFamily.UNDEFINED, 10, Font.BOLD);
         font.setColor(BaseColor.DARK_GRAY);
-        font.setSize(8);
         return font;
     }
 
