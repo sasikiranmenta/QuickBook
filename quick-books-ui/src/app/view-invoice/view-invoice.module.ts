@@ -11,15 +11,18 @@ import {AgGridModule} from 'ag-grid-angular';
 import {IndianCurrency} from '../pipe/indian-currency.pipe';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    ViewInvoicePageRoutingModule,
-    AgGridModule,
-    ReactiveFormsModule
-  ],
-  declarations: [ViewInvoicePage, IndianCurrency],
-  providers: [IndianCurrency, DatePipe]
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        ViewInvoicePageRoutingModule,
+        AgGridModule,
+        ReactiveFormsModule
+    ],
+    declarations: [ViewInvoicePage, IndianCurrency],
+    exports: [
+        IndianCurrency
+    ],
+    providers: [IndianCurrency, DatePipe]
 })
 export class ViewInvoicePageModule {}

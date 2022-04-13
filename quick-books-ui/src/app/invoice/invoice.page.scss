@@ -1,224 +1,246 @@
 form {
-  height: 100%;
+    height: 100%;
 }
 
-ion-item{
-  --border-color: black;
+ion-item {
+    --border-color: black;
 }
 
 .hsn {
-  display: inline-block;
-  font-weight: 600;
+    display: inline-block;
+    font-weight: 600;
 
-  ion-label {
-    padding: 0.6rem;
-    vertical-align: text-bottom;
-  }
+    ion-label {
+        padding: 0.6rem;
+        vertical-align: text-bottom;
+    }
 }
 
 .radio-label {
-  vertical-align: center;
+    vertical-align: center;
 }
 
 .border-all {
-  border-style: solid;
-  border-width: 0.1rem;
-  border-color: silver;
+    border-style: solid;
+    border-width: 0.1rem;
+    border-color: silver;
 }
 
 .border-left {
-  border-left-style: solid;
-  border-width: 0.1rem;
-  border-color: silver;
+    border-left-style: solid;
+    border-width: 0.1rem;
+    border-color: silver;
 }
 
 .show-right-border {
-  border-right-style: solid;
-  border-width: 0.1rem;
-  border-color: silver;
+    border-right-style: solid;
+    border-width: 0.1rem;
+    border-color: silver;
 }
 
 .border-left-right {
-  @extend .border-left;
-  border-right-style: solid;
+    @extend .border-left;
+    border-right-style: solid;
 }
 
-.border-bottom{
-  border-bottom-style: solid;
-  border-width: 0.1rem;
-  border-color: silver;
+.border-bottom {
+    border-bottom-style: solid;
+    border-width: 0.1rem;
+    border-color: silver;
 }
 
 .border-top-radius {
-  border-top-right-radius: 0.2rem;
-  border-top-left-radius: 0.2rem;
+    border-top-right-radius: 0.2rem;
+    border-top-left-radius: 0.2rem;
 }
 
 .no-border-bottom {
-  @extend .border-all;
-  border-bottom-style: none;
+    @extend .border-all;
+    border-bottom-style: none;
 }
+
 .hsn-row {
-  @extend .border-all;
-  border-top-style: none;
+    @extend .border-all;
+    border-top-style: none;
 }
 
 .default-font-style {
-  color: rgb(112, 117, 123);
-  font-family: Inter, sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-}
-.invoice-row {
-  @extend .border-all;
-  @extend .border-top-radius;
-
-  ion-input {
-    font-weight: 600;
-    --ion-color-base: #ff0025;
-  }
-}
-
-.calendar {
-  ion-icon {
-    padding-right: 0.5rem;
-    font-size: 18px;
-  }
-  ion-input {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--ion-color-primary);
-    --padding-top: 0;
-    --padding-bottom: 0;
-  }
-}
-
-select {
-  width: 100%;
-  border-top: 0;
-  border-right: 0;
-  border-left: 0;
-  color: red;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.calendar-col {
-  //@extend .border-left;
-}
-
-.invoice-label {
-  ion-icon {
-    padding-right: 1rem;
-  }
-  font-size: 18px;
-  font-family: Inter, sans-serif;
-  color: #2c323c;
-  font-weight: 600;
-}
-
-
-.invoice {
-  color: rgb(112, 117, 123);
-  font-family: Inter, sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 22px;
-  margin-left: 75px;
-  margin-right: 25px;
-}
-
-ion-radio {
-  width: 15px;
-  height: 15px;
-}
-
-.summary {
-  @extend .invoice-label;
-  padding-top: 0.5rem;
-  margin-left: 100px;
-}
-
-
-
-.summary-amount {
-  @extend .border-all;
-  @extend .border-top-radius;
-  margin-left: 100px;
-
-  ion-input {
-    --color: var(--ion-color-primary);
-    font-weight: 600;
-    font-size: 1rem;
-  }
-  input::part(native):disabled {
-    opacity: 1;
-  }
-}
-
-.before-tax {
-  border-bottom-style: solid;
-  border-width: 0.1rem;
-  border-color: silver;
-}
-
-.gst {
-  @extend .before-tax
-}
-.margin-left{
-  margin-left: 35px;
-}
-
-
-.customer-details {
- @extend .margin-left;
-  ion-item {
     color: rgb(112, 117, 123);
     font-family: Inter, sans-serif;
     font-size: 14px;
     font-weight: 500;
-    --border-color: silver;
-    ion-label {
-      color: rgb(112, 117, 123);
-      font-family: Inter, sans-serif;
-      font-weight: 500;
+}
+
+.invoice-row {
+    @extend .border-all;
+    @extend .border-top-radius;
+
+    ion-input {
+        font-weight: 600;
+        --ion-color-base: #ff0025;
     }
-  }
+}
+
+.calendar {
+    ion-icon {
+        padding-right: 0.5rem;
+        font-size: 18px;
+    }
+
+    ion-input {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--ion-color-primary);
+        --padding-top: 0;
+        --padding-bottom: 0;
+    }
+}
+
+select {
+    width: 100%;
+    border-top: 0;
+    border-right: 0;
+    border-left: 0;
+    color: red;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.calendar-col {
+    //@extend .border-left;
+}
+
+.invoice-label {
+    ion-icon {
+        padding-right: 1rem;
+    }
+
+    font-size: 18px;
+    font-family: Inter, sans-serif;
+    color: #2c323c;
+    font-weight: 600;
+}
+
+
+.invoice {
+    color: rgb(112, 117, 123);
+    font-family: Inter, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+    margin-left: 75px;
+    margin-right: 25px;
+}
+
+ion-radio {
+    width: 15px;
+    height: 15px;
+}
+
+.summary {
+    @extend .invoice-label;
+    padding-top: 0.5rem;
+    margin-left: 100px;
+}
+
+
+.summary-amount {
+    @extend .border-all;
+    @extend .border-top-radius;
+    margin-left: 100px;
+
+    ion-input {
+        --color: var(--ion-color-primary);
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    input::part(native):disabled {
+        opacity: 1;
+    }
+}
+
+.before-tax {
+    border-bottom-style: solid;
+    border-width: 0.1rem;
+    border-color: silver;
+}
+
+.gst {
+    @extend .before-tax
+}
+
+.margin-left {
+    margin-left: 35px;
+}
+
+
+.customer-details {
+    @extend .margin-left;
+
+    ion-item {
+        color: rgb(112, 117, 123);
+        font-family: Inter, sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        --border-color: silver;
+
+        ion-label {
+            color: rgb(112, 117, 123);
+            font-family: Inter, sans-serif;
+            font-weight: 500;
+        }
+    }
 }
 
 .margin-bottom {
-  margin-bottom: 16px;
+    margin-bottom: 16px;
 }
 
 .item {
-  background-color: #dddee1;
-  font-family: Inter, sans-serif;
-  font-size: 14px;
-  font-weight: 500;
+    background-color: #dddee1;
+    font-family: Inter, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .border-dashed-all {
-  margin: 15px;
+    margin: 15px;
 }
 
 .item-details-margin-top {
-  margin-top: 15px;
+    margin-top: 15px;
 }
 
-.item-details-margin-left-right{
-  margin-left: 70px;
-  margin-right: 70px;
+.item-details-margin-left-right {
+    margin-left: 70px;
+    margin-right: 70px;
 }
 
 ion-icon {
-  pointer-events: none;
+    pointer-events: none;
 }
 
 span {
-  color: red;
+    color: red;
 }
 
-  .edit-clear {
-  cursor: pointer;
-  }
+.edit-clear {
+    cursor: pointer;
+}
 
+.header-title {
+    font-size: 20px;
+}
+
+.error {
+    position: fixed;
+    color: var(--ion-color-primary-contrast);
+    background-color: red;
+    font-weight: 600;
+    left: 40%;
+}
+
+.paymentMode {
+    max-height: 20px;
+}

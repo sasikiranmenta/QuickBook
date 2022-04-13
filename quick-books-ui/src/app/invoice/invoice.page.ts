@@ -4,8 +4,9 @@ import {ModalController} from '@ionic/angular';
 import {ItemComponent} from './item/item.component';
 import {Item} from './item/item';
 import {formatDate} from '@angular/common';
-import {Invoice} from './invoice';
+import {Invoice, PaymentMode} from './invoice';
 import {InvoiceService} from '../services/invoice.service';
+import {PaymentModeComponent} from './payment-mode/payment-mode.component';
 
 @Component({
     selector: 'app-invoice', templateUrl: './invoice.page.html', styleUrls: ['./invoice.page.scss'],
@@ -14,20 +15,40 @@ export class InvoicePage implements OnInit {
     invoiceForm: FormGroup;
     itemDetailsArray: Array<Item>;
     invoiceId = '';
-    isInvalid = false;
+    isInvalid: boolean;
+    isMulti: boolean;
+    paymentModeList: Array<PaymentMode>;
+    totalBillAmount: number;
+    showErrorDiv = false;
+    isLoading = false;
+    errorMessage: string;
 
     constructor(private modalController: ModalController, private invoiceService: InvoiceService) {
     }
 
     ngOnInit() {
+        this.isLoading = true;
         this.itemDetailsArray = new Array<Item>();
-        this.initForm();
+        this.paymentModeList = new Array<PaymentMode>();
         this.isInvalid = false;
+        this.isMulti = false;
+        this.totalBillAmount = 0;
+        this.errorMessage = '';
+        this.initForm();
+    }
+
+    ionViewWillEnter() {
+        this.ngOnInit();
     }
 
     onSubmit(print = true) {
+        const paymentMode = this.invoiceForm.controls.paymentMode.value;
         if (this.invoiceForm.invalid || this.itemDetailsArray.length === 0) {
             this.isInvalid = true;
+            return;
+        } else if(paymentMode === 'MULTI' && this.paymentModeList.length === 0) {
+            this.setErrorDiv('Set Amounts in Partial Payment Screen before saving');
+            this.onShowPaymentMode();
             return;
         }
         this.saveIntoDb(print);
@@ -73,6 +94,7 @@ export class InvoicePage implements OnInit {
     getInvoiceNumber() {
         this.invoiceService.getInvoiceNumber().subscribe((invoiceId) => {
             this.invoiceId = invoiceId;
+            this.isLoading = false;
         });
     }
 
@@ -88,10 +110,40 @@ export class InvoicePage implements OnInit {
         cgst = Math.round(totalAmountBeforeTax * 1.5 / 100);
         sgst = Math.round(totalAmountBeforeTax * 1.5 / 100);
         totalAmountAfterTax = Math.round(totalAmountBeforeTax + cgst + sgst);
+        this.totalBillAmount = totalAmountAfterTax;
         this.invoiceForm.controls.amountBeforeTax.setValue(totalAmountBeforeTax);
         this.invoiceForm.controls.cgstAmount.setValue(cgst);
         this.invoiceForm.controls.sgstAmount.setValue(sgst);
         this.invoiceForm.controls.totalAmountAfterTax.setValue(totalAmountAfterTax);
+    }
+
+    onPaymentModeChange() {
+        if(this.invoiceForm.controls.paymentMode.value === 'MULTI') {
+            this.isMulti = true;
+        } else {
+            this.isMulti = false;
+        }
+    }
+
+    onShowPaymentMode() {
+        if(this.itemDetailsArray.length === 0) {
+            this.setErrorDiv('Add at-least one item to set partial payment');
+            return;
+        }
+        this.modalController.create({
+            component: PaymentModeComponent,
+            componentProps: {
+                paymentModeList: this.paymentModeList,
+                totalBillAmount: this.totalBillAmount
+            }
+        }).then((modalElement) => {
+            modalElement.present();
+            return modalElement.onDidDismiss();
+        }).then((paymentModeResponse) => {
+            if(paymentModeResponse.role === 'success') {
+                this.paymentModeList = paymentModeResponse.data;
+            }
+        });
     }
 
     onCancel() {
@@ -107,6 +159,7 @@ export class InvoicePage implements OnInit {
         invoice.igstAmount = this.invoiceForm.controls.igstAmount.value;
         invoice.totalAmountAfterTax = this.invoiceForm.controls.totalAmountAfterTax.value;
         invoice.totalWeight = this.getTotalWeight(invoice.invoiceItems);
+        invoice.paymentMode = this.getPaymentModeDetails();
 
         this.invoiceService.saveInvoice(invoice, isPrint)
             .subscribe((response) => {
@@ -144,5 +197,23 @@ export class InvoicePage implements OnInit {
             totalWeight += item.grossWeight;
         });
         return totalWeight;
+    }
+
+    private setErrorDiv(message: string) {
+        this.errorMessage = message;
+        this.showErrorDiv = true;
+        setTimeout(()=> {
+            this.showErrorDiv = false;
+        }, 4000);
+    }
+
+    private getPaymentModeDetails(): Array<PaymentMode> {
+        if (this.paymentModeList.length === 0) {
+            this.paymentModeList.push({
+                paymentMode: this.invoiceForm.controls.paymentMode.value,
+                amount: this.totalBillAmount
+            });
+        }
+        return this.paymentModeList;
     }
 }

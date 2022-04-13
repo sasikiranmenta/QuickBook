@@ -56,9 +56,8 @@ public class QuickBookInvoice implements Serializable {
     @Enumerated(EnumType.ORDINAL)
     private QuickBookHSNEnum invoiceType;
 
-    @Column(name = "PAYMENT_MODE")
-    @Enumerated(EnumType.STRING)
-    private PaymentModeEnum paymentMode;
+    @OneToMany(mappedBy = "quickBookInvoice", cascade = CascadeType.ALL)
+    private List<PaymentMode> paymentMode;
 
     @Column(name = "AMOUNT_BEFORE_TAX")
     private Float amountBeforeTax;

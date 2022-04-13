@@ -1,246 +1,266 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button menu="m1"></ion-menu-button>
-    </ion-buttons>
-    <ion-title>Invoice</ion-title>
-      <ion-button slot="end" color="danger" (click)="ngOnInit()">Reset</ion-button>
-      <ion-button slot="end" type="submit" color="primary" (click)="onSubmit(false)">Save</ion-button>
-      <ion-button slot="end" type="submit" color="primary" (click)="onSubmit(true)">Save & Print</ion-button>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button menu="m1"></ion-menu-button>
+        </ion-buttons>
+        <ion-text class="header-title">Invoice</ion-text>
+        <ion-button slot="end" color="danger" (click)="ngOnInit()">Reset</ion-button>
+        <ion-button slot="end" type="submit" color="primary" (click)="onSubmit(false)">Save</ion-button>
+        <ion-button slot="end" type="submit" color="primary" (click)="onSubmit(true)">Save & Print</ion-button>
+    </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <form [formGroup]="invoiceForm">
-    <ion-grid class="ion-text-center ion-no-padding-bottom">
-      <ion-row>
-        <ion-col >
-          <ion-grid class="customer-details">
+<ion-content *ngIf="!isLoading">
+    <ion-text *ngIf="showErrorDiv" class="error">{{ errorMessage }}</ion-text>
+    <form [formGroup]="invoiceForm">
+        <ion-grid class="ion-text-center ion-no-padding-bottom">
             <ion-row>
-              <ion-col class="ion-text-start margin-left">
-                <h6 class="invoice-label">
-                  <ion-icon name="person-outline"></ion-icon>
-                  Bill Details
-                </h6>
-              </ion-col>
-            </ion-row>
-            <ion-row class="no-border-bottom border-top-radius">
-              <ion-col>
-                <ion-item lines="inset">
-                  <ion-label position="floating">Customer Name <span *ngIf="isInvalid && invoiceForm.controls.customerName.invalid" color="danger">*required</span></ion-label>
+                <ion-col>
+                    <ion-grid class="customer-details">
+                        <ion-row>
+                            <ion-col class="ion-text-start margin-left">
+                                <h6 class="invoice-label">
+                                    <ion-icon name="person-outline"></ion-icon>
+                                    Bill Details
+                                </h6>
+                            </ion-col>
+                        </ion-row>
+                        <ion-row class="no-border-bottom border-top-radius">
+                            <ion-col>
+                                <ion-item lines="inset">
+                                    <ion-label position="floating">Customer Name <span
+                                        *ngIf="isInvalid && invoiceForm.controls.customerName.invalid" color="danger">*required</span>
+                                    </ion-label>
 
-                  <ion-input formControlName="customerName"></ion-input>
-                </ion-item>
-              </ion-col>
-            </ion-row>
-            <ion-row class="border-left-right">
-              <ion-col>
-                <ion-item lines="inset">
-                  <ion-label position="floating">Customer Address</ion-label>
-                  <ion-textarea formControlName="address"></ion-textarea>
-                </ion-item>
-              </ion-col>
-            </ion-row>
-            <ion-row class="border-left-right">
-              <ion-col>
-                <ion-item lines="inset">
-                  <ion-label position="floating">State <span *ngIf="isInvalid && invoiceForm.controls.state.invalid" color="danger">*required</span></ion-label>
+                                    <ion-input formControlName="customerName"></ion-input>
+                                </ion-item>
+                            </ion-col>
+                        </ion-row>
+                        <ion-row class="border-left-right">
+                            <ion-col>
+                                <ion-item lines="inset">
+                                    <ion-label position="floating">Customer Address</ion-label>
+                                    <ion-textarea formControlName="address"></ion-textarea>
+                                </ion-item>
+                            </ion-col>
+                        </ion-row>
+                        <ion-row class="border-left-right">
+                            <ion-col>
+                                <ion-item lines="inset">
+                                    <ion-label position="floating">State <span
+                                        *ngIf="isInvalid && invoiceForm.controls.state.invalid"
+                                        color="danger">*required</span></ion-label>
 
-                  <ion-input formControlName="state"></ion-input>
-                </ion-item>
-              </ion-col>
-              <ion-col>
-                <ion-item lines="inset">
-                  <ion-label position="floating">State Code <span *ngIf="isInvalid && invoiceForm.controls.stateCode.invalid" color="danger">*required</span></ion-label>
+                                    <ion-input formControlName="state"></ion-input>
+                                </ion-item>
+                            </ion-col>
+                            <ion-col>
+                                <ion-item lines="inset">
+                                    <ion-label position="floating">State Code <span
+                                        *ngIf="isInvalid && invoiceForm.controls.stateCode.invalid" color="danger">*required</span>
+                                    </ion-label>
 
-                  <ion-input type="number" formControlName="stateCode"></ion-input>
-                </ion-item>
-              </ion-col>
-            </ion-row>
-            <ion-row class="border-left-right border-bottom">
-              <ion-col class="margin-bottom">
-                <ion-item lines="inset">
-                  <ion-label position="floating">GSTIN / PAN</ion-label>
-                  <ion-input formControlName="gstin"></ion-input>
-                </ion-item>
-              </ion-col>
-              <ion-col class="margin-bottom">
-                <ion-item lines="inset">
-                  <ion-label position="floating">Phone Number</ion-label>
-                  <ion-input formControlName="phoneNumber"></ion-input>
-                </ion-item>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
+                                    <ion-input type="number" formControlName="stateCode"></ion-input>
+                                </ion-item>
+                            </ion-col>
+                        </ion-row>
+                        <ion-row class="border-left-right border-bottom">
+                            <ion-col class="margin-bottom">
+                                <ion-item lines="inset">
+                                    <ion-label position="floating">GSTIN / PAN</ion-label>
+                                    <ion-input formControlName="gstin"></ion-input>
+                                </ion-item>
+                            </ion-col>
+                            <ion-col class="margin-bottom">
+                                <ion-item lines="inset">
+                                    <ion-label position="floating">Phone Number</ion-label>
+                                    <ion-input formControlName="phoneNumber"></ion-input>
+                                </ion-item>
+                            </ion-col>
+                        </ion-row>
+                    </ion-grid>
 
-        </ion-col>
-        <ion-col class="invoice">
-          <ion-grid>
-            <ion-row>
-              <ion-col class="ion-text-start margin-left">
-                <h6 class="invoice-label">
-                  <ion-icon name="document-text-outline"></ion-icon>
-                  Invoice Details
-                </h6>
-              </ion-col>
-            </ion-row>
-            <ion-row class="invoice-row ion-align-items-center">
-              <ion-col size="2">
-                <ion-label>Invoice No.</ion-label>
-              </ion-col>
-              <ion-col size="1" class="show-right-border">
-                <ion-label color="danger">{{ invoiceId }}</ion-label>
-              </ion-col>
-              <ion-col size="2" class="calendar calendar-col">
-                <ion-label>
-                  <ion-icon name="calendar-outline"></ion-icon>
-                  Date
-                </ion-label>
-              </ion-col>
-              <ion-col size="auto" class="calendar" class = "show-right-border">
-                <ion-input type="date" formControlName="billDate"></ion-input>
-              </ion-col>
-              <ion-col size="3">
-                <ion-radio-group formControlName="paymentType">
-                  <div class="hsn">
-                    <ion-radio color="danger" slot="start" value="CASH"></ion-radio>
-                    <ion-label color="primary">Cash</ion-label>
-                  </div>
-                  <div class="hsn">
-                    <ion-radio color="danger" slot="start" value="CREDIT"></ion-radio>
-                    <ion-label color="primary">Credit</ion-label>
-                  </div>
-                </ion-radio-group>
-              </ion-col>
-            </ion-row>
-            <ion-row class="hsn-row ion-align-items-baseline">
-              <ion-col size="1" class="radio-label hsn-col">
-                <ion-label>HSN</ion-label>
-              </ion-col>
-              <ion-col size="3" class="show-right-border">
-                <ion-radio-group formControlName="invoiceType">
-                  <div class="hsn">
-                    <ion-radio color="danger" slot="start" value="GOLD"></ion-radio>
-                    <ion-label color="primary">7113</ion-label>
-                  </div>
-                  <div class="hsn">
-                    <ion-radio color="danger" slot="start" value="SILVER"></ion-radio>
-                    <ion-label color="primary">7114</ion-label>
-                  </div>
-                </ion-radio-group>
-              </ion-col>
-              <ion-col size="3">
-                <ion-label>Payment mode:</ion-label>
-              </ion-col>
-              <ion-col size="3" class="ion-justify-content-center">
-                <select name="payment-type" id="payment" formControlName="paymentMode">
-                    <option value="CASH">Cash</option>
-                    <option value="CARD">Card</option>
-                    <option value="UPI">UPI</option>
-                    <option value="BANK_TRANSFER">Bank Transfer</option>
-                </select>
-              </ion-col>
-            </ion-row>
-            <ion-row class="summary ion-text-start">
-              <ion-col>
-                <ion-icon src="assets/icon/rupee.svg"></ion-icon>
-                <ion-label>Summary</ion-label>
-              </ion-col>
-            </ion-row>
-            <div class="summary-amount  ion-text-start">
-              <ion-row class="ion-align-items-baseline before-tax">
-                <ion-col size="4">
-                  <ion-label position="floating">Amount before tax</ion-label>
                 </ion-col>
-                <ion-col size="auto" class="ion-text-center">
-                  <ion-input formControlName="amountBeforeTax" readonly="true"></ion-input>
+                <ion-col class="invoice">
+                    <ion-grid>
+                        <ion-row>
+                            <ion-col class="ion-text-start margin-left">
+                                <h6 class="invoice-label">
+                                    <ion-icon name="document-text-outline"></ion-icon>
+                                    Invoice Details
+                                </h6>
+                            </ion-col>
+                        </ion-row>
+                        <ion-row class="invoice-row ion-align-items-center">
+                            <ion-col size="2">
+                                <ion-label>Invoice No.</ion-label>
+                            </ion-col>
+                            <ion-col size="1" class="show-right-border">
+                                <ion-label color="danger">{{ invoiceId }}</ion-label>
+                            </ion-col>
+                            <ion-col size="2" class="calendar calendar-col">
+                                <ion-label>
+                                    <ion-icon name="calendar-outline"></ion-icon>
+                                    Date
+                                </ion-label>
+                            </ion-col>
+                            <ion-col size="auto" class="calendar" class="show-right-border">
+                                <ion-input type="date" formControlName="billDate"></ion-input>
+                            </ion-col>
+                            <ion-col size="3">
+                                <ion-radio-group formControlName="paymentType">
+                                    <div class="hsn">
+                                        <ion-radio color="danger" slot="start" value="CASH"></ion-radio>
+                                        <ion-label color="primary">Cash</ion-label>
+                                    </div>
+                                    <div class="hsn">
+                                        <ion-radio color="danger" slot="start" value="CREDIT"></ion-radio>
+                                        <ion-label color="primary">Credit</ion-label>
+                                    </div>
+                                </ion-radio-group>
+                            </ion-col>
+                        </ion-row>
+                        <ion-row class="hsn-row">
+                            <ion-col size="1" class="radio-label hsn-col">
+                                <ion-label>HSN</ion-label>
+                            </ion-col>
+                            <ion-col size="3" class="show-right-border">
+                                <ion-radio-group formControlName="invoiceType">
+                                    <div class="hsn">
+                                        <ion-radio color="danger" slot="start" value="GOLD"></ion-radio>
+                                        <ion-label color="primary">7113</ion-label>
+                                    </div>
+                                    <div class="hsn">
+                                        <ion-radio color="danger" slot="start" value="SILVER"></ion-radio>
+                                        <ion-label color="primary">7114</ion-label>
+                                    </div>
+                                </ion-radio-group>
+                            </ion-col>
+                            <ion-col size="3">
+                                <ion-label>Payment mode:</ion-label>
+                            </ion-col>
+                            <ion-col size="3" class="ion-justify-content-center">
+                                <select (click)="onPaymentModeChange()" name="payment-type" id="payment"
+                                        formControlName="paymentMode">
+                                    <option value="CASH">Cash</option>
+                                    <option value="CARD">Card</option>
+                                    <option value="UPI">UPI</option>
+                                    <option value="BANK_TRANSFER">Bank Transfer</option>
+                                    <option value="MULTI">Multi</option>
+                                </select>
+                            </ion-col>
+                            <ion-button *ngIf="isMulti" class="paymentMode" (click)="onShowPaymentMode()" fill="clear">
+                                <ion-icon size="small" name="settings-outline"></ion-icon>
+                            </ion-button>
+                        </ion-row>
+                        <ion-row class="summary ion-text-start">
+                            <ion-col>
+                                <ion-icon src="assets/icon/rupee.svg"></ion-icon>
+                                <ion-label>Summary</ion-label>
+                            </ion-col>
+                        </ion-row>
+                        <div class="summary-amount  ion-text-start">
+                            <ion-row class="ion-align-items-baseline before-tax">
+                                <ion-col size="4">
+                                    <ion-label position="floating">Amount before tax</ion-label>
+                                </ion-col>
+                                <ion-col size="auto" class="ion-text-center">
+                                    <ion-input formControlName="amountBeforeTax" readonly="true"></ion-input>
+                                </ion-col>
+                            </ion-row>
+                            <ion-row class="gst ion-align-items-baseline">
+                                <ion-col size="2">
+                                    <ion-label>cgst 1.5%</ion-label>
+                                </ion-col>
+                                <ion-col size="2" class="ion-text-center">
+                                    <ion-input formControlName="cgstAmount" readonly="true"></ion-input>
+                                </ion-col>
+                                <ion-col size="2" class="border-left">
+                                    <ion-label>sgst 1.5%</ion-label>
+                                </ion-col>
+                                <ion-col size="2" class="ion-text-center">
+                                    <ion-input formControlName="sgstAmount" readonly="true"></ion-input>
+                                </ion-col>
+                                <ion-col size="2" class="border-left">
+                                    <ion-label>igst 3.0%</ion-label>
+                                </ion-col>
+                                <ion-col size="2" class="ion-text-center">
+                                    <ion-input formControlName="igstAmount" readonly="true"></ion-input>
+                                </ion-col>
+                            </ion-row>
+                            <ion-row class="ion-align-items-baseline">
+                                <ion-col>
+                                    <ion-label>Total amount after tax</ion-label>
+                                </ion-col>
+                                <ion-col>
+                                    <ion-input formControlName="totalAmountAfterTax" readonly="true"></ion-input>
+                                </ion-col>
+                            </ion-row>
+                        </div>
+                    </ion-grid>
                 </ion-col>
-              </ion-row>
-              <ion-row class="gst ion-align-items-baseline">
-                <ion-col size="2">
-                  <ion-label>cgst 1.5%</ion-label>
+            </ion-row>
+
+            <ion-row
+                class="ion-text-center item border-all border-top-radius item-details-margin-left-right item-details-margin-top">
+                <ion-col size="1">
+                    <ion-label>#</ion-label>
                 </ion-col>
-                <ion-col size="2" class="ion-text-center">
-                  <ion-input formControlName="cgstAmount" readonly="true"></ion-input>
+                <ion-col size="4" class="border-left">
+                    <ion-label>Description of goods</ion-label>
                 </ion-col>
                 <ion-col size="2" class="border-left">
-                  <ion-label>sgst 1.5%</ion-label>
-                </ion-col>
-                <ion-col size="2" class="ion-text-center">
-                  <ion-input formControlName="sgstAmount" readonly="true"></ion-input>
+                    <ion-label>Gross weight (gm)</ion-label>
                 </ion-col>
                 <ion-col size="2" class="border-left">
-                  <ion-label>igst 3.0%</ion-label>
+                    <ion-label>Rate per gram</ion-label>
                 </ion-col>
-                <ion-col size="2" class="ion-text-center">
-                  <ion-input formControlName="igstAmount" readonly="true"></ion-input>
+                <ion-col size="2" class="border-left">
+                    <ion-label>Amount</ion-label>
                 </ion-col>
-              </ion-row>
-              <ion-row class="ion-align-items-baseline">
+                <ion-col size="1" class="border-left">
+
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="item-details-margin-left-right border-left-right border-bottom default-font-style"
+                     *ngFor="let item of itemDetailsArray; let i = index">
+                <ion-col size="1">
+                    <ion-label>1</ion-label>
+                </ion-col>
+                <ion-col size="4" class="border-left">
+                    <ion-label>{{ item.descriptionOfItem }}</ion-label>
+                </ion-col>
+                <ion-col size="2" class="border-left">
+                    <ion-label>{{ item.grossWeight }}</ion-label>
+                </ion-col>
+                <ion-col size="2" class="border-left">
+                    <ion-label>{{ item.ratePerGram }}</ion-label>
+                </ion-col>
+                <ion-col size="2" class="border-left">
+                    <ion-label>{{ item.amount }}</ion-label>
+                </ion-col>
+                <ion-col size="0.5" class="border-left edit-clear" (click)="editItem(i)">
+                    <ion-icon name="create-outline" color="primary"></ion-icon>
+                </ion-col>
+                <ion-col size="0.5" class="edit-clear" (click)="deleteItem(i)">
+                    <ion-icon color="danger" name="trash-outline" title="delete"></ion-icon>
+                </ion-col>
+            </ion-row>
+            <span *ngIf="isInvalid && itemDetailsArray.length === 0" color="danger">*required</span>
+            <ion-row class="ion-text-center item-details-margin-left-right">
                 <ion-col>
-                  <ion-label>Total amount after tax</ion-label>
+                    <ion-button class="border-dashed-all" expand="block" (click)="onAddItem()">
+                        <ion-icon name="add-outline"></ion-icon>
+                        Add item
+                    </ion-button>
                 </ion-col>
-                <ion-col>
-                  <ion-input formControlName="totalAmountAfterTax" readonly="true"></ion-input>
-                </ion-col>
-              </ion-row>
-            </div>
-          </ion-grid>
-        </ion-col>
-      </ion-row>
-
-      <ion-row class="ion-text-center item border-all border-top-radius item-details-margin-left-right item-details-margin-top">
-        <ion-col size="1">
-          <ion-label>#</ion-label>
-        </ion-col>
-        <ion-col size="4" class="border-left">
-          <ion-label>Description of goods</ion-label>
-        </ion-col>
-        <ion-col size="2" class="border-left">
-          <ion-label>Gross weight (gm)</ion-label>
-        </ion-col>
-        <ion-col size="2" class="border-left">
-          <ion-label>Rate per gram</ion-label>
-        </ion-col>
-        <ion-col size="2" class="border-left">
-          <ion-label>Amount</ion-label>
-        </ion-col>
-        <ion-col size="1" class="border-left">
-
-        </ion-col>
-      </ion-row>
-
-      <ion-row class="item-details-margin-left-right border-left-right border-bottom default-font-style" *ngFor="let item of itemDetailsArray; let i = index">
-        <ion-col size="1">
-          <ion-label>1</ion-label>
-        </ion-col>
-        <ion-col size="4" class="border-left">
-          <ion-label>{{ item.descriptionOfItem }}</ion-label>
-        </ion-col>
-        <ion-col size="2" class="border-left">
-          <ion-label>{{ item.grossWeight }}</ion-label>
-        </ion-col>
-        <ion-col size="2" class="border-left">
-          <ion-label>{{ item.ratePerGram }}</ion-label>
-        </ion-col>
-        <ion-col size="2" class="border-left">
-          <ion-label>{{ item.amount }}</ion-label>
-        </ion-col>
-        <ion-col size="0.5" class="border-left edit-clear" (click)="editItem(i)">
-          <ion-icon name="create-outline" color="primary"></ion-icon>
-        </ion-col>
-        <ion-col size="0.5" class="edit-clear" (click)="deleteItem(i)" >
-            <ion-icon color="danger" name="trash-outline" title="delete"></ion-icon>
-        </ion-col>
-      </ion-row>
-      <span *ngIf="isInvalid && itemDetailsArray.length === 0" color="danger">*required</span>
-      <ion-row class="ion-text-center item-details-margin-left-right">
-        <ion-col>
-          <ion-button class="border-dashed-all" expand="block" (click)="onAddItem()"><ion-icon name="add-outline"></ion-icon>Add item</ion-button>
-        </ion-col>
-      </ion-row>
-      <ion-row >
-      </ion-row>
-    </ion-grid>
-  </form>
+            </ion-row>
+            <ion-row>
+            </ion-row>
+        </ion-grid>
+    </form>
+</ion-content>
+<ion-content *ngIf="isLoading">
+    <ion-spinner></ion-spinner>
 </ion-content>

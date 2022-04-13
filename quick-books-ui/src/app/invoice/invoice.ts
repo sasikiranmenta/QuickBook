@@ -15,10 +15,15 @@ export interface Invoice {
   totalAmountAfterTax: number;
   invoiceType: string;
   paymentType: string;
-  paymentMode: string;
+  paymentMode: Array<PaymentMode>;
   totalWeight: number;
   invoiceItems: Array<Item>;
   phoneNumber: number;
+}
+
+export interface PaymentMode {
+    paymentMode: string;
+    amount: number;
 }
 
 export interface TotalValue {

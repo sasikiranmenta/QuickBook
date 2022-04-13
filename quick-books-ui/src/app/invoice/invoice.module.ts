@@ -8,16 +8,18 @@ import { InvoicePageRoutingModule } from './invoice-routing.module';
 
 import { InvoicePage } from './invoice.page';
 import {ItemComponent} from './item/item.component';
-import {HttpClientModule} from '@angular/common/http';
+import {PaymentModeComponent} from './payment-mode/payment-mode.component';
+import {ViewInvoicePageModule} from '../view-invoice/view-invoice.module';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    IonicModule,
-    InvoicePageRoutingModule
-  ],
-  declarations: [InvoicePage, ItemComponent]
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        IonicModule,
+        InvoicePageRoutingModule,
+        ViewInvoicePageModule
+    ],
+  declarations: [InvoicePage, ItemComponent, PaymentModeComponent]
 })
 export class InvoicePageModule {}
