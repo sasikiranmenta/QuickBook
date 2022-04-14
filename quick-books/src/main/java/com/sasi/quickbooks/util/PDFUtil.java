@@ -273,6 +273,11 @@ public class PDFUtil {
         return setCellBorderColor(setCenterAlign(cell));
     }
 
+    public static PdfPCell getCellInputCellLeftAlignOnlyRightBorderColored(String content) {
+        PdfPCell cell = getCell(content, getInputFontColorSize());
+        return setCellBorderColor(setOnlyRightBorder(setLeftAlign(cell)));
+    }
+
     public static PdfPCell getCellInputCellLeftAlignNoBorderRedColor(String content) {
         PdfPCell cell = getCell(content, getInputRedFontColorSize());
         return setCellNoBorder(setLeftAlign(cell));

@@ -1,0 +1,60 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title>Partial Payment Details</ion-title>
+        <ion-buttons slot="primary">
+            <ion-button (click)="onCloseModal()">
+                <ion-icon name="close"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <form [formGroup]="paymentModeGroup">
+        <ion-list>
+            <ion-item lines="none" *ngFor="let keyValue of paymentModeStateMap | keyvalue">
+                <ion-checkbox (ionChange)="onCheckboxToggled(keyValue.value)"
+                              slot="start"
+                              [checked]="keyValue.value.isChecked"></ion-checkbox>
+                <ion-label position="floating">{{ keyValue.value.name }}</ion-label>
+                <ion-input type="number"
+                           (ionChange)="calculateRemainingAmount()"
+                           [readonly]="!keyValue.value.isChecked"
+                           [formControlName]="keyValue.value.name"></ion-input>
+            </ion-item>
+        </ion-list>
+    </form>
+
+</ion-content>
+<ion-footer>
+    <ion-grid>
+        <ion-row *ngIf="showError">
+            <ion-col class="error ion-text-center">
+                Remaining Amount should be zero, check again
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-text>Total Bill Amount </ion-text>
+            </ion-col>
+            <ion-col>
+                {{ totalBillAmount | indianCurrency }}
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                Remaining Amount
+            </ion-col>
+            <ion-col>
+                {{ remainingAmount | indianCurrency }}
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-button expand="block" (click)="onReset()" color="danger">Reset</ion-button>
+            </ion-col>
+            <ion-col>
+                <ion-button expand="block" color="primary" (click)="onSave()">Save</ion-button>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-footer>

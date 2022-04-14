@@ -1,0 +1,11 @@
+ion-input {
+    border-bottom-style: solid;
+    border-width: 1px;
+    border-color: silver;
+}
+
+.error {
+    color: var(--ion-color-primary-contrast);
+    background-color: darkred;
+    font-weight: 700;
+}

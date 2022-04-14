@@ -57,7 +57,6 @@ export class ItemComponent implements OnInit {
       grossWeight: this.itemInvoiceForm.controls.itemWeight.value,
       ratePerGram: this.itemInvoiceForm.controls.weightPerGram.value
     };
-    console.log(this.itemInvoiceForm.controls.itemWeight.value, this.itemInvoiceForm.controls.weightPerGram.value);
     this.modalController.dismiss({invoiceItem: newItem}, 'confirm');
 
   }

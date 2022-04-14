@@ -9,7 +9,7 @@ export const getNewPaymentDetailStateMap = (): Map<string, PaymentModeDetail> =>
         ['CASH', {name: 'CASH', amount: 0, isChecked: false}],
         ['CARD', {name: 'CARD', amount: 0, isChecked: false}],
         ['UPI', {name: 'UPI', amount: 0, isChecked: false}],
-        ['BANK TRANSFER', {name: 'BANK TRANSFER', amount: 0, isChecked: false}]
+        ['BANK_TRANSFER', {name: 'BANK_TRANSFER', amount: 0, isChecked: false}]
     ]);
     return paymentDetailStateMap;
 };
