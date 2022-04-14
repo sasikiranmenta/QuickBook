@@ -159,18 +159,18 @@ public class PDFGeneratorService {
         amountDetailsTable.setWidths(columnWidths);
 
         amountDetailsTable.addCell(PDFUtil.getLabelCellRightAlignColored("TOTAL AMOUNT BEFORE TAX"));
-        amountDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignNoRightBorderColored(Float.toString(quickBookInvoice.getAmountBeforeTax())));
+        amountDetailsTable.addCell(PDFUtil.getCellInputCellRightAlignNoRightBorderColored(Float.toString(quickBookInvoice.getAmountBeforeTax())));
         amountDetailsTable.addCell(PDFUtil.getLabelCellRightAlignColored("CGST 1.5 %"));
-        amountDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignNoRightBorderColored(Float.toString(quickBookInvoice.getCgstAmount())));
+        amountDetailsTable.addCell(PDFUtil.getCellInputCellRightAlignNoRightBorderColored(Float.toString(quickBookInvoice.getCgstAmount())));
 
         amountDetailsTable.addCell(PDFUtil.getLabelCellRightAlignColored("SGST 1.5 %"));
-        amountDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignNoRightBorderColored(Float.toString(quickBookInvoice.getSgstAmount())));
+        amountDetailsTable.addCell(PDFUtil.getCellInputCellRightAlignNoRightBorderColored(Float.toString(quickBookInvoice.getSgstAmount())));
 
         amountDetailsTable.addCell(PDFUtil.getLabelCellRightAlignColored("IGST 3.0 %"));
-        amountDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignNoRightBorderColored(Float.toString(quickBookInvoice.getIgstAmount())));
+        amountDetailsTable.addCell(PDFUtil.getCellInputCellRightAlignNoRightBorderColored(Float.toString(quickBookInvoice.getIgstAmount())));
 
         amountDetailsTable.addCell(PDFUtil.getLabelCellRightAlignColored("TOTAL AMOUNT AFTER TAX"));
-        amountDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignNoRightBorderColored(Integer.toString(quickBookInvoice.getTotalAmountAfterTax().intValue())));
+        amountDetailsTable.addCell(PDFUtil.getCellInputCellRightAlignNoRightBorderColored(Float.toString(quickBookInvoice.getTotalAmountAfterTax())));
         return amountDetailsTable;
     }
 
