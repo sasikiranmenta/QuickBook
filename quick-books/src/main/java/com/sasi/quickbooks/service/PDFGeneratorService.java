@@ -186,12 +186,13 @@ public class PDFGeneratorService {
 
 
     public static PdfPTable getInvoiceAndDateTable(QuickBookInvoice quickBookInvoice) throws DocumentException {
-        PdfPTable invoiceDateTable = new PdfPTable(4);
+        PdfPTable invoiceDateTable = new PdfPTable(5);
         invoiceDateTable.setWidthPercentage(95);
-        float[] columnWidths = {1.2f, 2f, 2f, 1.5f};
+        float[] columnWidths = {1.2f, 2f, 2f, 2f, 1.5f};
         invoiceDateTable.setWidths(columnWidths);
         invoiceDateTable.addCell(PDFUtil.getCellLeftAlignNoBorder("INVOICE No."));
         invoiceDateTable.addCell(PDFUtil.getCellInputCellLeftAlignNoBorderRedColor(Long.toString(quickBookInvoice.getInvoiceId())));
+        invoiceDateTable.addCell(PDFUtil.getCellInputCellCenterAlignNoBorderRedColor(quickBookInvoice.getPaymentType().name()));
         invoiceDateTable.addCell(PDFUtil.getCellRightAlignNoBorder("DATE"));
         invoiceDateTable.addCell(PDFUtil.getCellInputCellLeftAlignBottomBorderColored(PDFUtil.getDisplayFormatDate(quickBookInvoice.getBillDate())));
         invoiceDateTable.setSpacingAfter(5f);
