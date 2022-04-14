@@ -22,6 +22,7 @@ export class InvoicePage implements OnInit {
     showErrorDiv = false;
     isLoading = false;
     errorMessage: string;
+    isCredit: boolean;
 
     constructor(private modalController: ModalController, private invoiceService: InvoiceService) {
     }
@@ -33,6 +34,7 @@ export class InvoicePage implements OnInit {
         this.isInvalid = false;
         this.isMulti = false;
         this.totalBillAmount = 0;
+        this.isCredit = false;
         this.errorMessage = '';
         this.initForm();
     }
@@ -46,7 +48,7 @@ export class InvoicePage implements OnInit {
         if (this.invoiceForm.invalid || this.itemDetailsArray.length === 0) {
             this.isInvalid = true;
             return;
-        } else if(paymentMode === 'MULTI' && this.paymentModeList.length === 0) {
+        } else if(!this.isCredit && paymentMode === 'MULTI' && this.paymentModeList.length === 0) {
             this.setErrorDiv('Set Amounts in Partial Payment Screen before saving');
             this.onShowPaymentMode();
             return;
@@ -146,6 +148,16 @@ export class InvoicePage implements OnInit {
         });
     }
 
+
+    onPaymentTypeChanged() {
+        this.isCredit = !this.isCredit;
+        if(!this.isCredit) {
+            this.invoiceForm.controls.paymentMode.setValue('CASH');
+        } else {
+            this.invoiceForm.controls.paymentMode.setValue('NA');
+        }
+    }
+
     onCancel() {
 
     }
@@ -208,7 +220,9 @@ export class InvoicePage implements OnInit {
     }
 
     private getPaymentModeDetails(): Array<PaymentMode> {
-        if (this.paymentModeList.length === 0) {
+        if (this.isCredit) {
+            return new Array<PaymentMode>();
+        } else if (this.paymentModeList.length === 0) {
             this.paymentModeList.push({
                 paymentMode: this.invoiceForm.controls.paymentMode.value,
                 amount: this.totalBillAmount
@@ -216,4 +230,5 @@ export class InvoicePage implements OnInit {
         }
         return this.paymentModeList;
     }
+
 }

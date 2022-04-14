@@ -108,7 +108,7 @@
                                 <ion-input type="date" formControlName="billDate"></ion-input>
                             </ion-col>
                             <ion-col size="3">
-                                <ion-radio-group formControlName="paymentType">
+                                <ion-radio-group (ionChange)="onPaymentTypeChanged()" formControlName="paymentType">
                                     <div class="hsn">
                                         <ion-radio color="danger" slot="start" value="CASH"></ion-radio>
                                         <ion-label color="primary">Cash</ion-label>
@@ -141,7 +141,8 @@
                             </ion-col>
                             <ion-col size="3" class="ion-justify-content-center">
                                 <select (click)="onPaymentModeChange()" name="payment-type" id="payment"
-                                        formControlName="paymentMode">
+                                        formControlName="paymentMode" [attr.disabled]="isCredit? '': null">
+                                    <option value="NA" *ngIf="isCredit">Not Available</option>
                                     <option value="CASH">Cash</option>
                                     <option value="CARD">Card</option>
                                     <option value="UPI">UPI</option>
