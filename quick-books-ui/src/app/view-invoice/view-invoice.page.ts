@@ -7,7 +7,7 @@ import {AgGridAngular} from 'ag-grid-angular';
 import {IndianCurrency} from '../pipe/indian-currency.pipe';
 import {DatePipe, formatDate} from '@angular/common';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {TotalValue} from '../invoice/invoice';
+import {Invoice, TotalValue} from '../invoice/invoice';
 import {AlertController} from '@ionic/angular';
 import {Router} from '@angular/router';
 
@@ -17,6 +17,8 @@ import {Router} from '@angular/router';
 export class ViewInvoicePage implements OnInit {
 
     @ViewChild('agGrid') agGrid: AgGridAngular;
+
+    selectedInvoices: Array<number> = new Array<number>();
 
     template ='<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>';
 
@@ -89,7 +91,7 @@ export class ViewInvoicePage implements OnInit {
     }
 
     onRowEdit($event: RowDoubleClickedEvent) {
-        console.log($event);
+        console.log($event.data.invoiceId);
         this.alertController.create({
             header: 'Click one from below',
             buttons: [
@@ -124,13 +126,16 @@ export class ViewInvoicePage implements OnInit {
         }).then((dismisEl) => {
             if (dismisEl.role === 'edit') {
                 this.router.navigateByUrl('/invoice/edit/'+ $event.data.invoiceId);
+            } else if (dismisEl.role === 'print') {
+                this.selectedInvoices = [];
+                this.selectedInvoices.push($event.data.invoiceId);
+                this.getPdfWithSelectedInvoices();
             }
         });
     }
 
     onRowDataChanged($event: RowDataChangedEvent) {
         this.setTotal();
-        console.log('row data changed');
     }
 
     getInvoiceData(from: Date, to: Date) {
@@ -150,7 +155,6 @@ export class ViewInvoicePage implements OnInit {
 
     onFilterChange($event: FilterChangedEvent) {
         this.setTotal();
-        console.log(this.agGrid.api.deselectAll());
     }
 
     setTotal() {
@@ -203,6 +207,22 @@ export class ViewInvoicePage implements OnInit {
             fromDate: new FormControl(formatDate(financialStartDate, 'yyyy-MM-dd', 'en'), Validators.required),
             toDate: new FormControl(formatDate(currentDate, 'yyyy-MM-dd', 'en'), Validators.required)
         });
+    }
+
+    onCheckBoxChange() {
+        this.setSelectedInvoices();
+    }
+
+    setSelectedInvoices() {
+        this.selectedInvoices = new Array<number>();
+        this.agGrid.api.getSelectedRows().forEach((invoice: Invoice) => {
+            this.selectedInvoices.push(invoice.invoiceId);
+        });
+    }
+
+    getPdfWithSelectedInvoices() {
+        this.viewInvoiceService.downloadSelectedInvoices(this.selectedInvoices);
+        this.agGrid.api.deselectAll();
     }
 }
 

@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -219,6 +221,38 @@ public class PDFGeneratorService {
         document.close();
     }
 
+    public void generateInvoices(List<QuickBookInvoice> quickBookInvoices, HttpServletResponse response) throws IOException, DocumentException {
+        Document document = new Document(PageSize.A5, 1f, 1f, 1f, 0f);
+
+        String headerKey = "file_name";
+        String headerValue = "invoice_" + new Date().getTime() + ".pdf";
+        response.setHeader(headerKey, headerValue);
+        response.setHeader("Access-Control-Expose-Headers","file_name");
+        PdfWriter writer = PdfWriter.getInstance(document,
+                response.getOutputStream());
+        Rotate event = new Rotate();
+        writer.setPageEvent(event);
+        document.open();
+        quickBookInvoices.forEach((quickBookInvoice) -> {
+            try {
+                document.add(getHeaderTable());
+                document.add(getInvoiceAndDateTable(quickBookInvoice));
+                document.add(getDetailsTable(quickBookInvoice));
+                document.add(getItemDetails(quickBookInvoice));
+                document.add(getFooterDetailsTable());
+                document.newPage();
+            } catch (BadElementException e) {
+                e.printStackTrace();
+            } catch (DocumentException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        document.close();
+    }
+
     private PdfPTable getHeaderTable() throws BadElementException, IOException {
         PdfPTable headerTable = new PdfPTable(1);
         headerTable.setWidthPercentage(95);
@@ -250,6 +284,7 @@ public class PDFGeneratorService {
 
         return footerTable;
     }
+
 }
 
     class Rotate extends PdfPageEventHelper {

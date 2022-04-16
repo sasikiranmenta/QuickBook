@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("quick-book")
@@ -68,5 +69,11 @@ public class InvoiceController {
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).build();
         }
         return ResponseEntity.ok().build();
+    }
+
+    @RequestMapping(value = "/getBills", method = RequestMethod.POST)
+    public ResponseEntity getBillsForInvoices(@RequestBody @Valid Set<Long> invoiceIds, HttpServletResponse response) throws DocumentException, IOException {
+        this.quickBookInvoiceService.getBills(invoiceIds, response);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).build();
     }
 }

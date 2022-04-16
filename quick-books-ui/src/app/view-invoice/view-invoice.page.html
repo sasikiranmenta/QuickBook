@@ -21,6 +21,7 @@
 </ion-header>
 
 <ion-content>
+    <ion-button color="primary" (click)="getPdfWithSelectedInvoices()">Print Selected <ion-icon name="print-outline"></ion-icon></ion-button>
    <ag-grid-angular (filterChanged) ="onFilterChange($event)"
                     style="width: 100%; height: 80%;"
                     class="ag-theme-alpine"
@@ -28,71 +29,74 @@
                     [defaultColDef]="defaultColDef"
                     [rowData]="rowData"
                     rowSelection="multiple"
-                    [overlayLoadingTemplate]="template"
+                    (selectionChanged)="onCheckBoxChange()"
                     (rowDataChanged)="onRowDataChanged($event)"
                     (gridReady)="onGridReady($event)"
                     (rowDoubleClicked) ="onRowEdit($event)"
                     #agGrid></ag-grid-angular>
-  <div>
-    <ion-grid class="summary">
-      <ion-row>
-        <ion-col >
-          Type
-        </ion-col>
-        <ion-col>
-          Total Weight
-        </ion-col>
-        <ion-col>
-          Total before tax
-        </ion-col>
-        <ion-col>
-          Total CGST
-        </ion-col> <ion-col>
-        Total SGST
-      </ion-col>
-        <ion-col>
-          Total after tax
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col>
-          GOLD
-        </ion-col>
-        <ion-col>
-       {{goldDetails.totalWeight}}
-        </ion-col>
-        <ion-col>
-   {{goldDetails.totalBeforeTax | indianCurrency}}
-        </ion-col>
-        <ion-col>
-         {{ goldDetails.totalCgst |  indianCurrency}}
-        </ion-col> <ion-col>
- {{goldDetails.totalSgst | indianCurrency}}
-      </ion-col>
-        <ion-col>
-        {{goldDetails.totalAfterTax | indianCurrency}}
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col>
-          SILVER
-        </ion-col>
-        <ion-col>
-   {{silverDetails.totalWeight}}
-        </ion-col>
-        <ion-col>
-     {{silverDetails.totalBeforeTax | indianCurrency}}
-        </ion-col>
-        <ion-col>
-      {{ silverDetails.totalCgst |  indianCurrency}}
-        </ion-col> <ion-col>
-        {{ silverDetails.totalSgst | indianCurrency}}
-      </ion-col>
-        <ion-col>
-           {{ silverDetails.totalAfterTax | indianCurrency}}
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </div>
 
 </ion-content>
+
+<ion-footer>
+    <ion-grid class="summary">
+        <ion-row>
+            <ion-col >
+                Type
+            </ion-col>
+            <ion-col>
+                Total Weight
+            </ion-col>
+            <ion-col>
+                Total before tax
+            </ion-col>
+            <ion-col>
+                Total CGST
+            </ion-col> <ion-col>
+            Total SGST
+        </ion-col>
+            <ion-col>
+                Total after tax
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                GOLD
+            </ion-col>
+            <ion-col>
+                {{goldDetails.totalWeight}}
+            </ion-col>
+            <ion-col>
+                {{goldDetails.totalBeforeTax | indianCurrency}}
+            </ion-col>
+            <ion-col>
+                {{ goldDetails.totalCgst |  indianCurrency}}
+            </ion-col> <ion-col>
+            {{goldDetails.totalSgst | indianCurrency}}
+        </ion-col>
+            <ion-col>
+                {{goldDetails.totalAfterTax | indianCurrency}}
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                SILVER
+            </ion-col>
+            <ion-col>
+                {{silverDetails.totalWeight}}
+            </ion-col>
+            <ion-col>
+                {{silverDetails.totalBeforeTax | indianCurrency}}
+            </ion-col>
+            <ion-col>
+                {{ silverDetails.totalCgst |  indianCurrency}}
+            </ion-col> <ion-col>
+            {{ silverDetails.totalSgst | indianCurrency}}
+        </ion-col>
+            <ion-col>
+                {{ silverDetails.totalAfterTax | indianCurrency}}
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-footer>
+
+

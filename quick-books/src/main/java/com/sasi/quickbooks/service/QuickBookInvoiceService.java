@@ -15,12 +15,14 @@ import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -124,5 +126,13 @@ public class QuickBookInvoiceService {
         oldInvoice.setQuickBookUpdatedTime(new Date());
         oldInvoice.getInvoiceItems().clear();
         oldInvoice.getInvoiceItems().addAll(invoice.getInvoiceItems());
+    }
+
+    public void getBills(Set<Long> invoiceIds, HttpServletResponse response) throws DocumentException, IOException {
+        String multipleInvoiceQuery = "SELECT invoice from QuickBookInvoice invoice where invoice.invoiceId in :invoiceIds";
+        TypedQuery<QuickBookInvoice> invoice = em.createQuery(multipleInvoiceQuery, QuickBookInvoice.class);
+        invoice.setParameter("invoiceIds", invoiceIds);
+        List<QuickBookInvoice> quickBookInvoices = invoice.getResultList();
+        this.pdfGeneratorService.generateInvoices(quickBookInvoices, response);
     }
 }
