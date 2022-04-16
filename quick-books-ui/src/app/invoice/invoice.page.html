@@ -4,13 +4,15 @@
             <ion-menu-button menu="m1"></ion-menu-button>
         </ion-buttons>
         <ion-text class="header-title">Invoice</ion-text>
-        <ion-button slot="end" color="danger" (click)="ngOnInit()">Reset</ion-button>
+        <ion-button *ngIf="isEditMode" slot="end" color="danger" (click)="onCancelEditingMode()">Cancel Editing Mode</ion-button>
+        <ion-button *ngIf="!isEditMode" slot="end" color="danger" (click)="ngOnInit()">Reset</ion-button>
         <ion-button slot="end" type="submit" color="primary" (click)="onSubmit(false)">Save</ion-button>
         <ion-button slot="end" type="submit" color="primary" (click)="onSubmit(true)">Save & Print</ion-button>
     </ion-toolbar>
 </ion-header>
 
 <ion-content *ngIf="!isLoading">
+    <ion-badge *ngIf="isEditMode" class="edit-div">In Edit Mode</ion-badge>
     <ion-text *ngIf="showErrorDiv" class="error">{{ errorMessage }}</ion-text>
     <form [formGroup]="invoiceForm">
         <ion-grid class="ion-text-center ion-no-padding-bottom">

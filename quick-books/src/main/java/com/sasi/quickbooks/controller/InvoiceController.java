@@ -56,31 +56,17 @@ public class InvoiceController {
     }
 
     @RequestMapping(value = "/getInvoice", method = RequestMethod.GET)
-    public ResponseEntity getInvoice(HttpServletRequest request, HttpServletResponse response) throws IOException, DocumentException {
-        File invoicePdf = new File("D:\\QuickBooks\\HelloWorld-Table.pdf");
-//        File invoicePdf = new File("D:\\passport_application.pdf");
-//        response.setContentType("application/pdf");
+    public ResponseEntity<QuickBookInvoice> getInvoiceBasedOnId(@RequestParam (name = "invoice_id") int invoiceId) {
+        return ResponseEntity.ok(this.quickBookInvoiceService.getQuickBookBasedOnInvoiceId(invoiceId));
+    }
 
-//        String headerKey = "Content-Disposition";
-//        String headerValue = "attachment; filename=users.pdf";
-//        response.setHeader(headerKey, headerValue);
-        if (invoicePdf != null && invoicePdf.exists()) {
-            byte[] invoiceFile = Files.readAllBytes(invoicePdf.toPath());
-            for (byte ch : invoiceFile) {
-//                response.getWriter().append((char) ch);
-//                log.info(String.valueOf((char)ch));
-                return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).body(invoiceFile);
-            }
-
-//       QuickBookInvoice quickBookInvoice = new QuickBookInvoice();
-//        quickBookInvoice.setAddress("Nellore");
-//        quickBookInvoice.setInvoiceType(QuickBookHSNEnum.GOLD);
-//        InvoiceItem item = new InvoiceItem();
-//        item.setDescriptionOfItem("sell");
-//        item.setGrossWeight(2f);
-//        quickBookInvoice.setInvoiceItems(Arrays.asList(item));
-//        return ResponseEntity.ok().body(quickBookInvoice);
+    @RequestMapping(value = "/updateInvoice", method = RequestMethod.POST)
+    public ResponseEntity updateInvoice(@RequestBody @Valid QuickBookInvoice invoice, @RequestParam(name = "print") Boolean print,
+                                        HttpServletRequest request, HttpServletResponse response) throws DocumentException, IOException {
+        this.quickBookInvoiceService.updateInvoice(invoice, print, response);
+        if(print) {
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).build();
         }
-        return null;
+        return ResponseEntity.ok().build();
     }
 }

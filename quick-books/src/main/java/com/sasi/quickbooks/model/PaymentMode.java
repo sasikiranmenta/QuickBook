@@ -1,8 +1,6 @@
 package com.sasi.quickbooks.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.AccessType;
 
 import javax.persistence.*;
@@ -14,7 +12,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 @AccessType(AccessType.Type.FIELD)
+@EqualsAndHashCode
 public class PaymentMode implements Serializable {
 
     private static final long serialVersionUID = -784976737109738770L;
@@ -28,8 +28,8 @@ public class PaymentMode implements Serializable {
     @Column(name = "AMOUNT")
     private Float amount;
 
-    @ManyToOne
-    private QuickBookInvoice quickBookInvoice;
+//    @ManyToOne
+//    private QuickBookInvoice quickBookInvoice;
 
     @Id
     @Column(name = "PAYMENT_MODE_ID")

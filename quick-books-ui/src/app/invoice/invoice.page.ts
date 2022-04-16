@@ -7,6 +7,7 @@ import {formatDate} from '@angular/common';
 import {Invoice, PaymentMode} from './invoice';
 import {InvoiceService} from '../services/invoice.service';
 import {PaymentModeComponent} from './payment-mode/payment-mode.component';
+import {ActivatedRoute, Route, Router} from '@angular/router';
 
 @Component({
     selector: 'app-invoice', templateUrl: './invoice.page.html', styleUrls: ['./invoice.page.scss'],
@@ -18,16 +19,27 @@ export class InvoicePage implements OnInit {
     isInvalid: boolean;
     isMulti: boolean;
     paymentModeList: Array<PaymentMode>;
+    paymentModeSetAmount: number;
     totalBillAmount: number;
     showErrorDiv = false;
     isLoading = false;
     errorMessage: string;
     isCredit: boolean;
+    isEditMode: boolean;
 
-    constructor(private modalController: ModalController, private invoiceService: InvoiceService) {
+    constructor(private modalController: ModalController,
+                private invoiceService: InvoiceService,
+                private routerSnapshot: ActivatedRoute,
+                private router: Router) {
     }
 
-    ngOnInit() {
+    ngOnInit(){
+        const id = this.routerSnapshot.snapshot.params.id;
+        if(!!id) {
+            this.isEditMode = true;
+        } else {
+            this.isEditMode = false;
+        }
         this.isLoading = true;
         this.itemDetailsArray = new Array<Item>();
         this.paymentModeList = new Array<PaymentMode>();
@@ -36,7 +48,8 @@ export class InvoicePage implements OnInit {
         this.totalBillAmount = 0;
         this.isCredit = false;
         this.errorMessage = '';
-        this.initForm();
+        this.paymentModeSetAmount = 0;
+        this.initForm(id);
     }
 
     ionViewWillEnter() {
@@ -50,6 +63,10 @@ export class InvoicePage implements OnInit {
             return;
         } else if(!this.isCredit && paymentMode === 'MULTI' && this.paymentModeList.length === 0) {
             this.setErrorDiv('Set Amounts in Partial Payment Screen before saving');
+            this.onShowPaymentMode();
+            return;
+        } else if (paymentMode === 'MULTI' && this.paymentModeSetAmount !== this.totalBillAmount) {
+            this.setErrorDiv('Paymentmode amount not matched');
             this.onShowPaymentMode();
             return;
         }
@@ -124,6 +141,7 @@ export class InvoicePage implements OnInit {
             this.isMulti = true;
         } else {
             this.isMulti = false;
+            this.paymentModeList = [];
         }
     }
 
@@ -143,7 +161,8 @@ export class InvoicePage implements OnInit {
             return modalElement.onDidDismiss();
         }).then((paymentModeResponse) => {
             if(paymentModeResponse.role === 'success') {
-                this.paymentModeList = paymentModeResponse.data;
+                this.paymentModeList = paymentModeResponse.data.list;
+                this.paymentModeSetAmount = paymentModeResponse.data.paymentAmount;
             }
         });
     }
@@ -162,6 +181,10 @@ export class InvoicePage implements OnInit {
 
     }
 
+    onCancelEditingMode() {
+        this.router.navigateByUrl('/invoice');
+    }
+
     private saveIntoDb(isPrint: boolean) {
         const invoice: Invoice = this.invoiceForm.value;
         invoice.invoiceItems = this.itemDetailsArray;
@@ -172,35 +195,85 @@ export class InvoicePage implements OnInit {
         invoice.totalAmountAfterTax = this.invoiceForm.controls.totalAmountAfterTax.value;
         invoice.totalWeight = this.getTotalWeight(invoice.invoiceItems);
         invoice.paymentMode = this.getPaymentModeDetails();
+        if(this.isEditMode) {
+            invoice.invoiceId = +this.invoiceId;
+        }
 
-        this.invoiceService.saveInvoice(invoice, isPrint)
+        this.invoiceService.persistInvoice(invoice, isPrint, this.isEditMode)
             .subscribe((response) => {
                 if (isPrint) {
                     this.invoiceService.downloadPDF(response);
                 }
-                this.ngOnInit();
+                this.router.navigateByUrl('/invoice');
             });
     }
 
-    private initForm() {
+    private initForm(id: string) {
+        let paymentMode = 'CASH';
+        let tempInvoice: Invoice = {
+            invoiceItems: undefined,
+            paymentMode: undefined,
+            totalWeight: 0,
+            customerName: undefined,
+            address: 'Nellore',
+            state: 'AP',
+            stateCode: 37,
+            gstin: undefined,
+            billDate: new Date(),
+            amountBeforeTax: 0,
+            paymentType: 'CASH',
+            cgstAmount: 0,
+            sgstAmount: 0,
+            igstAmount: 0,
+            invoiceType: 'GOLD',
+            totalAmountAfterTax: 0,
+            phoneNumber: undefined,
+            invoiceId: undefined
+        };
+        if (!!id) {
+            this.invoiceService.getInvoice(+id).subscribe((invoice: Invoice) => {
+                this.isLoading = true;
+                tempInvoice = invoice;
+                this.itemDetailsArray = invoice.invoiceItems;
+                this.paymentModeList = invoice.paymentMode;
+                this.invoiceId = invoice.invoiceId.toString();
+                this.totalBillAmount = invoice.totalAmountAfterTax;
+                this.paymentModeSetAmount = this.totalBillAmount;
+                if(this.paymentModeList.length > 1) {
+                    paymentMode = 'MULTI';
+                    this.isMulti = true;
+                } else {
+                    this.paymentModeList.forEach((paymentModeData) => {
+                        paymentMode = paymentModeData.paymentMode;
+                    });
+                }
+                this.initFormControls(tempInvoice, paymentMode);
+                this.isLoading = false;
+            });
+        } else {
+            this.initFormControls(tempInvoice, paymentMode);
+            this.getInvoiceNumber();
+        }
+    }
+
+    private initFormControls(tempInvoice: Invoice, paymentMode: string) {
         this.invoiceForm = new FormGroup({
-            customerName: new FormControl(undefined, Validators.required),
-            address: new FormControl('Nellore', Validators.maxLength(254)),
-            state: new FormControl('AP', Validators.required),
-            stateCode: new FormControl(37, Validators.required),
-            gstin: new FormControl(undefined),
-            billDate: new FormControl(formatDate(new Date(), 'yyyy-MM-dd', 'en'), Validators.required),
-            amountBeforeTax: new FormControl(0, Validators.required),
-            paymentType: new FormControl('CASH', Validators.required),
-            paymentMode: new FormControl('CASH', Validators.required),
-            cgstAmount: new FormControl(0, Validators.required),
-            sgstAmount: new FormControl(0, Validators.required),
-            igstAmount: new FormControl(0, Validators.required),
-            invoiceType: new FormControl('GOLD', Validators.required),
-            totalAmountAfterTax: new FormControl(0, Validators.required),
-            phoneNumber: new FormControl(undefined,)
+            customerName: new FormControl(tempInvoice.customerName, Validators.required),
+            address: new FormControl(tempInvoice.address, Validators.maxLength(254)),
+            state: new FormControl(tempInvoice.state, Validators.required),
+            stateCode: new FormControl(tempInvoice.stateCode, Validators.required),
+            gstin: new FormControl(tempInvoice.gstin),
+            billDate: new FormControl(formatDate(tempInvoice.billDate, 'yyyy-MM-dd', 'en'), Validators.required),
+            amountBeforeTax: new FormControl(tempInvoice.amountBeforeTax, Validators.required),
+            paymentType: new FormControl(tempInvoice.paymentType, Validators.required),
+            paymentMode: new FormControl(paymentMode, Validators.required),
+            cgstAmount: new FormControl(tempInvoice.cgstAmount, Validators.required),
+            sgstAmount: new FormControl(tempInvoice.sgstAmount, Validators.required),
+            igstAmount: new FormControl(tempInvoice.igstAmount, Validators.required),
+            invoiceType: new FormControl(tempInvoice.invoiceType, Validators.required),
+            totalAmountAfterTax: new FormControl(tempInvoice.totalAmountAfterTax, Validators.required),
+            phoneNumber: new FormControl(tempInvoice.phoneNumber)
         });
-        this.getInvoiceNumber();
     }
 
     private getTotalWeight(items: Array<Item>): number {

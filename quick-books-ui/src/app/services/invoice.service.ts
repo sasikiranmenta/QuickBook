@@ -9,8 +9,13 @@ export class InvoiceService {
   constructor(private httpService: HttpService) {
   }
 
-  public saveInvoice(invoice, print: boolean): Observable<any> {
-    const path = print ? '/quick-book/saveInvoice?print=1' : '/quick-book/saveInvoice?print=0';
+  public persistInvoice(invoice, print: boolean, isEditMode: boolean): Observable<any> {
+    let path = '';
+    if(isEditMode) {
+        path = print ? '/quick-book/updateInvoice?print=1' : '/quick-book/updateInvoice?print=0';
+    } else {
+        path = print ? '/quick-book/saveInvoice?print=1' : '/quick-book/saveInvoice?print=0';
+    }
     const options = {
       observe: 'response', responseType: 'blob'
     };
@@ -19,6 +24,10 @@ export class InvoiceService {
 
   public getInvoiceNumber(): Observable<any> {
     return this.httpService.get('/quick-book/getInvoiceNumber');
+  }
+
+  public getInvoice(id: number): Observable<any> {
+      return this.httpService.get('/quick-book/getInvoice?invoice_id='+id);
   }
 
   public downloadPDF(response) {

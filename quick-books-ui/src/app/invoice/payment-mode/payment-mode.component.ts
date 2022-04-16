@@ -60,7 +60,7 @@ export class PaymentModeComponent implements OnInit {
             this.showErrorDiv();
             return;
         }
-        this.modalController.dismiss(this.getPaymentModesList(), 'success');
+        this.modalController.dismiss({list: this.getPaymentModesList(), paymentAmount: this.totalBillAmount}, 'success');
     }
 
     private initForm() {

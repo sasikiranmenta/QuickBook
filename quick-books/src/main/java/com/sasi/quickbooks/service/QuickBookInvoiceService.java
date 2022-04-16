@@ -2,8 +2,6 @@ package com.sasi.quickbooks.service;
 
 import com.itextpdf.text.DocumentException;
 import com.sasi.quickbooks.Repository.InvoiceRepository;
-import com.sasi.quickbooks.model.InvoiceItem;
-import com.sasi.quickbooks.model.QuickBookHSNEnum;
 import com.sasi.quickbooks.model.QuickBookInvoice;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,16 +11,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 @Service
@@ -42,7 +39,6 @@ public class QuickBookInvoiceService {
     }
 
     public void saveInvoice(QuickBookInvoice quickBookInvoice, Boolean print, HttpServletResponse response) throws DocumentException, IOException {
-        setInvoiceForItem(quickBookInvoice);
         this.quickBookInvoiceRepository.save(quickBookInvoice);
         if(print) {
             this.pdfGeneratorService.generateInvoiceFile(quickBookInvoice, response);
@@ -54,10 +50,6 @@ public class QuickBookInvoiceService {
         return null;
     }
 
-    private void setInvoiceForItem(QuickBookInvoice quickBookInvoice) {
-        quickBookInvoice.getInvoiceItems()
-                .forEach(invoiceItem -> invoiceItem.setQuickBookInvoice(quickBookInvoice));
-    }
 
     public Integer getNextInvoiceNumber() {
 
@@ -85,5 +77,52 @@ public class QuickBookInvoiceService {
 
         List<QuickBookInvoice> invoices = typedQuery.getResultList();
         return invoices;
+    }
+
+    public QuickBookInvoice getQuickBookBasedOnInvoiceId(int invoiceId) {
+
+        String invoiceQuery = "select invoice from QuickBookInvoice invoice where invoice.invoiceId = :invoiceId";
+        TypedQuery<QuickBookInvoice> typedQuery = em.createQuery(invoiceQuery, QuickBookInvoice.class);
+        typedQuery.setParameter("invoiceId", Long.valueOf(invoiceId));
+        QuickBookInvoice invoice = typedQuery.getSingleResult();
+        return invoice;
+    }
+
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public QuickBookInvoice updateInvoice(QuickBookInvoice invoice, Boolean print, HttpServletResponse response) throws DocumentException, IOException {
+        String invoiceUpdateQuery = "select invoice from QuickBookInvoice invoice where invoice.invoiceId = :invoiceId";
+        TypedQuery<QuickBookInvoice> typedQuery = em.createQuery(invoiceUpdateQuery, QuickBookInvoice.class);
+        typedQuery.setParameter("invoiceId", invoice.getInvoiceId());
+        QuickBookInvoice oldInvoice = typedQuery.getSingleResult();
+        updateOldInvoice(oldInvoice, invoice);
+        em.merge(oldInvoice);
+        if(print) {
+            this.pdfGeneratorService.generateInvoiceFile(invoice, response);
+        }
+        return oldInvoice;
+    }
+
+    private void updateOldInvoice(QuickBookInvoice oldInvoice, QuickBookInvoice invoice) {
+        oldInvoice.setInvoiceType(invoice.getInvoiceType());
+        oldInvoice.setCustomerName(invoice.getCustomerName());
+        oldInvoice.setAddress(invoice.getAddress());
+        oldInvoice.setState(invoice.getState());
+        oldInvoice.setStateCode(invoice.getStateCode());
+        oldInvoice.setBillDate(invoice.getBillDate());
+        oldInvoice.setGstin(invoice.getGstin());
+        oldInvoice.setInvoiceType(invoice.getInvoiceType());
+        oldInvoice.getPaymentMode().clear();
+        oldInvoice.getPaymentMode().addAll(invoice.getPaymentMode());
+        oldInvoice.setAmountBeforeTax(invoice.getAmountBeforeTax());
+        oldInvoice.setCgstAmount(invoice.getCgstAmount());
+        oldInvoice.setSgstAmount(invoice.getSgstAmount());
+        oldInvoice.setIgstAmount(invoice.getIgstAmount());
+        oldInvoice.setTotalAmountAfterTax(invoice.getTotalAmountAfterTax());
+        oldInvoice.setTotalWeight(invoice.getTotalWeight());
+        oldInvoice.setPhoneNumber(invoice.getPhoneNumber());
+        oldInvoice.setPaymentType(invoice.getPaymentType());
+        oldInvoice.setQuickBookUpdatedTime(new Date());
+        oldInvoice.getInvoiceItems().clear();
+        oldInvoice.getInvoiceItems().addAll(invoice.getInvoiceItems());
     }
 }

@@ -1,8 +1,6 @@
 package com.sasi.quickbooks.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.springframework.stereotype.Component;
@@ -10,13 +8,15 @@ import org.springframework.stereotype.Component;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @Entity
 @Component
+@ToString
+@EqualsAndHashCode
 public class QuickBookInvoice implements Serializable {
 
     private static final long serialVersionUID = -2953998801387139748L;
@@ -27,7 +27,7 @@ public class QuickBookInvoice implements Serializable {
             strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
             parameters = {
                     @Parameter(name = "sequence_name", value = "invoice_id_generator"),
-                    @Parameter(name = "initial_value", value = "1800"),
+                    @Parameter(name = "initial_value", value = "1"),
                     @Parameter(name = "increment_size", value = "1")
             }
     )
@@ -56,8 +56,9 @@ public class QuickBookInvoice implements Serializable {
     @Enumerated(EnumType.ORDINAL)
     private QuickBookHSNEnum invoiceType;
 
-    @OneToMany(mappedBy = "quickBookInvoice", cascade = CascadeType.ALL)
-    private List<PaymentMode> paymentMode;
+    @OneToMany( cascade = CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "INVOICE_ID", nullable = false)
+    private Set<PaymentMode> paymentMode;
 
     @Column(name = "AMOUNT_BEFORE_TAX")
     private Float amountBeforeTax;
@@ -89,6 +90,8 @@ public class QuickBookInvoice implements Serializable {
     @Transient
     private Date quickBookUpdatedTime;
 
-    @OneToMany(mappedBy = "quickBookInvoice", cascade = CascadeType.ALL)
-    private List<InvoiceItem> invoiceItems;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "INVOICE_ID", nullable = false)
+    private Set<InvoiceItem> invoiceItems;
 }
