@@ -48,7 +48,12 @@ public class InvoiceController {
 
     @RequestMapping(value = "/getAllInvoiceInBetween", method = RequestMethod.GET)
     public ResponseEntity<List<QuickBookInvoice>> getAllInvoice(@RequestParam(name = "fromDate") String fromDate, @RequestParam(name = "toDate") String toDate ) {
-        return ResponseEntity.ok(this.quickBookInvoiceService.getInvoicesInBetweenDates(fromDate, toDate));
+        return ResponseEntity.ok(this.quickBookInvoiceService.getInvoicesInBetweenDatesBasedOnGst(fromDate, toDate, true, false));
+    }
+
+    @RequestMapping(value = "/getAllInvoiceInBetweenBasedOnGst", method = RequestMethod.GET)
+    public ResponseEntity<List<QuickBookInvoice>> getAllInvoiceBasedOnGST(@RequestParam(name = "fromDate") String fromDate, @RequestParam(name = "toDate") String toDate, @RequestParam(name = "includeGst") Boolean includeGst, @RequestParam(name = "showOnlyGst") Boolean showOnlyGst) {
+        return ResponseEntity.ok(this.quickBookInvoiceService.getInvoicesInBetweenDatesBasedOnGst(fromDate, toDate, includeGst, showOnlyGst));
     }
 
     @RequestMapping(value = "/getInvoiceNumber", method = RequestMethod.GET)

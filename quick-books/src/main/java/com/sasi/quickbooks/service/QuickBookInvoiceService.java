@@ -61,10 +61,17 @@ public class QuickBookInvoiceService {
         return invoiceNumber.intValue();
     }
 
-    public List<QuickBookInvoice> getInvoicesInBetweenDates(String fromDate, String toDate) {
+    public List<QuickBookInvoice> getInvoicesInBetweenDatesBasedOnGst(String fromDate, String toDate, Boolean includeGst, Boolean showonlyGst) {
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
 
         String inBetweenQuery = "select I from QuickBookInvoice I where I.billDate >= :fromDate and I.billDate <= :toDate";
+        if(!includeGst) {
+            inBetweenQuery = inBetweenQuery + " and I.gstin is null";
+        }
+        if(includeGst && showonlyGst) {
+            inBetweenQuery = inBetweenQuery + " and I.gstin is not null";
+        }
+
         TypedQuery<QuickBookInvoice> typedQuery = em.createQuery(inBetweenQuery, QuickBookInvoice.class);
         try {
             Calendar toCalendar = Calendar.getInstance();

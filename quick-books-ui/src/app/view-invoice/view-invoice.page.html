@@ -21,8 +21,12 @@
 </ion-header>
 
 <ion-content>
-    <ion-button color="primary" (click)="getPdfWithSelectedInvoices()">Print Selected <ion-icon name="print-outline"></ion-icon></ion-button>
-   <ag-grid-angular (filterChanged) ="onFilterChange($event)"
+    <ion-item>
+        <ion-checkbox [(ngModel)]="includeGstBills" (click)="includeGstCheckBoxChange(true)"></ion-checkbox><ion-text>Include GST bills</ion-text>
+        <ion-checkbox [(ngModel)]="showOnlyGstBills" (click)="showOnlyGstBillsCheckBoxChange()"></ion-checkbox><ion-text>Show only GST bills</ion-text>
+        <ion-button slot="end" color="primary" (click)="getPdfWithSelectedInvoices()">Print Selected <ion-icon name="print-outline"></ion-icon></ion-button>
+    </ion-item>
+       <ag-grid-angular (filterChanged) ="onFilterChange($event)"
                     style="width: 100%; height: 80%;"
                     class="ag-theme-alpine"
                     [columnDefs]="columnDefs"

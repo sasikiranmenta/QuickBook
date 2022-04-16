@@ -20,6 +20,9 @@ export class ViewInvoicePage implements OnInit {
 
     selectedInvoices: Array<number> = new Array<number>();
 
+    includeGstBills = true;
+    showOnlyGstBills = false;
+
     template ='<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>';
 
     dateGroup: FormGroup;
@@ -82,7 +85,7 @@ export class ViewInvoicePage implements OnInit {
         this.intializeTotalsToZero();
         const currentDate = new Date();
         const financialStartDate = this.getFinancialStartDate(currentDate);
-        this.getInvoiceData(financialStartDate, currentDate);
+        this.getInvoiceData(financialStartDate, currentDate, this.includeGstBills, this.showOnlyGstBills);
         this.initForm(financialStartDate, currentDate);
     }
 
@@ -138,8 +141,8 @@ export class ViewInvoicePage implements OnInit {
         this.setTotal();
     }
 
-    getInvoiceData(from: Date, to: Date) {
-        this.viewInvoiceService.getInvoicesInBetween(from, to).subscribe((response) => {
+    getInvoiceData(from: Date, to: Date, includeGst: boolean, showOnlyGst: boolean) {
+        this.viewInvoiceService.getInvoicesInBetween(from, to, includeGst, showOnlyGst).subscribe((response) => {
             this.rowData = response;
         });
     }
@@ -180,7 +183,7 @@ export class ViewInvoicePage implements OnInit {
         if (this.dateGroup.valid) {
             const fromDate: Date = new Date(this.dateGroup.value.fromDate);
             const toDate: Date = new Date(this.dateGroup.value.toDate);
-            this.getInvoiceData(fromDate, toDate);
+            this.getInvoiceData(fromDate, toDate, this.includeGstBills, this.showOnlyGstBills);
             this.intializeTotalsToZero();
         }
     }
@@ -224,5 +227,37 @@ export class ViewInvoicePage implements OnInit {
         this.viewInvoiceService.downloadSelectedInvoices(this.selectedInvoices);
         this.agGrid.api.deselectAll();
     }
+
+    showOnlyGstBillsCheckBoxChange() {
+        if(!this.showOnlyGstBills) {
+            this.includeGstCheckBoxChange(false);
+        } else {
+            this.setGstIncludedData(this.includeGstBills, !this.showOnlyGstBills);
+        }
+        }
+
+    includeGstCheckBoxChange(fromTemplate: boolean) {
+        if(fromTemplate && this.showOnlyGstBills) {
+            if(this.showOnlyGstBills && this.includeGstBills) {
+                this.showOnlyGstBills = false;
+            }
+        } else if(!fromTemplate){
+            if(!this.showOnlyGstBills === true) {
+                this.includeGstBills = true;
+            }
+            this.setGstIncludedData(this.includeGstBills, !this.showOnlyGstBills);
+            return;
+        }
+        this.setGstIncludedData(!this.includeGstBills, this.showOnlyGstBills);
+    }
+
+    setGstIncludedData(includeGst: boolean, showOnlyGst: boolean) {
+        if (this.dateGroup.valid) {
+            const fromDate: Date = new Date(this.dateGroup.value.fromDate);
+            const toDate: Date = new Date(this.dateGroup.value.toDate);
+            this.getInvoiceData(fromDate, toDate, includeGst, showOnlyGst);
+            this.intializeTotalsToZero();
+    }
+}
 }
 
