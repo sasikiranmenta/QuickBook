@@ -135,15 +135,20 @@ public class PDFGeneratorService {
             itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignOnlyLeftBorderColored(" "));
         }
 
-        quickBookInvoice.getPaymentMode().forEach((paymentMode) -> {
-            String payment = paymentMode.getPaymentMode() + ": " + paymentMode.getAmount();
-            itemDetailsTable.addCell(PDFUtil.getCellInputCellLeftAlignOnlyRightBorderColored(payment));
-            itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(" "));
-            itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(" "));
-            itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(" "));
-            itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignOnlyLeftBorderColored(" "));
-        });
-
+//        quickBookInvoice.getPaymentMode().forEach((paymentMode) -> {
+//            String payment = paymentMode.getPaymentMode() + ": " + paymentMode.getAmount();
+//            itemDetailsTable.addCell(PDFUtil.getCellInputCellLeftAlignOnlyRightBorderColored(payment));
+//            itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(" "));
+//            itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(" "));
+//            itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(" "));
+//            itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignOnlyLeftBorderColored(" "));
+//        });
+        PdfPCell paymentCell = new PdfPCell(getPaymentModeDetailsTable(quickBookInvoice));
+        itemDetailsTable.addCell(PDFUtil.setCellBorderColor(paymentCell));
+        itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(" "));
+        itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(" "));
+        itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignLeftRightBorderColored(" "));
+        itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignOnlyLeftBorderColored(" "));
 
         itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignTopAndLeftNoBorder(" "));
         itemDetailsTable.addCell(PDFUtil.getCellInputCellCenterAlignColored(" "));
@@ -283,6 +288,19 @@ public class PDFGeneratorService {
         footerTable.addCell(PDFUtil.getFooterCellBigFontRightAlignNoBorderColored("Authorised Signatory"));
 
         return footerTable;
+    }
+
+    private static PdfPTable getPaymentModeDetailsTable(QuickBookInvoice quickBookInvoice) throws DocumentException {
+        PdfPTable paymentModeTable = new PdfPTable(2);
+        paymentModeTable.setWidthPercentage(95);
+        float[] columnWidths = {6f, 4f};
+        paymentModeTable.setWidths(columnWidths);
+        paymentModeTable.setSpacingAfter(5f);
+        quickBookInvoice.getPaymentMode().forEach((paymentMode) -> {
+            paymentModeTable.addCell(PDFUtil.getCellSmallInputCellLeftAlignOnlyRightBorderColored(paymentMode.getPaymentMode().name()));
+            paymentModeTable.addCell(PDFUtil.getCellSmallInputCellRightAlignOnlyRightBorderColored(paymentMode.getAmount().toString()));
+        });
+        return paymentModeTable;
     }
 
 }

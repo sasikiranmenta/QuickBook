@@ -15,7 +15,6 @@ import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -54,7 +53,6 @@ public class QuickBookInvoiceService {
 
 
     public Integer getNextInvoiceNumber() {
-
         String invoiceNumberQuery = "select * from invoice_id_generator";
         Query invoiceTypedQuery = em.createNativeQuery(invoiceNumberQuery);
         BigInteger invoiceNumber = (BigInteger) invoiceTypedQuery.getSingleResult();

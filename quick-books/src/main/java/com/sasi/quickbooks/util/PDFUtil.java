@@ -160,6 +160,12 @@ public class PDFUtil {
         return font;
     }
 
+    public static Font getSmallInputFontColorSize() {
+        Font font = new Font(Font.FontFamily.UNDEFINED, 8);
+        font.setColor(BaseColor.DARK_GRAY);
+        return font;
+    }
+
     public static Font getInputRedFontColorSize() {
         Font font = new Font();
         font.setColor(BaseColor.RED);
@@ -276,6 +282,16 @@ public class PDFUtil {
     public static PdfPCell getCellInputCellLeftAlignOnlyRightBorderColored(String content) {
         PdfPCell cell = getCell(content, getInputFontColorSize());
         return setCellBorderColor(setOnlyRightBorder(setLeftAlign(cell)));
+    }
+
+    public static PdfPCell getCellSmallInputCellLeftAlignOnlyRightBorderColored(String content) {
+        PdfPCell cell = getCell(content, getSmallInputFontColorSize());
+        return setCellBorderColor(setOnlyRightBorder(setLeftAlign(cell)));
+    }
+
+    public static PdfPCell getCellSmallInputCellRightAlignOnlyRightBorderColored(String content) {
+        PdfPCell cell = getCell(content, getSmallInputFontColorSize());
+        return setCellBorderColor(setOnlyRightBorder(setRightAlign(cell)));
     }
 
     public static PdfPCell getCellInputCellLeftAlignNoBorderRedColor(String content) {
