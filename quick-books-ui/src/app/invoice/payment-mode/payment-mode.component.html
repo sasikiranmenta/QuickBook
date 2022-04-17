@@ -17,7 +17,7 @@
                               [checked]="keyValue.value.isChecked"></ion-checkbox>
                 <ion-label position="floating">{{ keyValue.value.name }}</ion-label>
                 <ion-input type="number"
-                           (ionChange)="calculateRemainingAmount()"
+                           (ionBlur)="calculateRemainingAmount()"
                            [readonly]="!keyValue.value.isChecked"
                            [formControlName]="keyValue.value.name"></ion-input>
             </ion-item>

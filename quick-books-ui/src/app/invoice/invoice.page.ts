@@ -66,7 +66,7 @@ export class InvoicePage implements OnInit {
             this.onShowPaymentMode();
             return;
         } else if (paymentMode === 'MULTI' && this.paymentModeSetAmount !== this.totalBillAmount) {
-            this.setErrorDiv('Paymentmode amount not matched');
+            this.setErrorDiv('Payment mode amount not matched');
             this.onShowPaymentMode();
             return;
         }
@@ -205,6 +205,7 @@ export class InvoicePage implements OnInit {
                     this.invoiceService.downloadPDF(response);
                 }
                 this.router.navigateByUrl('/invoice');
+                this.ngOnInit();
             });
     }
 
