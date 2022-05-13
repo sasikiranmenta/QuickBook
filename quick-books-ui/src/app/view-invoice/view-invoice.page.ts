@@ -228,8 +228,12 @@ export class ViewInvoicePage implements OnInit {
     }
 
     getPdfWithSelectedInvoices() {
-        this.viewInvoiceService.downloadSelectedInvoices(this.selectedInvoices);
-        this.agGrid.api.deselectAll();
+        if(this.selectedInvoices.length !== 0) {
+            this.viewInvoiceService.downloadSelectedInvoices(this.selectedInvoices);
+            this.agGrid.api.deselectAll();
+        } else {
+            this.setMessage('Nothing selected to download', 'error');
+        }
     }
 
     showOnlyGstBillsCheckBoxChange() {

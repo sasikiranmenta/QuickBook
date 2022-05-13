@@ -26,6 +26,7 @@ export class InvoicePage implements OnInit {
     errorMessage: string;
     isCredit: boolean;
     isEditMode: boolean;
+    reverseBilling = false;
 
     constructor(private modalController: ModalController,
                 private invoiceService: InvoiceService,
@@ -49,6 +50,7 @@ export class InvoicePage implements OnInit {
         this.isCredit = false;
         this.errorMessage = '';
         this.paymentModeSetAmount = 0;
+        this.reverseBilling = false;
         this.initForm(id);
     }
 
@@ -89,6 +91,7 @@ export class InvoicePage implements OnInit {
     }
 
     editItem(i: number) {
+        this.reverseBilling = false;
         this.modalController.create({
             backdropDismiss: false,
             component: ItemComponent,
@@ -101,6 +104,7 @@ export class InvoicePage implements OnInit {
             if (resultData.role === 'confirm') {
                 this.itemDetailsArray[i] = resultData.data.invoiceItem;
                 this.setSummaryDetails();
+
             }
         });
     }
@@ -183,6 +187,22 @@ export class InvoicePage implements OnInit {
 
     onCancelEditingMode() {
         this.router.navigateByUrl('/invoice');
+    }
+
+    initiateReverseBill() {
+        if(this.reverseBilling) {
+            const total = this.invoiceForm.controls.totalAmountAfterTax.value;
+            let three = total - total / 1.03;
+            three = Math.round(three / 2) + Math.round(three / 2);
+            this.itemDetailsArray = new Array<Item>();
+            this.itemDetailsArray.push({
+                descriptionOfItem: '',
+                grossWeight: undefined,
+                ratePerGram: undefined,
+                amount: Math.floor(total - three) + three === total ? Math.floor(total - three) : Math.ceil(total - three)
+            });
+            this.editItem(0);
+        }
     }
 
     private saveIntoDb(isPrint: boolean) {
@@ -304,5 +324,4 @@ export class InvoicePage implements OnInit {
         }
         return this.paymentModeList;
     }
-
 }

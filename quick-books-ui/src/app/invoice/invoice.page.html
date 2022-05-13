@@ -156,10 +156,13 @@
                                 <ion-icon size="small" name="settings-outline"></ion-icon>
                             </ion-button>
                         </ion-row>
-                        <ion-row class="summary ion-text-start">
+                        <ion-row class="summary ion-text-start ion-align-items-center">
                             <ion-col>
                                 <ion-icon src="assets/icon/rupee.svg"></ion-icon>
                                 <ion-label>Summary</ion-label>
+                            </ion-col>
+                            <ion-col>
+                                <ion-toggle [(ngModel)]="reverseBilling" color="danger" [ngModelOptions]="{standalone: true}"></ion-toggle>
                             </ion-col>
                         </ion-row>
                         <div class="summary-amount  ion-text-start">
@@ -196,7 +199,7 @@
                                     <ion-label>Total amount after tax</ion-label>
                                 </ion-col>
                                 <ion-col>
-                                    <ion-input formControlName="totalAmountAfterTax" readonly="true"></ion-input>
+                                    <ion-input formControlName="totalAmountAfterTax" (ionBlur)="initiateReverseBill()" [color]="reverseBilling ? 'danger' : 'primary'" [readonly]="!reverseBilling"></ion-input>
                                 </ion-col>
                             </ion-row>
                         </div>
