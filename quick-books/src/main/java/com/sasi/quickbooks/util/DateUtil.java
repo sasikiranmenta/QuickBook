@@ -13,7 +13,7 @@ public class DateUtil {
         SimpleDateFormat df = new SimpleDateFormat(format);
         try {
             Date formattedDate = df.parse(dateStr);
-            df = new SimpleDateFormat(QuickBookConstants.FORMAT_DD_Mon_yyyy);
+            df = new SimpleDateFormat(QuickBookConstants.FORMAT_DD_MMM_yyyy);
             return df.format(formattedDate);
         } catch (ParseException e) {
             e.printStackTrace();
