@@ -1,0 +1,18 @@
+<form [formGroup]="emailForm">
+    <ion-item>
+        <ion-label position="floating">Enter email id</ion-label>
+        <ion-input type="email" autocomplete="email" formControlName="emailId"></ion-input>
+    </ion-item>
+</form>
+<ion-grid>
+    <ion-row>
+        <ion-col>
+            <ion-button expand="block" (click)="onCancel()" color="danger">Cancel</ion-button>
+        </ion-col>
+        <ion-col>
+            <ion-button expand="block" (click)="onSendMail()">Send mail</ion-button>
+        </ion-col>
+    </ion-row>
+</ion-grid>
+
+

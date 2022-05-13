@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
 @Injectable({
@@ -12,10 +12,11 @@ export class HttpService {
     this.baseUrl = 'http://localhost:8081';
   }
 
-  get(urlPath: string, options?: any ): Observable<any> {
-    if(!!options) {
-      console.log('params flow');
-      return this.httpClient.get(this.baseUrl+urlPath, {params: options.params});
+  get(urlPath: string, params?: HttpParams ): Observable<any> {
+    if(!!params) {
+        const httpOptions: Record<string, any> = {};
+        httpOptions.params = params;
+      return this.httpClient.get(this.baseUrl+urlPath, httpOptions);
     }
     return this.httpClient.get(this.baseUrl+urlPath);
   }

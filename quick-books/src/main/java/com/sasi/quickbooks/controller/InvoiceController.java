@@ -5,9 +5,12 @@ import com.sasi.quickbooks.model.InvoiceItem;
 import com.sasi.quickbooks.model.QuickBookHSNEnum;
 import com.sasi.quickbooks.model.QuickBookInvoice;
 import com.sasi.quickbooks.service.QuickBookInvoiceService;
+import com.sasi.quickbooks.service.SummaryReportService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +34,11 @@ public class InvoiceController {
 
     final QuickBookInvoiceService quickBookInvoiceService;
 
-    public InvoiceController(QuickBookInvoiceService quickBookInvoiceService) {
+    final SummaryReportService summaryReportService;
+
+    public InvoiceController(QuickBookInvoiceService quickBookInvoiceService, SummaryReportService summaryReportService) {
         this.quickBookInvoiceService = quickBookInvoiceService;
+        this.summaryReportService = summaryReportService;
     }
 
     @RequestMapping(value = "/saveInvoice", method = RequestMethod.POST)
@@ -52,7 +58,8 @@ public class InvoiceController {
     }
 
     @RequestMapping(value = "/getAllInvoiceInBetweenBasedOnGst", method = RequestMethod.GET)
-    public ResponseEntity<List<QuickBookInvoice>> getAllInvoiceBasedOnGST(@RequestParam(name = "fromDate") String fromDate, @RequestParam(name = "toDate") String toDate, @RequestParam(name = "includeGst") Boolean includeGst, @RequestParam(name = "showOnlyGst") Boolean showOnlyGst) {
+    public ResponseEntity<List<QuickBookInvoice>> getAllInvoiceBasedOnGST(@RequestParam(name = "fromDate") String fromDate, @RequestParam(name = "toDate") String toDate,
+                                                                          @RequestParam(name = "includeGst") Boolean includeGst, @RequestParam(name = "showOnlyGst") Boolean showOnlyGst) {
         return ResponseEntity.ok(this.quickBookInvoiceService.getInvoicesInBetweenDatesBasedOnGst(fromDate, toDate, includeGst, showOnlyGst));
     }
 
@@ -80,5 +87,15 @@ public class InvoiceController {
     public ResponseEntity getBillsForInvoices(@RequestBody @Valid Set<Long> invoiceIds, HttpServletResponse response) throws DocumentException, IOException {
         this.quickBookInvoiceService.getBills(invoiceIds, response);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).build();
+    }
+
+    @RequestMapping(value = "/emailSummary", method = RequestMethod.GET)
+    public ResponseEntity emailSummaryReport(@RequestParam(name = "fromDate") String fromDate, @RequestParam(name = "toDate") String toDate,
+                                             @RequestParam(name = "emailId") String emailId) {
+        if (this.summaryReportService.sendSummaryReport(fromDate, toDate, emailId)) {
+           return ResponseEntity.ok().build();
+        } else {
+           return ResponseEntity.internalServerError().build();
+        }
     }
 }

@@ -1,8 +1,11 @@
 package com.sasi.quickbooks.service;
 
 import com.itextpdf.text.DocumentException;
+import com.sasi.quickbooks.QuickBookConstants;
 import com.sasi.quickbooks.Repository.InvoiceRepository;
+import com.sasi.quickbooks.model.QuickBookHSNEnum;
 import com.sasi.quickbooks.model.QuickBookInvoice;
+import com.sasi.quickbooks.model.SummaryReport;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,25 +21,20 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Slf4j
 public class QuickBookInvoiceService {
 
-    @Autowired
-    PDFGeneratorService pdfGeneratorService;
-
+    final PDFGeneratorService pdfGeneratorService;
     final InvoiceRepository quickBookInvoiceRepository;
-
     final EntityManager em;
 
-    public QuickBookInvoiceService(InvoiceRepository quickBookInvoiceRepository, EntityManager em) {
+    public QuickBookInvoiceService(InvoiceRepository quickBookInvoiceRepository, EntityManager em, PDFGeneratorService pdfGeneratorService, MailService mailService) {
         this.quickBookInvoiceRepository = quickBookInvoiceRepository;
         this.em = em;
+        this.pdfGeneratorService = pdfGeneratorService;
     }
 
     public void saveInvoice(QuickBookInvoice quickBookInvoice, Boolean print, HttpServletResponse response) throws DocumentException, IOException {
@@ -50,7 +48,6 @@ public class QuickBookInvoiceService {
 //       return pdfGeneratorService.generateInvoiceFile();
         return null;
     }
-
 
     public Integer getNextInvoiceNumber() {
         String invoiceNumberQuery = "select * from invoice_id_generator";
@@ -140,4 +137,5 @@ public class QuickBookInvoiceService {
         List<QuickBookInvoice> quickBookInvoices = invoice.getResultList();
         this.pdfGeneratorService.generateInvoices(quickBookInvoices, response);
     }
+
 }

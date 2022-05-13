@@ -9,6 +9,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPage;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.sasi.quickbooks.model.SummaryReport;
 import com.sasi.quickbooks.util.PDFUtil;
 import com.sasi.quickbooks.model.InvoiceItem;
 import com.sasi.quickbooks.model.QuickBookInvoice;
@@ -16,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +25,65 @@ import java.util.List;
 @Service
 @Slf4j
 public class PDFGeneratorService {
+
+    public File generateSummaryReport(SummaryReport gold, SummaryReport silver, String type, String from, String to) {
+        Document document = new Document(PageSize.A5, 1f, 1f, 1f, 0f);
+
+        File file = new File("..\\"+type+".pdf");
+        try {
+            OutputStream outputStream = new FileOutputStream(file);
+            PdfWriter.getInstance(document, outputStream);
+            document.open();
+
+            PdfPTable detailsTable = new PdfPTable(4);
+            float[] columnWidths1 = {2, 2f, 2f, 2f};
+            detailsTable.setWidths(columnWidths1);
+            detailsTable.setWidthPercentage(95);
+
+            detailsTable.addCell("From");
+            detailsTable.addCell(from);
+            detailsTable.addCell("To");
+            detailsTable.addCell(to);
+            document.add(detailsTable);
+            PdfPTable summaryTable = new PdfPTable(3);
+            float[] columnWidths = {2, 1.5f, 1.5f};
+            summaryTable.setWidths(columnWidths);
+            summaryTable.setWidthPercentage(95);
+
+            summaryTable.setPaddingTop(10f);
+
+            summaryTable.addCell("#");
+            summaryTable.addCell("GOLD");
+            summaryTable.addCell("SILVER");
+
+            summaryTable.addCell("Total Weight");
+            summaryTable.addCell(gold.getTotalWeight().toString());
+            summaryTable.addCell(silver.getTotalWeight().toString());
+
+            summaryTable.addCell("Total amount before tax");
+            summaryTable.addCell(gold.getTotalBeforeTax().toString());
+            summaryTable.addCell(silver.getTotalBeforeTax().toString());
+
+            summaryTable.addCell("Total CGST");
+            summaryTable.addCell(gold.getTotalCGST().toString());
+            summaryTable.addCell(silver.getTotalCGST().toString());
+
+            summaryTable.addCell("Total SGST");
+            summaryTable.addCell(gold.getTotalSGST().toString());
+            summaryTable.addCell(silver.getTotalSGST().toString());
+
+            summaryTable.addCell("Total amount After tax");
+            summaryTable.addCell(gold.getTotalAfterTax().toString());
+            summaryTable.addCell(silver.getTotalAfterTax().toString());
+            document.add(summaryTable);
+            document.close();
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return file;
+    }
 
     public static PdfPTable getDetailsTable(QuickBookInvoice quickBookInvoice) throws DocumentException {
         PdfPTable detailsTable = new PdfPTable(1);

@@ -9,6 +9,7 @@ import { ViewInvoicePageRoutingModule } from './view-invoice-routing.module';
 import { ViewInvoicePage } from './view-invoice.page';
 import {AgGridModule} from 'ag-grid-angular';
 import {IndianCurrency} from '../pipe/indian-currency.pipe';
+import {EmailComponent} from './email/email.component';
 
 @NgModule({
     imports: [
@@ -19,7 +20,7 @@ import {IndianCurrency} from '../pipe/indian-currency.pipe';
         AgGridModule,
         ReactiveFormsModule
     ],
-    declarations: [ViewInvoicePage, IndianCurrency],
+    declarations: [ViewInvoicePage, IndianCurrency, EmailComponent],
     exports: [
         IndianCurrency
     ],

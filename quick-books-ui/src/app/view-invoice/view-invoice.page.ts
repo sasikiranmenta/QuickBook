@@ -8,8 +8,9 @@ import {IndianCurrency} from '../pipe/indian-currency.pipe';
 import {DatePipe, formatDate} from '@angular/common';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Invoice, TotalValue} from '../invoice/invoice';
-import {AlertController} from '@ionic/angular';
+import {AlertController, PopoverController} from '@ionic/angular';
 import {Router} from '@angular/router';
+import {EmailComponent} from './email/email.component';
 
 @Component({
     selector: 'app-view-invoice', templateUrl: './view-invoice.page.html', styleUrls: ['./view-invoice.page.scss'],
@@ -22,6 +23,10 @@ export class ViewInvoicePage implements OnInit {
 
     includeGstBills = true;
     showOnlyGstBills = false;
+    showMessage = false;
+    messageClass = '';
+    errorMessage = '';
+    emailLoading = false;
 
     template ='<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>';
 
@@ -78,7 +83,8 @@ export class ViewInvoicePage implements OnInit {
                 private indianCurrency: IndianCurrency,
                 private datePipe: DatePipe,
                 private alertController: AlertController,
-                private router: Router) {
+                private router: Router,
+                private popoverController: PopoverController) {
     }
 
     ngOnInit() {
@@ -90,11 +96,10 @@ export class ViewInvoicePage implements OnInit {
     }
 
     onGridReady(params: GridReadyEvent) {
-        console.log(params);
     }
 
     onRowEdit($event: RowDoubleClickedEvent) {
-        console.log($event.data.invoiceId);
+
         this.alertController.create({
             header: 'Click one from below',
             buttons: [
@@ -149,7 +154,6 @@ export class ViewInvoicePage implements OnInit {
 
     getFinancialStartDate(currentDate: Date) {
         let previousYear: number = currentDate.getFullYear();
-        console.log(currentDate.getUTCMonth());
         if (currentDate.getUTCMonth() < 3) {
             previousYear = previousYear - 1;
         }
@@ -259,5 +263,38 @@ export class ViewInvoicePage implements OnInit {
             this.intializeTotalsToZero();
     }
 }
+
+    sendEmail(event) {
+        this.popoverController.create({
+            component: EmailComponent,
+            event,
+            showBackdrop: false
+        }).then((el) => {
+            el.present();
+            return el.onDidDismiss();
+        }).then((data) => {
+            if(data.role === 'success') {
+                this.emailLoading = true;
+                this.viewInvoiceService
+                    .sendSummaryReportMail(data.data, new Date(this.dateGroup.value.fromDate), new Date(this.dateGroup.value.toDate))
+                    .subscribe(() => {
+                        this.emailLoading = false;
+                        this.setMessage(`Mail sent to ${data.data} successfully`, 'success');
+                    }, () => {
+                        this.emailLoading = false;
+                        this.setMessage(`Error sending mail. Check internet connection`, 'error');
+                    });
+            }
+        });
+    }
+
+    private setMessage(message: string, type: string) {
+        this.errorMessage = message;
+        this.showMessage = true;
+        this.messageClass = type;
+        setTimeout(()=> {
+            this.showMessage = false;
+        }, 4000);
+    }
 }
 
