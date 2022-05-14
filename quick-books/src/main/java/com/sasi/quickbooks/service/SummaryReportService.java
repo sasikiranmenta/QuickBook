@@ -38,7 +38,7 @@ public class SummaryReportService {
                 generateSummaryReport("Silver", summaryReportsMap.get(QuickBookConstants.SUMMARY_REPORT_ENUM.SILVER_NORMAL)), "noGst", fromDate, toDate);
         File onlyGstFile = pdfGeneratorService.generateSummaryReport(generateSummaryReport("Gold", summaryReportsMap.get(QuickBookConstants.SUMMARY_REPORT_ENUM.GOLD_GST)),
                 generateSummaryReport("Silver", summaryReportsMap.get(QuickBookConstants.SUMMARY_REPORT_ENUM.SILVER_GST)), "onlyGst", fromDate, toDate);
-         return mailService.sendMailWithAttachment(emailId, "Summary Report", "Summary Report from "+ fromDate + " to "+ toDate, withOutGstFile, onlyGstFile);
+         return mailService.sendMailWithAttachment(emailId,  "Summary Report from "+ fromDate + " to "+ toDate, "", withOutGstFile, onlyGstFile);
     }
 
     private Map<QuickBookConstants.SUMMARY_REPORT_ENUM, List<QuickBookInvoice>> getSummaryReportsMap(String fromDate, String toDate) {
