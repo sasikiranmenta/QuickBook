@@ -29,7 +29,7 @@ public class PDFGeneratorService {
     public File generateSummaryReport(SummaryReport gold, SummaryReport silver, String type, String from, String to) {
         Document document = new Document(PageSize.A5, 1f, 1f, 1f, 0f);
 
-        File file = new File("..\\"+type+".pdf");
+        File file = new File("C:\\"+type+".pdf");
         try {
             OutputStream outputStream = new FileOutputStream(file);
             PdfWriter.getInstance(document, outputStream);
