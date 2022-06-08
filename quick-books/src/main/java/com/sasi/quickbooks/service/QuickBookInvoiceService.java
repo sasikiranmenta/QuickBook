@@ -115,6 +115,7 @@ public class QuickBookInvoiceService {
         oldInvoice.setStateCode(invoice.getStateCode());
         oldInvoice.setBillDate(invoice.getBillDate());
         oldInvoice.setGstin(invoice.getGstin());
+        oldInvoice.setGstType(invoice.getGstType());
         oldInvoice.setInvoiceType(invoice.getInvoiceType());
         oldInvoice.getPaymentMode().clear();
         oldInvoice.getPaymentMode().addAll(invoice.getPaymentMode());
