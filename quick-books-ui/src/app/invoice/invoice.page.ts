@@ -104,7 +104,6 @@ export class InvoicePage implements OnInit {
             if (resultData.role === 'confirm') {
                 this.itemDetailsArray[i] = resultData.data.invoiceItem;
                 this.setSummaryDetails();
-
             }
         });
     }
@@ -207,6 +206,11 @@ export class InvoicePage implements OnInit {
 
     private saveIntoDb(isPrint: boolean) {
         const invoice: Invoice = this.invoiceForm.value;
+        if(!invoice.gstin) {
+            console.log('hi');
+            invoice.gstType = undefined;
+            console.log(invoice);
+        }
         invoice.invoiceItems = this.itemDetailsArray;
         invoice.amountBeforeTax = this.invoiceForm.controls.amountBeforeTax.value;
         invoice.cgstAmount = this.invoiceForm.controls.cgstAmount.value;
@@ -218,6 +222,7 @@ export class InvoicePage implements OnInit {
         if(this.isEditMode) {
             invoice.invoiceId = +this.invoiceId;
         }
+
 
         this.invoiceService.persistInvoice(invoice, isPrint, this.isEditMode)
             .subscribe((response) => {
@@ -249,7 +254,8 @@ export class InvoicePage implements OnInit {
             invoiceType: 'GOLD',
             totalAmountAfterTax: 0,
             phoneNumber: undefined,
-            invoiceId: undefined
+            invoiceId: undefined,
+            gstType: 'PAN'
         };
         if (!!id) {
             this.invoiceService.getInvoice(+id).subscribe((invoice: Invoice) => {
@@ -293,7 +299,8 @@ export class InvoicePage implements OnInit {
             igstAmount: new FormControl(tempInvoice.igstAmount, Validators.required),
             invoiceType: new FormControl(tempInvoice.invoiceType, Validators.required),
             totalAmountAfterTax: new FormControl(tempInvoice.totalAmountAfterTax, Validators.required),
-            phoneNumber: new FormControl(tempInvoice.phoneNumber)
+            phoneNumber: new FormControl(tempInvoice.phoneNumber),
+            gstType: new FormControl(tempInvoice.gstType)
         });
     }
 

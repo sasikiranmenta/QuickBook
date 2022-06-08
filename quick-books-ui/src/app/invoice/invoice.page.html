@@ -68,8 +68,17 @@
                         </ion-row>
                         <ion-row class="border-left-right border-bottom">
                             <ion-col class="margin-bottom">
+                                <ion-radio-group formControlName="gstType">
+                                    <div class="hsn">
+                                        <ion-radio color="danger" slot="start" value="GSTIN"></ion-radio>
+                                        <ion-label color="primary">GSTIN</ion-label>
+                                    </div>
+                                    <div class="hsn">
+                                        <ion-radio color="danger" slot="start" value="PAN"></ion-radio>
+                                        <ion-label color="primary">PAN</ion-label>
+                                    </div>
+                                </ion-radio-group>
                                 <ion-item lines="inset">
-                                    <ion-label position="floating">GSTIN / PAN</ion-label>
                                     <ion-input formControlName="gstin"></ion-input>
                                 </ion-item>
                             </ion-col>

@@ -48,7 +48,7 @@ public class MailService {
                 helper.setTo(to);
                 helper.setFrom("xyz@gmail.com");
                 helper.setText(body);
-                mimeMessage.setSubject("Summary Report");
+                mimeMessage.setSubject(subject);
                 FileSystemResource file1 = new FileSystemResource(attachment1);
                 FileSystemResource file2 = new FileSystemResource(attachment2);
                 helper.addAttachment("noGst.pdf", file1);

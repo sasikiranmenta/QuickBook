@@ -160,6 +160,7 @@ public class PDFUtil {
         return font;
     }
 
+
     public static Font getSmallInputFontColorSize() {
         Font font = new Font(Font.FontFamily.UNDEFINED, 8);
         font.setColor(BaseColor.DARK_GRAY);
@@ -167,9 +168,8 @@ public class PDFUtil {
     }
 
     public static Font getInputRedFontColorSize() {
-        Font font = new Font();
+        Font font = new Font(Font.FontFamily.UNDEFINED, 10, Font.BOLD);
         font.setColor(BaseColor.RED);
-        font.setSize(8);
         return font;
     }
 
@@ -356,4 +356,7 @@ public class PDFUtil {
        return cell;
     }
 
+    public static PdfPCell getCell(String format) {
+        return new PdfPCell(new Phrase(format));
+    }
 }

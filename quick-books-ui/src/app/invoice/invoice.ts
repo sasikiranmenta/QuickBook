@@ -19,6 +19,7 @@ export interface Invoice {
   totalWeight: number;
   invoiceItems: Array<Item>;
   phoneNumber: number;
+  gstType: string;
 }
 
 export interface PaymentMode {

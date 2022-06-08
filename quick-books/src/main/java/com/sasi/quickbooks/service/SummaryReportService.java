@@ -60,9 +60,9 @@ public class SummaryReportService {
         String inBetweenQuery = "select I from QuickBookInvoice I where I.billDate >= :fromDate and I.billDate <= :toDate and I.invoiceType = :invoiceType";
 
         if (!includeGst) {
-            inBetweenQuery = inBetweenQuery + " and I.gstin is null";
+            inBetweenQuery = inBetweenQuery + " and (I.gstin is null or I.gstType = 'PAN')";
         } else {
-            inBetweenQuery = inBetweenQuery + " and I.gstin is not null";
+            inBetweenQuery = inBetweenQuery + " and ((I.gstin is not null and I.gstType is null) or I.gstType = 'GSTIN')";
         }
 
         TypedQuery<QuickBookInvoice> typedQuery = em.createQuery(inBetweenQuery, QuickBookInvoice.class);

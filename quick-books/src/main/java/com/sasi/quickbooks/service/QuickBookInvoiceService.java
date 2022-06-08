@@ -3,6 +3,7 @@ package com.sasi.quickbooks.service;
 import com.itextpdf.text.DocumentException;
 import com.sasi.quickbooks.QuickBookConstants;
 import com.sasi.quickbooks.Repository.InvoiceRepository;
+import com.sasi.quickbooks.model.GstModeEnum;
 import com.sasi.quickbooks.model.QuickBookHSNEnum;
 import com.sasi.quickbooks.model.QuickBookInvoice;
 import com.sasi.quickbooks.model.SummaryReport;
@@ -61,10 +62,10 @@ public class QuickBookInvoiceService {
 
         String inBetweenQuery = "select I from QuickBookInvoice I where I.billDate >= :fromDate and I.billDate <= :toDate";
         if(!includeGst) {
-            inBetweenQuery = inBetweenQuery + " and I.gstin is null";
+            inBetweenQuery = inBetweenQuery + " and (I.gstin is null or I.gstType = 'PAN')";
         }
         if(includeGst && showonlyGst) {
-            inBetweenQuery = inBetweenQuery + " and I.gstin is not null";
+            inBetweenQuery = inBetweenQuery + " and ((I.gstin is not null and I.gstType is null) or I.gstType = 'GSTIN')";
         }
 
         TypedQuery<QuickBookInvoice> typedQuery = em.createQuery(inBetweenQuery, QuickBookInvoice.class);

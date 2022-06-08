@@ -52,6 +52,10 @@ public class QuickBookInvoice implements Serializable {
     @Column(name = "GSTIN")
     private String gstin;
 
+    @Column(name="GST_TYPE")
+    @Enumerated(EnumType.STRING)
+    private GstModeEnum gstType;
+
     @Column(name = "INVOICE_TYPE")
     @Enumerated(EnumType.ORDINAL)
     private QuickBookHSNEnum invoiceType;
