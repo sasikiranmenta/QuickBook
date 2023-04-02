@@ -1,101 +1,94 @@
 package com.sasi.quickbooks.controller;
 
 import com.itextpdf.text.DocumentException;
-import com.sasi.quickbooks.model.InvoiceItem;
-import com.sasi.quickbooks.model.QuickBookHSNEnum;
-import com.sasi.quickbooks.model.QuickBookInvoice;
+import com.sasi.quickbooks.dto.InvoiceIDDto;
+import com.sasi.quickbooks.model.invoice.Invoice;
+import com.sasi.quickbooks.service.InvoiceConfigService;
 import com.sasi.quickbooks.service.QuickBookInvoiceService;
 import com.sasi.quickbooks.service.SummaryReportService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("quick-book")
 @CrossOrigin("*")
 @Slf4j
+@RequiredArgsConstructor
 public class InvoiceController {
 
     final QuickBookInvoiceService quickBookInvoiceService;
 
     final SummaryReportService summaryReportService;
 
-    public InvoiceController(QuickBookInvoiceService quickBookInvoiceService, SummaryReportService summaryReportService) {
-        this.quickBookInvoiceService = quickBookInvoiceService;
-        this.summaryReportService = summaryReportService;
-    }
+    final InvoiceConfigService configService;
+
 
     @RequestMapping(value = "/saveInvoice", method = RequestMethod.POST)
-    public ResponseEntity saveInvoice(@RequestBody @Valid QuickBookInvoice quickBookInvoice, @RequestParam(name = "print") Boolean print,
-                                      HttpServletRequest request, HttpServletResponse response) throws DocumentException, IOException {
-        this.quickBookInvoiceService.saveInvoice(quickBookInvoice, print, response);
-        if(print) {
+    public ResponseEntity saveInvoice(@RequestBody @Valid Invoice quickBookInvoice, @RequestParam(name = "print") Boolean print,
+                                      HttpServletResponse response) throws DocumentException, IOException {
+        this.quickBookInvoiceService.saveInvoiceMongo(quickBookInvoice, print, response);
+        if (print) {
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).build();
         }
         return ResponseEntity.ok().build();
-
     }
 
     @RequestMapping(value = "/getAllInvoiceInBetween", method = RequestMethod.GET)
-    public ResponseEntity<List<QuickBookInvoice>> getAllInvoice(@RequestParam(name = "fromDate") String fromDate, @RequestParam(name = "toDate") String toDate ) {
+    public ResponseEntity<List<Invoice>> getAllInvoice(@RequestParam(name = "fromDate") String fromDate, @RequestParam(name = "toDate") String toDate) throws ParseException {
         return ResponseEntity.ok(this.quickBookInvoiceService.getInvoicesInBetweenDatesBasedOnGst(fromDate, toDate, true, false));
     }
 
     @RequestMapping(value = "/getAllInvoiceInBetweenBasedOnGst", method = RequestMethod.GET)
-    public ResponseEntity<List<QuickBookInvoice>> getAllInvoiceBasedOnGST(@RequestParam(name = "fromDate") String fromDate, @RequestParam(name = "toDate") String toDate,
-                                                                          @RequestParam(name = "includeGst") Boolean includeGst, @RequestParam(name = "showOnlyGst") Boolean showOnlyGst) {
+    public ResponseEntity<List<Invoice>> getAllInvoiceBasedOnGST(@RequestParam(name = "fromDate") String fromDate, @RequestParam(name = "toDate") String toDate,
+                                                                 @RequestParam(name = "includeGst") Boolean includeGst, @RequestParam(name = "showOnlyGst") Boolean showOnlyGst) throws ParseException {
         return ResponseEntity.ok(this.quickBookInvoiceService.getInvoicesInBetweenDatesBasedOnGst(fromDate, toDate, includeGst, showOnlyGst));
     }
 
     @RequestMapping(value = "/getInvoiceNumber", method = RequestMethod.GET)
-    public ResponseEntity<Integer> getInvoiceNumber() {
-        return ResponseEntity.status(HttpStatus.OK).body(quickBookInvoiceService.getNextInvoiceNumber());
+    public ResponseEntity<Integer> getInvoiceNumber(@RequestParam(name = "billDate") String date) throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return ResponseEntity.status(HttpStatus.OK).body(configService.getNextInvoiceNumber(dateFormat.parse(date)));
     }
 
     @RequestMapping(value = "/getInvoice", method = RequestMethod.GET)
-    public ResponseEntity<QuickBookInvoice> getInvoiceBasedOnId(@RequestParam (name = "invoice_id") int invoiceId) {
-        return ResponseEntity.ok(this.quickBookInvoiceService.getQuickBookBasedOnInvoiceId(invoiceId));
+    public ResponseEntity<Invoice> getInvoiceBasedOnId(@RequestParam(name = "invoice_id") int invoiceId, @RequestParam(name = "financialYear") int financialYear) {
+        return ResponseEntity.ok(this.quickBookInvoiceService.getQuickBookBasedOnInvoiceId(invoiceId, financialYear));
     }
 
     @RequestMapping(value = "/updateInvoice", method = RequestMethod.POST)
-    public ResponseEntity updateInvoice(@RequestBody @Valid QuickBookInvoice invoice, @RequestParam(name = "print") Boolean print,
-                                        HttpServletRequest request, HttpServletResponse response) throws DocumentException, IOException {
+    public ResponseEntity updateInvoice(@RequestBody @Valid Invoice invoice, @RequestParam(name = "print") Boolean print,
+                                        HttpServletResponse response) throws DocumentException, IOException {
         this.quickBookInvoiceService.updateInvoice(invoice, print, response);
-        if(print) {
+        if (print) {
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).build();
         }
         return ResponseEntity.ok().build();
     }
 
     @RequestMapping(value = "/getBills", method = RequestMethod.POST)
-    public ResponseEntity getBillsForInvoices(@RequestBody @Valid Set<Long> invoiceIds, HttpServletResponse response) throws DocumentException, IOException {
+    public ResponseEntity getBillsForInvoices(@RequestBody @Valid List<InvoiceIDDto> invoiceIds, HttpServletResponse response) throws DocumentException, IOException {
         this.quickBookInvoiceService.getBills(invoiceIds, response);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).build();
     }
 
     @RequestMapping(value = "/emailSummary", method = RequestMethod.GET)
     public ResponseEntity emailSummaryReport(@RequestParam(name = "fromDate") String fromDate, @RequestParam(name = "toDate") String toDate,
-                                             @RequestParam(name = "emailId") String emailId) {
+                                             @RequestParam(name = "emailId") String emailId) throws ParseException {
         if (this.summaryReportService.sendSummaryReport(fromDate, toDate, emailId)) {
-           return ResponseEntity.ok().build();
+            return ResponseEntity.ok().build();
         } else {
-           return ResponseEntity.internalServerError().build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 }
