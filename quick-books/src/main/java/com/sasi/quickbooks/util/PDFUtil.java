@@ -92,6 +92,12 @@ public class PDFUtil {
         return cell;
     }
 
+    public static PdfPCell setBottomAndRightBorder(PdfPCell cell) {
+        cell.setBorderWidthLeft(0);
+        cell.setBorderWidthTop(0);
+        return cell;
+    }
+
     public static PdfPCell setOnlyLeftBorder(PdfPCell cell) {
         cell.setBorderWidthBottom(0);
         cell.setBorderWidthRight(0);
@@ -161,8 +167,8 @@ public class PDFUtil {
     }
 
 
-    public static Font getSmallInputFontColorSize() {
-        Font font = new Font(Font.FontFamily.UNDEFINED, 8);
+    public static Font getSmallInputFontColorSize(int size) {
+        Font font = new Font(Font.FontFamily.UNDEFINED, size);
         font.setColor(BaseColor.DARK_GRAY);
         return font;
     }
@@ -220,6 +226,11 @@ public class PDFUtil {
         return cell;
     }
 
+    public static PdfPCell getCellInputCellCenterAlignBottomAndRightBorderColored(String content) {
+        PdfPCell cell = getCell(content, getInputFontColorSize());
+        return setCellBorderColor(setBottomAndRightBorder(setCenterAlign(cell)));
+    }
+
     public static PdfPCell getCellInputCellCenterAlignTopNoBorder(String content) {
         PdfPCell cell = getCell(content, getInputFontColorSize());
         setCellBorderColor(setNoTopBorder(cell));
@@ -259,6 +270,11 @@ public class PDFUtil {
         return setCellBorderColor(setOnlyRightBorder(setCenterAlign(cell)));
     }
 
+    public static PdfPCell getCellInputCellCenterAlignOnlyRightBorderColoredSmall(String content) {
+        PdfPCell cell = getCell(content, getSmallInputFontColorSize(6));
+        return setCellBorderColor(setOnlyRightBorder(setCenterAlign(cell)));
+    }
+
     public static PdfPCell getCellInputCellCenterAlignOnlyLeftBorderColored(String content) {
         PdfPCell cell = getCell(content, getInputFontColorSize());
         return setCellBorderColor(setCenterAlign(setOnlyLeftBorder(cell)));
@@ -285,12 +301,12 @@ public class PDFUtil {
     }
 
     public static PdfPCell getCellSmallInputCellLeftAlignOnlyRightBorderColored(String content) {
-        PdfPCell cell = getCell(content, getSmallInputFontColorSize());
+        PdfPCell cell = getCell(content, getSmallInputFontColorSize(8));
         return setCellBorderColor(setOnlyRightBorder(setLeftAlign(cell)));
     }
 
     public static PdfPCell getCellSmallInputCellRightAlignOnlyRightBorderColored(String content) {
-        PdfPCell cell = getCell(content, getSmallInputFontColorSize());
+        PdfPCell cell = getCell(content, getSmallInputFontColorSize(8));
         return setCellBorderColor(setOnlyRightBorder(setRightAlign(cell)));
     }
 

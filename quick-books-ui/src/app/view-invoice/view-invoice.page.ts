@@ -1,6 +1,10 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {
-    ColDef, FilterChangedEvent, GridReadyEvent, RowDataChangedEvent, RowDoubleClickedEvent
+    ColDef,
+    FilterChangedEvent,
+    GridReadyEvent,
+    RowDataChangedEvent,
+    RowDoubleClickedEvent
 } from 'ag-grid-community';
 import {ViewInvoicesService} from '../services/view.invoices.service';
 import {AgGridAngular} from 'ag-grid-angular';
@@ -11,6 +15,7 @@ import {Invoice, TotalValue} from '../invoice/invoice';
 import {AlertController, PopoverController} from '@ionic/angular';
 import {Router} from '@angular/router';
 import {EmailComponent} from './email/email.component';
+import {SelectedInvoice} from "./SelectedInvoice";
 
 @Component({
     selector: 'app-view-invoice', templateUrl: './view-invoice.page.html', styleUrls: ['./view-invoice.page.scss'],
@@ -19,7 +24,7 @@ export class ViewInvoicePage implements OnInit {
 
     @ViewChild('agGrid') agGrid: AgGridAngular;
 
-    selectedInvoices: Array<number> = new Array<number>();
+    selectedInvoices: Array<SelectedInvoice> = new Array<SelectedInvoice>();
 
     includeGstBills = true;
     showOnlyGstBills = false;
@@ -28,7 +33,7 @@ export class ViewInvoicePage implements OnInit {
     errorMessage = '';
     emailLoading = false;
 
-    template ='<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>';
+    template = '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>';
 
     dateGroup: FormGroup;
 
@@ -41,7 +46,11 @@ export class ViewInvoicePage implements OnInit {
 
 
     public columnDefs: ColDef[] = [{
-        headerName: 'Invoice No.', field: 'invoiceId', filter: 'agSetColumnFilter', checkboxSelection: true, headerCheckboxSelection: true
+        headerName: 'Invoice No.',
+        field: 'invoiceId',
+        filter: 'agSetColumnFilter',
+        checkboxSelection: true,
+        headerCheckboxSelection: true
     }, {
         headerName: 'HSN', field: 'invoiceType', filter: 'agSetColumnFilter'
     }, {
@@ -50,28 +59,38 @@ export class ViewInvoicePage implements OnInit {
         filter: 'agDateColumnFilter',
         valueFormatter: (param) => this.datePipe.transform(param.value, 'dd/MM/YYYY')
     }, {
-        headerName: 'Weight', field: 'totalWeight', filter: 'agSetColumnFilter'
-    }, {
-        headerName: 'Before Tax',
-        field: 'amountBeforeTax',
+        headerName: 'FY',
+        field: 'financialYear',
         filter: 'agSetColumnFilter',
-        valueFormatter: (param) => this.indianCurrency.transform(param.value, false)
-    }, {
-        headerName: 'CGST',
-        field: 'cgstAmount',
-        filter: 'agSetColumnFilter',
-        valueFormatter: (param) => this.indianCurrency.transform(param.value, false)
-    }, {
-        headerName: 'SGST',
-        field: 'sgstAmount',
-        filter: 'agSetColumnFilter',
-        valueFormatter: (param) => this.indianCurrency.transform(param.value, false)
-    }, {
-        headerName: 'After Tax',
-        field: 'totalAmountAfterTax',
-        filter: 'agSetColumnFilter',
-        valueFormatter: (param) => this.indianCurrency.transform(param.value, false)
-    }];
+        valueFormatter: (param) => {
+            let temp = +param.value;
+            temp++;
+            return param.value + '-' + temp;
+        }
+    },
+        {
+            headerName: 'Weight', field: 'totalWeight', filter: 'agSetColumnFilter'
+        }, {
+            headerName: 'Before Tax',
+            field: 'amountBeforeTax',
+            filter: 'agSetColumnFilter',
+            valueFormatter: (param) => this.indianCurrency.transform(param.value, false)
+        }, {
+            headerName: 'CGST',
+            field: 'cgstAmount',
+            filter: 'agSetColumnFilter',
+            valueFormatter: (param) => this.indianCurrency.transform(param.value, false)
+        }, {
+            headerName: 'SGST',
+            field: 'sgstAmount',
+            filter: 'agSetColumnFilter',
+            valueFormatter: (param) => this.indianCurrency.transform(param.value, false)
+        }, {
+            headerName: 'After Tax',
+            field: 'totalAmountAfterTax',
+            filter: 'agSetColumnFilter',
+            valueFormatter: (param) => this.indianCurrency.transform(param.value, false)
+        }];
 
     rowData: Array<any>;
     defaultColDef: ColDef = {
@@ -133,10 +152,10 @@ export class ViewInvoicePage implements OnInit {
             return presentEl.onDidDismiss();
         }).then((dismisEl) => {
             if (dismisEl.role === 'edit') {
-                this.router.navigateByUrl('/invoice/edit/'+ $event.data.invoiceId);
+                this.router.navigateByUrl('/invoice/edit/' + $event.data.invoiceId + '/' + $event.data.financialYear);
             } else if (dismisEl.role === 'print') {
                 this.selectedInvoices = [];
-                this.selectedInvoices.push($event.data.invoiceId);
+                this.selectedInvoices.push({invoiceId: $event.data.invoiceId, financialYear: $event.data.financialYear});
                 this.getPdfWithSelectedInvoices();
             }
         });
@@ -221,14 +240,14 @@ export class ViewInvoicePage implements OnInit {
     }
 
     setSelectedInvoices() {
-        this.selectedInvoices = new Array<number>();
+        this.selectedInvoices = new Array<SelectedInvoice>();
         this.agGrid.api.getSelectedRows().forEach((invoice: Invoice) => {
-            this.selectedInvoices.push(invoice.invoiceId);
+            this.selectedInvoices.push({invoiceId: invoice.invoiceId, financialYear: invoice.financialYear});
         });
     }
 
     getPdfWithSelectedInvoices() {
-        if(this.selectedInvoices.length !== 0) {
+        if (this.selectedInvoices.length !== 0) {
             this.viewInvoiceService.downloadSelectedInvoices(this.selectedInvoices);
             this.agGrid.api.deselectAll();
         } else {
@@ -237,20 +256,20 @@ export class ViewInvoicePage implements OnInit {
     }
 
     showOnlyGstBillsCheckBoxChange() {
-        if(!this.showOnlyGstBills) {
+        if (!this.showOnlyGstBills) {
             this.includeGstCheckBoxChange(false);
         } else {
             this.setGstIncludedData(this.includeGstBills, !this.showOnlyGstBills);
         }
-        }
+    }
 
     includeGstCheckBoxChange(fromTemplate: boolean) {
-        if(fromTemplate && this.showOnlyGstBills) {
-            if(this.showOnlyGstBills && this.includeGstBills) {
+        if (fromTemplate && this.showOnlyGstBills) {
+            if (this.showOnlyGstBills && this.includeGstBills) {
                 this.showOnlyGstBills = false;
             }
-        } else if(!fromTemplate){
-            if(!this.showOnlyGstBills === true) {
+        } else if (!fromTemplate) {
+            if (!this.showOnlyGstBills === true) {
                 this.includeGstBills = true;
             }
             this.setGstIncludedData(this.includeGstBills, !this.showOnlyGstBills);
@@ -265,8 +284,8 @@ export class ViewInvoicePage implements OnInit {
             const toDate: Date = new Date(this.dateGroup.value.toDate);
             this.getInvoiceData(fromDate, toDate, includeGst, showOnlyGst);
             this.intializeTotalsToZero();
+        }
     }
-}
 
     sendEmail(event) {
         this.popoverController.create({
@@ -277,7 +296,7 @@ export class ViewInvoicePage implements OnInit {
             el.present();
             return el.onDidDismiss();
         }).then((data) => {
-            if(data.role === 'success') {
+            if (data.role === 'success') {
                 this.emailLoading = true;
                 this.viewInvoiceService
                     .sendSummaryReportMail(data.data, new Date(this.dateGroup.value.fromDate), new Date(this.dateGroup.value.toDate))
@@ -296,7 +315,7 @@ export class ViewInvoicePage implements OnInit {
         this.errorMessage = message;
         this.showMessage = true;
         this.messageClass = type;
-        setTimeout(()=> {
+        setTimeout(() => {
             this.showMessage = false;
         }, 4000);
     }

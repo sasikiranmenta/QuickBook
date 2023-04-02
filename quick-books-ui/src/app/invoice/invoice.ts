@@ -5,10 +5,11 @@ export interface Invoice {
   address: string;
   state: string;
   stateCode: number;
-  gstin: string;
+  identificationNumber: string;
   invoiceId?: number;
   billDate: Date;
   amountBeforeTax: number;
+  financialYear: number;
   cgstAmount: number;
   sgstAmount: number;
   igstAmount: number;
@@ -19,7 +20,7 @@ export interface Invoice {
   totalWeight: number;
   invoiceItems: Array<Item>;
   phoneNumber: number;
-  gstType: string;
+  identificationNumberType: string;
 }
 
 export interface PaymentMode {

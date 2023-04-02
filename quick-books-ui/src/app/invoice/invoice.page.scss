@@ -101,9 +101,14 @@ select {
     border-top: 0;
     border-right: 0;
     border-left: 0;
-    color: red;
+    //color: red;
     font-size: 16px;
     font-weight: 600;
+    border-color: silver;
+}
+
+.identificationType {
+ margin-top: 34px;
 }
 
 .calendar-col {

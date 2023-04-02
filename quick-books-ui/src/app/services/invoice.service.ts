@@ -22,12 +22,12 @@ export class InvoiceService {
     return this.httpService.post(path, invoice, print ? options : undefined);
   }
 
-  public getInvoiceNumber(): Observable<any> {
-    return this.httpService.get('/quick-book/getInvoiceNumber');
+  public getInvoiceNumber(billDate: string): Observable<any> {
+    return this.httpService.get('/quick-book/getInvoiceNumber?billDate='+billDate);
   }
 
-  public getInvoice(id: number): Observable<any> {
-      return this.httpService.get('/quick-book/getInvoice?invoice_id='+id);
+  public getInvoice(id: number, financialYear: number): Observable<any> {
+      return this.httpService.get('/quick-book/getInvoice?invoice_id='+id+'&financialYear='+financialYear);
   }
 
   public downloadPDF(response) {

@@ -1,143 +1,93 @@
 package com.sasi.quickbooks.service;
 
 import com.itextpdf.text.DocumentException;
-import com.sasi.quickbooks.QuickBookConstants;
 import com.sasi.quickbooks.Repository.InvoiceRepository;
-import com.sasi.quickbooks.model.GstModeEnum;
-import com.sasi.quickbooks.model.QuickBookHSNEnum;
-import com.sasi.quickbooks.model.QuickBookInvoice;
-import com.sasi.quickbooks.model.SummaryReport;
+import com.sasi.quickbooks.dto.InvoiceIDDto;
+import com.sasi.quickbooks.mapper.InvoiceMapper;
+import com.sasi.quickbooks.model.invoice.Invoice;
+import com.sasi.quickbooks.util.InvoiceUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.math.BigInteger;
+import java.net.InetAddress;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class QuickBookInvoiceService {
 
     final PDFGeneratorService pdfGeneratorService;
-    final InvoiceRepository quickBookInvoiceRepository;
-    final EntityManager em;
+    final InvoiceConfigService invoiceConfigService;
+    final InvoiceRepository invoiceRepository;
+    final InvoiceMapper invoiceMapper;
 
-    public QuickBookInvoiceService(InvoiceRepository quickBookInvoiceRepository, EntityManager em, PDFGeneratorService pdfGeneratorService, MailService mailService) {
-        this.quickBookInvoiceRepository = quickBookInvoiceRepository;
-        this.em = em;
-        this.pdfGeneratorService = pdfGeneratorService;
-    }
-
-    public void saveInvoice(QuickBookInvoice quickBookInvoice, Boolean print, HttpServletResponse response) throws DocumentException, IOException {
-        this.quickBookInvoiceRepository.save(quickBookInvoice);
-        if(print) {
+    public void saveInvoiceMongo(Invoice quickBookInvoice, Boolean print, HttpServletResponse response) throws DocumentException, IOException {
+        quickBookInvoice.setFinancialYear(InvoiceUtil.getFinancialYear(quickBookInvoice.getBillDate()));
+        this.invoiceRepository.save(quickBookInvoice);
+        this.invoiceConfigService.incrementInvoiceId(quickBookInvoice.getBillDate());
+        if (print) {
             this.pdfGeneratorService.generateInvoiceFile(quickBookInvoice, response);
         }
     }
 
-    public File getInvoice() throws DocumentException, FileNotFoundException {
-//       return pdfGeneratorService.generateInvoiceFile();
-        return null;
-    }
-
-    public Integer getNextInvoiceNumber() {
-        String invoiceNumberQuery = "select * from invoice_id_generator";
-        Query invoiceTypedQuery = em.createNativeQuery(invoiceNumberQuery);
-        BigInteger invoiceNumber = (BigInteger) invoiceTypedQuery.getSingleResult();
-        return invoiceNumber.intValue();
-    }
-
-    public List<QuickBookInvoice> getInvoicesInBetweenDatesBasedOnGst(String fromDate, String toDate, Boolean includeGst, Boolean showonlyGst) {
+    public List<Invoice> getInvoicesInBetweenDatesBasedOnGst(String fromDate, String toDate, Boolean includeGst, Boolean showonlyGst) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-
-        String inBetweenQuery = "select I from QuickBookInvoice I where I.billDate >= :fromDate and I.billDate <= :toDate";
-        if(!includeGst) {
-            inBetweenQuery = inBetweenQuery + " and (I.gstin is null or I.gstType = 'PAN')";
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(format.parse(toDate));
+        calendar.add(Calendar.DAY_OF_WEEK, 1);
+        if (!includeGst) {
+            return this.invoiceRepository.invoiceByBillDateBetweenNoGST(format.parse(fromDate), calendar.getTime());
         }
-        if(includeGst && showonlyGst) {
-            inBetweenQuery = inBetweenQuery + " and ((I.gstin is not null and I.gstType is null) or I.gstType = 'GSTIN')";
+        if (includeGst && showonlyGst) {
+            return this.invoiceRepository.invoiceByBillDateBetweenOnlyGST(format.parse(fromDate), calendar.getTime());
         }
+        return this.invoiceRepository.invoiceByBillDateBetween(format.parse(fromDate), calendar.getTime());
 
-        TypedQuery<QuickBookInvoice> typedQuery = em.createQuery(inBetweenQuery, QuickBookInvoice.class);
+    }
+
+    @Scheduled(fixedRate = 1000)
+    private void test() {
         try {
-            Calendar toCalendar = Calendar.getInstance();
-            toCalendar.setTime(format.parse(toDate));
-            toCalendar.add(Calendar.DAY_OF_WEEK, 1);
-            toDate = format.format(toCalendar.getTime());
-            typedQuery.setParameter("fromDate", format.parse(fromDate));
-            typedQuery.setParameter("toDate", format.parse(toDate));
-        } catch (ParseException e) {
-            log.error(e.getMessage());
+            InetAddress inetAddress = InetAddress.getByName("www.google.com");
+            boolean isReachable = inetAddress.isReachable(5000); // 5000 milliseconds timeout
+            if (isReachable) {
+                System.out.println("Network connection is available");
+            } else {
+                System.out.println("Network connection is not available");
+            }
+        } catch (Exception e) {
+            System.out.println("Error checking network connection: " + e.getMessage());
         }
-
-        List<QuickBookInvoice> invoices = typedQuery.getResultList();
-        return invoices;
     }
 
-    public QuickBookInvoice getQuickBookBasedOnInvoiceId(int invoiceId) {
-
-        String invoiceQuery = "select invoice from QuickBookInvoice invoice where invoice.invoiceId = :invoiceId";
-        TypedQuery<QuickBookInvoice> typedQuery = em.createQuery(invoiceQuery, QuickBookInvoice.class);
-        typedQuery.setParameter("invoiceId", Long.valueOf(invoiceId));
-        QuickBookInvoice invoice = typedQuery.getSingleResult();
-        return invoice;
+    public Invoice getQuickBookBasedOnInvoiceId(int invoiceId, int financialYear) {
+        return this.invoiceRepository.getMongoInvoiceByInvoiceIdAndFinancialYear(invoiceId, financialYear);
     }
 
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public QuickBookInvoice updateInvoice(QuickBookInvoice invoice, Boolean print, HttpServletResponse response) throws DocumentException, IOException {
-        String invoiceUpdateQuery = "select invoice from QuickBookInvoice invoice where invoice.invoiceId = :invoiceId";
-        TypedQuery<QuickBookInvoice> typedQuery = em.createQuery(invoiceUpdateQuery, QuickBookInvoice.class);
-        typedQuery.setParameter("invoiceId", invoice.getInvoiceId());
-        QuickBookInvoice oldInvoice = typedQuery.getSingleResult();
-        updateOldInvoice(oldInvoice, invoice);
-        em.merge(oldInvoice);
-        if(print) {
+    public Invoice updateInvoice(Invoice invoice, Boolean print, HttpServletResponse response) throws DocumentException, IOException {
+        invoice.setFinancialYear(InvoiceUtil.getFinancialYear(invoice.getBillDate()));
+        Invoice oldInvoice = this.invoiceRepository.getMongoInvoiceByInvoiceIdAndFinancialYear(invoice.getInvoiceId(), invoice.getFinancialYear());
+        invoiceMapper.map(invoice, oldInvoice);
+        this.invoiceRepository.save(oldInvoice);
+        if (print) {
             this.pdfGeneratorService.generateInvoiceFile(invoice, response);
         }
         return oldInvoice;
     }
 
-    private void updateOldInvoice(QuickBookInvoice oldInvoice, QuickBookInvoice invoice) {
-        oldInvoice.setInvoiceType(invoice.getInvoiceType());
-        oldInvoice.setCustomerName(invoice.getCustomerName());
-        oldInvoice.setAddress(invoice.getAddress());
-        oldInvoice.setState(invoice.getState());
-        oldInvoice.setStateCode(invoice.getStateCode());
-        oldInvoice.setBillDate(invoice.getBillDate());
-        oldInvoice.setGstin(invoice.getGstin());
-        oldInvoice.setGstType(invoice.getGstType());
-        oldInvoice.setInvoiceType(invoice.getInvoiceType());
-        oldInvoice.getPaymentMode().clear();
-        oldInvoice.getPaymentMode().addAll(invoice.getPaymentMode());
-        oldInvoice.setAmountBeforeTax(invoice.getAmountBeforeTax());
-        oldInvoice.setCgstAmount(invoice.getCgstAmount());
-        oldInvoice.setSgstAmount(invoice.getSgstAmount());
-        oldInvoice.setIgstAmount(invoice.getIgstAmount());
-        oldInvoice.setTotalAmountAfterTax(invoice.getTotalAmountAfterTax());
-        oldInvoice.setTotalWeight(invoice.getTotalWeight());
-        oldInvoice.setPhoneNumber(invoice.getPhoneNumber());
-        oldInvoice.setPaymentType(invoice.getPaymentType());
-        oldInvoice.setQuickBookUpdatedTime(new Date());
-        oldInvoice.getInvoiceItems().clear();
-        oldInvoice.getInvoiceItems().addAll(invoice.getInvoiceItems());
-    }
-
-    public void getBills(Set<Long> invoiceIds, HttpServletResponse response) throws DocumentException, IOException {
-        String multipleInvoiceQuery = "SELECT invoice from QuickBookInvoice invoice where invoice.invoiceId in :invoiceIds";
-        TypedQuery<QuickBookInvoice> invoice = em.createQuery(multipleInvoiceQuery, QuickBookInvoice.class);
-        invoice.setParameter("invoiceIds", invoiceIds);
-        List<QuickBookInvoice> quickBookInvoices = invoice.getResultList();
+    public void getBills(List<InvoiceIDDto> invoiceIds, HttpServletResponse response) throws DocumentException, IOException {
+        List<Invoice> quickBookInvoices = new ArrayList<>();
+        invoiceIds.forEach(invoiceIDDto ->
+                quickBookInvoices.add(this.invoiceRepository.getMongoInvoiceByInvoiceIdAndFinancialYear(invoiceIDDto.getInvoiceId(), invoiceIDDto.getFinancialYear())));
         this.pdfGeneratorService.generateInvoices(quickBookInvoices, response);
     }
-
 }

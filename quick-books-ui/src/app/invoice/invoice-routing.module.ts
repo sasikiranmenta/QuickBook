@@ -6,7 +6,7 @@ import {InvoicePage} from './invoice.page';
 const routes: Routes = [{
     path: '', component: InvoicePage
 }, {
-    path: 'edit/:id', component: InvoicePage
+    path: 'edit/:id/:financialYear', component: InvoicePage
 }];
 
 @NgModule({

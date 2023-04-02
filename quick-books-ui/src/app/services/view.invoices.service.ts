@@ -3,6 +3,7 @@ import {HttpService} from './http.service';
 import {Observable} from 'rxjs';
 import {HttpParams} from '@angular/common/http';
 import {InvoiceService} from './invoice.service';
+import {SelectedInvoice} from "../view-invoice/SelectedInvoice";
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class ViewInvoicesService {
         '&toDate='+to.toLocaleDateString()+'&includeGst='+includeGst+'&showOnlyGst='+showOnlyGst, undefined);
   }
 
-  public downloadSelectedInvoices(invoices: Array<number>): void {
+  public downloadSelectedInvoices(invoices: Array<SelectedInvoice>): void {
       const path = '/quick-book/getBills';
       const options = {
           observe: 'response', responseType: 'blob'

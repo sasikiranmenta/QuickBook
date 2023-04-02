@@ -66,22 +66,26 @@
                                 </ion-item>
                             </ion-col>
                         </ion-row>
-                        <ion-row class="border-left-right border-bottom">
+                        <ion-row class="border-left-right">
                             <ion-col class="margin-bottom">
-                                <ion-radio-group formControlName="gstType">
-                                    <div class="hsn">
-                                        <ion-radio color="danger" slot="start" value="GSTIN"></ion-radio>
-                                        <ion-label color="primary">GSTIN</ion-label>
-                                    </div>
-                                    <div class="hsn">
-                                        <ion-radio color="danger" slot="start" value="PAN"></ion-radio>
-                                        <ion-label color="primary">PAN</ion-label>
-                                    </div>
-                                </ion-radio-group>
-                                <ion-item lines="inset">
-                                    <ion-input formControlName="gstin"></ion-input>
+                                <ion-item lines="none">
+                                    <select name="identificationNumberType" id="identificationNumberType"
+                                            formControlName="identificationNumberType" class="identificationType">
+                                        <option value="" selected>Select ID Type</option>
+                                        <option value="PAN">PAN</option>
+                                        <option value="GSTIN">GSTIN</option>
+                                        <option value="AADHAAR">AADHAAR</option>
+                                    </select>
                                 </ion-item>
                             </ion-col>
+                            <ion-col>
+                                <ion-item lines="inset">
+                                    <ion-label position="floating">ID Number</ion-label>
+                                    <ion-input formControlName="identificationNumber"></ion-input>
+                                </ion-item>
+                            </ion-col>
+                        </ion-row>
+                        <ion-row class="border-left-right border-bottom">
                             <ion-col class="margin-bottom">
                                 <ion-item lines="inset">
                                     <ion-label position="floating">Phone Number</ion-label>
@@ -116,7 +120,7 @@
                                 </ion-label>
                             </ion-col>
                             <ion-col size="auto" class="calendar" class="show-right-border">
-                                <ion-input type="date" formControlName="billDate"></ion-input>
+                                <ion-input type="date" formControlName="billDate" (ionChange)="getInvoiceNumber()"></ion-input>
                             </ion-col>
                             <ion-col size="3">
                                 <ion-radio-group (ionChange)="onPaymentTypeChanged()" formControlName="paymentType">

@@ -7,7 +7,7 @@ import {formatDate} from '@angular/common';
 import {Invoice, PaymentMode} from './invoice';
 import {InvoiceService} from '../services/invoice.service';
 import {PaymentModeComponent} from './payment-mode/payment-mode.component';
-import {ActivatedRoute, Route, Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
     selector: 'app-invoice', templateUrl: './invoice.page.html', styleUrls: ['./invoice.page.scss'],
@@ -34,9 +34,10 @@ export class InvoicePage implements OnInit {
                 private router: Router) {
     }
 
-    ngOnInit(){
+    ngOnInit() {
         const id = this.routerSnapshot.snapshot.params.id;
-        if(!!id) {
+        const financialYear = this.routerSnapshot.snapshot.params.financialYear;
+        if (!!id) {
             this.isEditMode = true;
         } else {
             this.isEditMode = false;
@@ -51,7 +52,7 @@ export class InvoicePage implements OnInit {
         this.errorMessage = '';
         this.paymentModeSetAmount = 0;
         this.reverseBilling = false;
-        this.initForm(id);
+        this.initForm(id, financialYear);
     }
 
     ionViewWillEnter() {
@@ -63,7 +64,7 @@ export class InvoicePage implements OnInit {
         if (this.invoiceForm.invalid || this.itemDetailsArray.length === 0) {
             this.isInvalid = true;
             return;
-        } else if(!this.isCredit && paymentMode === 'MULTI' && this.paymentModeList.length === 0) {
+        } else if (!this.isCredit && paymentMode === 'MULTI' && this.paymentModeList.length === 0) {
             this.setErrorDiv('Set Amounts in Partial Payment Screen before saving');
             this.onShowPaymentMode();
             return;
@@ -114,7 +115,7 @@ export class InvoicePage implements OnInit {
     }
 
     getInvoiceNumber() {
-        this.invoiceService.getInvoiceNumber().subscribe((invoiceId) => {
+        this.invoiceService.getInvoiceNumber(this.invoiceForm.controls.billDate.value).subscribe((invoiceId) => {
             this.invoiceId = invoiceId;
             this.isLoading = false;
         });
@@ -140,7 +141,7 @@ export class InvoicePage implements OnInit {
     }
 
     onPaymentModeChange() {
-        if(this.invoiceForm.controls.paymentMode.value === 'MULTI') {
+        if (this.invoiceForm.controls.paymentMode.value === 'MULTI') {
             this.isMulti = true;
         } else {
             this.isMulti = false;
@@ -149,7 +150,7 @@ export class InvoicePage implements OnInit {
     }
 
     onShowPaymentMode() {
-        if(this.itemDetailsArray.length === 0) {
+        if (this.itemDetailsArray.length === 0) {
             this.setErrorDiv('Add at-least one item to set partial payment');
             return;
         }
@@ -163,7 +164,7 @@ export class InvoicePage implements OnInit {
             modalElement.present();
             return modalElement.onDidDismiss();
         }).then((paymentModeResponse) => {
-            if(paymentModeResponse.role === 'success') {
+            if (paymentModeResponse.role === 'success') {
                 this.paymentModeList = paymentModeResponse.data.list;
                 this.paymentModeSetAmount = paymentModeResponse.data.paymentAmount;
             }
@@ -173,7 +174,7 @@ export class InvoicePage implements OnInit {
 
     onPaymentTypeChanged() {
         this.isCredit = !this.isCredit;
-        if(!this.isCredit) {
+        if (!this.isCredit) {
             this.invoiceForm.controls.paymentMode.setValue('CASH');
         } else {
             this.invoiceForm.controls.paymentMode.setValue('NA');
@@ -189,7 +190,7 @@ export class InvoicePage implements OnInit {
     }
 
     initiateReverseBill() {
-        if(this.reverseBilling) {
+        if (this.reverseBilling) {
             const total = this.invoiceForm.controls.totalAmountAfterTax.value;
             let three = total - total / 1.03;
             three = Math.round(three / 2) + Math.round(three / 2);
@@ -206,11 +207,12 @@ export class InvoicePage implements OnInit {
 
     private saveIntoDb(isPrint: boolean) {
         const invoice: Invoice = this.invoiceForm.value;
-        if(!invoice.gstin) {
+        if (!invoice.identificationNumber) {
             console.log('hi');
-            invoice.gstType = undefined;
+            invoice.identificationNumberType = undefined;
             console.log(invoice);
         }
+        invoice.invoiceId = +this.invoiceId;
         invoice.invoiceItems = this.itemDetailsArray;
         invoice.amountBeforeTax = this.invoiceForm.controls.amountBeforeTax.value;
         invoice.cgstAmount = this.invoiceForm.controls.cgstAmount.value;
@@ -219,7 +221,7 @@ export class InvoicePage implements OnInit {
         invoice.totalAmountAfterTax = this.invoiceForm.controls.totalAmountAfterTax.value;
         invoice.totalWeight = this.getTotalWeight(invoice.invoiceItems);
         invoice.paymentMode = this.getPaymentModeDetails();
-        if(this.isEditMode) {
+        if (this.isEditMode) {
             invoice.invoiceId = +this.invoiceId;
         }
 
@@ -234,7 +236,7 @@ export class InvoicePage implements OnInit {
             });
     }
 
-    private initForm(id: string) {
+    private initForm(id: string, financialYear: string) {
         let paymentMode = 'CASH';
         let tempInvoice: Invoice = {
             invoiceItems: undefined,
@@ -244,7 +246,7 @@ export class InvoicePage implements OnInit {
             address: 'Nellore',
             state: 'AP',
             stateCode: 37,
-            gstin: undefined,
+            identificationNumber: undefined,
             billDate: new Date(),
             amountBeforeTax: 0,
             paymentType: 'CASH',
@@ -255,10 +257,11 @@ export class InvoicePage implements OnInit {
             totalAmountAfterTax: 0,
             phoneNumber: undefined,
             invoiceId: undefined,
-            gstType: 'PAN'
+            identificationNumberType: '',
+            financialYear: undefined
         };
         if (!!id) {
-            this.invoiceService.getInvoice(+id).subscribe((invoice: Invoice) => {
+            this.invoiceService.getInvoice(+id, +financialYear).subscribe((invoice: Invoice) => {
                 this.isLoading = true;
                 tempInvoice = invoice;
                 this.itemDetailsArray = invoice.invoiceItems;
@@ -266,7 +269,7 @@ export class InvoicePage implements OnInit {
                 this.invoiceId = invoice.invoiceId.toString();
                 this.totalBillAmount = invoice.totalAmountAfterTax;
                 this.paymentModeSetAmount = this.totalBillAmount;
-                if(this.paymentModeList.length > 1) {
+                if (this.paymentModeList.length > 1) {
                     paymentMode = 'MULTI';
                     this.isMulti = true;
                 } else {
@@ -289,7 +292,7 @@ export class InvoicePage implements OnInit {
             address: new FormControl(tempInvoice.address, Validators.maxLength(254)),
             state: new FormControl(tempInvoice.state, Validators.required),
             stateCode: new FormControl(tempInvoice.stateCode, Validators.required),
-            gstin: new FormControl(tempInvoice.gstin),
+            identificationNumber: new FormControl(tempInvoice.identificationNumber),
             billDate: new FormControl(formatDate(tempInvoice.billDate, 'yyyy-MM-dd', 'en'), Validators.required),
             amountBeforeTax: new FormControl(tempInvoice.amountBeforeTax, Validators.required),
             paymentType: new FormControl(tempInvoice.paymentType, Validators.required),
@@ -300,7 +303,7 @@ export class InvoicePage implements OnInit {
             invoiceType: new FormControl(tempInvoice.invoiceType, Validators.required),
             totalAmountAfterTax: new FormControl(tempInvoice.totalAmountAfterTax, Validators.required),
             phoneNumber: new FormControl(tempInvoice.phoneNumber),
-            gstType: new FormControl(tempInvoice.gstType)
+            identificationNumberType: new FormControl(tempInvoice.identificationNumberType)
         });
     }
 
@@ -315,7 +318,7 @@ export class InvoicePage implements OnInit {
     private setErrorDiv(message: string) {
         this.errorMessage = message;
         this.showErrorDiv = true;
-        setTimeout(()=> {
+        setTimeout(() => {
             this.showErrorDiv = false;
         }, 4000);
     }

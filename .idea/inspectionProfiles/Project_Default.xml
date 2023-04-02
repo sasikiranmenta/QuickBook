@@ -5,13 +5,11 @@
       <option name="customHeaders">
         <set>
           <option value="Access-Control-Expose-Headers" />
+          <option value="file_name" />
         </set>
       </option>
     </inspection_tool>
     <inspection_tool class="SerialVersionUIDNotStaticFinal" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="SerializableHasSerialVersionUIDField" enabled="true" level="ERROR" enabled_by_default="true">
-      <option name="ignoreAnonymousInnerClasses" value="false" />
-      <option name="superClassString" value="java.awt.Component" />
-    </inspection_tool>
+    <inspection_tool class="SerializableHasSerialVersionUIDField" enabled="true" level="ERROR" enabled_by_default="true" />
   </profile>
 </component>
