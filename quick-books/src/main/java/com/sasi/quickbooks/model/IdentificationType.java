@@ -1,6 +1,6 @@
 package com.sasi.quickbooks.model;
 
-public enum IdenticationType {
+public enum IdentificationType {
     GSTIN,
     PAN,
     AADHAAR
