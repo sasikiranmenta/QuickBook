@@ -8,6 +8,7 @@ import com.sasi.quickbooks.model.invoice.Invoice;
 import com.sasi.quickbooks.util.InvoiceUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,7 @@ public class QuickBookInvoiceService {
     final InvoiceConfigService invoiceConfigService;
     final InvoiceRepository invoiceRepository;
     final InvoiceMapper invoiceMapper;
+    final SimpMessagingTemplate template;
 
     public void saveInvoiceMongo(Invoice quickBookInvoice, Boolean print, HttpServletResponse response) throws DocumentException, IOException {
         quickBookInvoice.setFinancialYear(InvoiceUtil.getFinancialYear(quickBookInvoice.getBillDate()));
@@ -55,18 +57,20 @@ public class QuickBookInvoiceService {
     }
 
     @Scheduled(fixedRate = 1000)
-    private void test() {
+    private void networkStatusCheck() {
         try {
             InetAddress inetAddress = InetAddress.getByName("www.google.com");
-            boolean isReachable = inetAddress.isReachable(5000); // 5000 milliseconds timeout
+            boolean isReachable = inetAddress.isReachable(3000); // 5000 milliseconds timeout
             if (isReachable) {
                 System.out.println("Network connection is available");
-            } else {
-                System.out.println("Network connection is not available");
+                template.convertAndSend("/topic", true);
+                return;
             }
         } catch (Exception e) {
             System.out.println("Error checking network connection: " + e.getMessage());
         }
+        System.out.println("Network connection is not available");
+        template.convertAndSend("/topic", false);
     }
 
     public Invoice getQuickBookBasedOnInvoiceId(int invoiceId, int financialYear) {
