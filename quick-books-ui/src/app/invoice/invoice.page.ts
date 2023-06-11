@@ -115,10 +115,12 @@ export class InvoicePage implements OnInit {
     }
 
     getInvoiceNumber() {
-        this.invoiceService.getInvoiceNumber(this.invoiceForm.controls.billDate.value).subscribe((invoiceId) => {
-            this.invoiceId = invoiceId;
-            this.isLoading = false;
-        });
+        if(!this.isEditMode) {
+            this.invoiceService.getInvoiceNumber(this.invoiceForm.controls.billDate.value).subscribe((invoiceId) => {
+                this.invoiceId = invoiceId;
+                this.isLoading = false;
+            });
+        }
     }
 
     setSummaryDetails() {
