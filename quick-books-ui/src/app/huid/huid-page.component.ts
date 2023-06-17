@@ -15,6 +15,7 @@ import {HuidItemComponent} from "./item/huid-item.component";
 import {HuidService} from "../services/huid.service";
 import {HuidItem} from "./item/huidItem";
 import {SaleCellRendererComponent} from "./sale-cell-renderer/sale-cell-renderer.component";
+import {HuidRequestBody} from "./item/huid-request-body";
 
 @Component({
     selector: 'app-view-invoice', templateUrl: './huid-page.component.html', styleUrls: ['./huid-page.component.scss'],
@@ -24,14 +25,14 @@ export class HuidPage implements OnInit {
     @ViewChild('agGrid') agGrid: AgGridAngular;
 
 
-    includeGstBills = true;
-    showOnlyGstBills = false;
+    includeSaledData = true;
+    includeInstockData = true;
     showMessage = false;
     messageClass = '';
     errorMessage = '';
     emailLoading = false;
-
-    template = '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>';
+    dateRangeFilter = 'saled';
+    template = '<span class="ag-overlay-loading-center">Please wait while data is loading</span>';
 
     dateGroup: FormGroup;
 
@@ -44,7 +45,7 @@ export class HuidPage implements OnInit {
 
 
     public columnDefs: ColDef[] = [
-        { headerName: 'Date', field: 'createdOn', filter: 'agDateColumnFilter', valueFormatter: (param) => this.datePipe.transform(param.value, 'dd/MM/YYYY') },
+        { headerName: 'HUID Created Date', field: 'createdOn', filter: 'agDateColumnFilter', valueFormatter: (param) => this.datePipe.transform(param.value, 'dd/MM/YYYY') },
         { headerName: 'HUID NO.', field: 'huidNumber', filter: 'agSetColumnFilter' },
         { headerName: 'Item name', field: 'itemName', filter: 'agSetColumnFilter' },
         { headerName: 'Weight', field: 'grossWeight', filter: 'agSetColumnFilter' },
@@ -68,8 +69,9 @@ export class HuidPage implements OnInit {
         this.intializeTotalsToZero();
         const currentDate = new Date();
         const financialStartDate = this.getFinancialStartDate(currentDate);
-        this.getHuidData();
+
         this.initForm(financialStartDate, currentDate);
+        this.getHuidData();
     }
 
     onGridReady(params: GridReadyEvent) {
@@ -87,14 +89,6 @@ export class HuidPage implements OnInit {
                     cssClass: 'secondary',
                     handler: () => {
                         this.alertController.dismiss(null, 'edit');
-                    }
-                },
-                {
-                    text: 'Print',
-                    role: 'print',
-                    cssClass: 'secondary',
-                    handler: () => {
-                        this.alertController.dismiss(null, 'print');
                     }
                 },
                 {
@@ -121,7 +115,14 @@ export class HuidPage implements OnInit {
     }
 
     getHuidData() {
-        this.huidService.getAllHuid().subscribe((response) => {
+        let requestBody: HuidRequestBody = {
+            from:  new Date(this.dateGroup.value.fromDate),
+            to: new Date(this.dateGroup.value.toDate),
+            applyDateRangeOn: this.dateGroup.value.dateRangeOn,
+            includeSaledData: this.includeSaledData,
+            includeStockData: this.includeInstockData
+        }
+        this.huidService.getAllHuid(requestBody).subscribe((response) => {
             this.rowData = response;
         });
     }
@@ -190,12 +191,23 @@ export class HuidPage implements OnInit {
     initForm(financialStartDate: Date, currentDate: Date) {
         this.dateGroup = new FormGroup({
             fromDate: new FormControl(formatDate(financialStartDate, 'yyyy-MM-dd', 'en'), Validators.required),
-            toDate: new FormControl(formatDate(currentDate, 'yyyy-MM-dd', 'en'), Validators.required)
+            toDate: new FormControl(formatDate(currentDate, 'yyyy-MM-dd', 'en'), Validators.required),
+            dateRangeOn: new FormControl('SALED')
         });
     }
 
-    onCheckBoxChange() {
-        this.setSelectedInvoices();
+    onSaleCheckBoxChange() {
+        if(!this.includeInstockData && !this.includeSaledData) {
+            this.includeInstockData = true;
+        }
+        this.getHuidData();
+    }
+
+    onStockCheckBoxChange() {
+        if(!this.includeInstockData && !this.includeSaledData) {
+            this.includeSaledData = true;
+        }
+        this.getHuidData();
     }
 
     setSelectedInvoices() {

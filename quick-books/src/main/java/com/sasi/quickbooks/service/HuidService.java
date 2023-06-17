@@ -2,6 +2,8 @@ package com.sasi.quickbooks.service;
 
 import com.sasi.quickbooks.Repository.HuidRepository;
 import com.sasi.quickbooks.model.huid.Huid;
+import com.sasi.quickbooks.model.huid.HuidItemStatusEnum;
+import com.sasi.quickbooks.model.requestbody.HuidRequestBody;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +23,23 @@ public class HuidService {
         return repository.findById(huidNumber).orElse(null);
     }
 
-    public List<Huid> fetchAllHuid() {
-        return repository.findAll();
+    public List<Huid> fetchAllHuid(HuidRequestBody requestBody) {
+        if(requestBody.getApplyDateRangeOn() == HuidItemStatusEnum.INSTOCK) {
+            if(requestBody.isIncludeSaledData() && requestBody.isIncludeStockData()) {
+                return repository.fetchHuidBasedOnStock(requestBody.getFrom(), requestBody.getTo());
+            } else if(requestBody.isIncludeSaledData()) {
+                return repository.fetchHuidBasedOnStockIncludeOnlySale(requestBody.getFrom(), requestBody.getTo());
+            }
+            return repository.fetchHuidBasedOnStockIncludeOnlyStock(requestBody.getFrom(), requestBody.getTo());
+
+        }
+        else {
+            if(requestBody.isIncludeSaledData() && requestBody.isIncludeStockData()) {
+                return repository.fetchHuidBasedOnSale(requestBody.getFrom(), requestBody.getTo());
+            } else if(requestBody.isIncludeSaledData()) {
+                return repository.fetchHuidBasedOnSaleIncludeOnlySale(requestBody.getFrom(), requestBody.getTo());
+            }
+            return repository.fetchHuidBasedOnSaleIncludeOnlyStock(requestBody.getFrom(), requestBody.getTo());
+        }
     }
 }

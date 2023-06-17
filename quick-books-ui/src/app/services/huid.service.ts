@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpService} from './http.service';
 import {Observable} from 'rxjs';
 import {HuidItem} from "../huid/item/huidItem";
+import {HuidRequestBody} from "../huid/item/huid-request-body";
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +16,8 @@ export class HuidService {
     return this.httpService.post(path, huid);
   }
 
-  public getAllHuid(): Observable<Array<HuidItem>> {
-    return this.httpService.get('/quick-book/huid/fetchAllHuid');
+  public getAllHuid(requestBody: HuidRequestBody): Observable<Array<HuidItem>> {
+    return this.httpService.post('/quick-book/huid/fetchAllHuid', requestBody);
   }
 
   public getInvoice(id: number, financialYear: number): Observable<any> {

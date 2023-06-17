@@ -12,6 +12,7 @@ import {HuidItemComponent} from "./item/huid-item.component";
 import {SaleCellRendererComponent} from "./sale-cell-renderer/sale-cell-renderer.component";
 import {DateItemComponent} from "./date-item/date-item.component";
 import {ConfirmItemComponent} from "./confirm-item/confirm-item.component";
+import {NgSelectModule} from "@ng-select/ng-select";
 
 @NgModule({
     imports: [
@@ -20,7 +21,8 @@ import {ConfirmItemComponent} from "./confirm-item/confirm-item.component";
         IonicModule,
         HuidPageRoutingModule,
         AgGridModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        NgSelectModule
     ],
     declarations: [HuidPage, ConfirmItemComponent, HuidItemComponent, SaleCellRendererComponent,DateItemComponent],
     exports: [],

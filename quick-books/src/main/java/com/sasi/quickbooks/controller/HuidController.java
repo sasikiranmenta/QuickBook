@@ -4,6 +4,7 @@ import com.itextpdf.text.DocumentException;
 import com.sasi.quickbooks.dto.InvoiceIDDto;
 import com.sasi.quickbooks.model.huid.Huid;
 import com.sasi.quickbooks.model.invoice.Invoice;
+import com.sasi.quickbooks.model.requestbody.HuidRequestBody;
 import com.sasi.quickbooks.service.HuidService;
 import com.sasi.quickbooks.service.InvoiceConfigService;
 import com.sasi.quickbooks.service.QuickBookInvoiceService;
@@ -53,9 +54,9 @@ public class HuidController {
 //        return ResponseEntity.ok().build();
 //    }
 
-    @RequestMapping(value = "/fetchAllHuid", method = RequestMethod.GET)
-    public List<Huid> getAllHuid() {
-        return this.huidService.fetchAllHuid();
+    @RequestMapping(value = "/fetchAllHuid", method = RequestMethod.POST)
+    public List<Huid> getAllHuid(@RequestBody HuidRequestBody requestBody) {
+        return this.huidService.fetchAllHuid(requestBody);
     }
 
 //    @RequestMapping(value = "/emailSummary", method = RequestMethod.GET)

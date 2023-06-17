@@ -64,6 +64,7 @@ export class HuidItemComponent implements OnInit {
         itemName: this.huidForm.controls.itemName.value,
         createdOn: this.huidForm.controls.createdOn.value,
         grossWeight: this.huidForm.controls.grossWeight.value,
+        itemType: this.huidForm.controls.itemType.value,
         saledOn,
         saled
     };
@@ -85,6 +86,7 @@ export class HuidItemComponent implements OnInit {
     let itemName = undefined;
     let createdOn = new Date();
     let grossWeight = 0;
+    let itemType = 'GOLD';
 
 
     if(this.isEditMode === true) {
@@ -92,12 +94,14 @@ export class HuidItemComponent implements OnInit {
         itemName = this.itemData.itemName;
         createdOn = this.itemData.createdOn;
         grossWeight = this.itemData.grossWeight;
+        itemType = this.itemData.itemType;
     }
       this.huidForm = new FormGroup({
           huidNumber: new FormControl(huidNumber, Validators.required),
           itemName: new FormControl(itemName, Validators.required),
           createdOn: new FormControl(formatDate(createdOn, 'yyyy-MM-dd', 'en'), Validators.required),
-          grossWeight: new FormControl(grossWeight, Validators.required)
+          grossWeight: new FormControl(grossWeight, Validators.required),
+          itemType: new FormControl(itemType, Validators.required)
     });
   }
 }

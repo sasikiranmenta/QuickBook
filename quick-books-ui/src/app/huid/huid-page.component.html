@@ -11,19 +11,26 @@
                         <ion-title>HUID Details</ion-title>
                     </ion-col>
                     <ion-col size="2">
-                        <ion-button (click)="showModal()">Add New</ion-button>
+                        <ion-button (click)="showModal()">Add New +</ion-button>
                     </ion-col>
                     <ion-col size="0.5"></ion-col>
-                    <ion-col offset="3" size="2">
+                    <ion-col offset="1" size="2" class="ion-justify-content-end">
+                        <ion-label>Apply Date Range on</ion-label>
+                        <select name="date-range-on" formControlName="dateRangeOn">
+                            <option value="INSTOCK">Created Date</option>
+                            <option value="SALED">Saled Date</option>
+                        </select>
+                    </ion-col>
+                    <ion-col size="2">
                         <ion-item>
                             <ion-label position="stacked">From</ion-label>
-                            <ion-input type="date" (ionChange)="onDateChange()" formControlName="fromDate"></ion-input>
+                            <ion-input type="date" (ionChange)="getHuidData()" formControlName="fromDate"></ion-input>
                         </ion-item>
                     </ion-col>
                     <ion-col size="2">
                         <ion-item>
                             <ion-label position="stacked">To</ion-label>
-                            <ion-input type="date" (ionChange)="onDateChange()" formControlName="toDate"></ion-input>
+                            <ion-input type="date" (ionChange)="getHuidData()" formControlName="toDate"></ion-input>
                         </ion-item>
                     </ion-col>
                 </ion-row>
@@ -34,10 +41,10 @@
 
 <ion-content>
     <ion-item>
-        <ion-checkbox [(ngModel)]="includeGstBills" ></ion-checkbox>
-        <ion-text>Include GST bills</ion-text>
-        <ion-checkbox [(ngModel)]="showOnlyGstBills" ></ion-checkbox>
-        <ion-text>Show only GST bills</ion-text>
+        <ion-checkbox [(ngModel)]="includeSaledData" (ionChange)="onSaleCheckBoxChange()"></ion-checkbox>
+        <ion-text>Show Saled details</ion-text>
+        <ion-checkbox [(ngModel)]="includeInstockData" (ionChange)="onStockCheckBoxChange()"></ion-checkbox>
+        <ion-text>Show Instock details</ion-text>
         <ion-button slot="end" color="primary" (click)="sendEmail($event)">
             <ion-icon name="mail-unread-outline"></ion-icon>
             <ion-spinner *ngIf="emailLoading" name="dots" color="warning"></ion-spinner>
@@ -68,19 +75,13 @@
                 Type
             </ion-col>
             <ion-col>
-                Total Weight
+                Total Instock Weight
             </ion-col>
             <ion-col>
-                Total before tax
+                Total Saled Weight
             </ion-col>
             <ion-col>
-                Total CGST
-            </ion-col>
-            <ion-col>
-                Total SGST
-            </ion-col>
-            <ion-col>
-                Total after tax
+                Number of Items saled
             </ion-col>
         </ion-row>
         <ion-row>
@@ -96,12 +97,6 @@
             <ion-col>
 <!--                {{ goldDetails.totalCgst |  indianCurrency}}-->
             </ion-col>
-            <ion-col>
-<!--                {{goldDetails.totalSgst | indianCurrency}}-->
-            </ion-col>
-            <ion-col>
-<!--                {{goldDetails.totalAfterTax | indianCurrency}}-->
-            </ion-col>
         </ion-row>
         <ion-row>
             <ion-col>
@@ -115,12 +110,6 @@
             </ion-col>
             <ion-col>
 <!--                {{ silverDetails.totalCgst |  indianCurrency}}-->
-            </ion-col>
-            <ion-col>
-<!--                {{ silverDetails.totalSgst | indianCurrency}}-->
-            </ion-col>
-            <ion-col>
-<!--                {{ silverDetails.totalAfterTax | indianCurrency}}-->
             </ion-col>
         </ion-row>
     </ion-grid>
