@@ -1,0 +1,3 @@
+<ion-button aria-label="Primary toggle"  expand="full" color="warning" *ngIf="!itemData.saled" (click)="onSaleClicked()">In Stock</ion-button>
+<ion-button aria-label="Primary toggle" expand="full" color="success" *ngIf="itemData.saled" (click)="onSaleClicked()">Saled</ion-button>
+

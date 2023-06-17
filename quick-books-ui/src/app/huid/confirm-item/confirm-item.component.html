@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Are you sure to move item back to stock?</ion-title>
+    <ion-buttons slot="primary">
+      <ion-button (click)="onCancel()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding ion-text-center">
+    <ion-button type="button"
+                color="primary"
+                (click)="onSubmit()">Move back to stock</ion-button>
+    <ion-button (click)="onCancel()"
+                color="danger"
+                >Cancel</ion-button>
+</ion-content>

@@ -1,0 +1,129 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-text *ngIf="showMessage" [ngClass]="messageClass">{{ errorMessage }}</ion-text>
+        <ion-buttons slot="start">
+            <ion-menu-button menu="m1"></ion-menu-button>
+        </ion-buttons>
+        <form [formGroup]="dateGroup">
+            <ion-grid>
+                <ion-row class="ion-align-items-center">
+                    <ion-col size="2">
+                        <ion-title>HUID Details</ion-title>
+                    </ion-col>
+                    <ion-col size="2">
+                        <ion-button (click)="showModal()">Add New</ion-button>
+                    </ion-col>
+                    <ion-col size="0.5"></ion-col>
+                    <ion-col offset="3" size="2">
+                        <ion-item>
+                            <ion-label position="stacked">From</ion-label>
+                            <ion-input type="date" (ionChange)="onDateChange()" formControlName="fromDate"></ion-input>
+                        </ion-item>
+                    </ion-col>
+                    <ion-col size="2">
+                        <ion-item>
+                            <ion-label position="stacked">To</ion-label>
+                            <ion-input type="date" (ionChange)="onDateChange()" formControlName="toDate"></ion-input>
+                        </ion-item>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </form>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-item>
+        <ion-checkbox [(ngModel)]="includeGstBills" ></ion-checkbox>
+        <ion-text>Include GST bills</ion-text>
+        <ion-checkbox [(ngModel)]="showOnlyGstBills" ></ion-checkbox>
+        <ion-text>Show only GST bills</ion-text>
+        <ion-button slot="end" color="primary" (click)="sendEmail($event)">
+            <ion-icon name="mail-unread-outline"></ion-icon>
+            <ion-spinner *ngIf="emailLoading" name="dots" color="warning"></ion-spinner>
+        </ion-button>
+        <ion-button slot="end" color="primary" (click)="getPdfWithSelectedInvoices()">Download
+            <ion-icon name="download-outline"></ion-icon>
+        </ion-button>
+    </ion-item>
+    <ag-grid-angular (filterChanged)="onFilterChange($event)"
+                     style="width: 100%; height: 80%;"
+                     class="ag-theme-alpine"
+                     [columnDefs]="columnDefs"
+                     [defaultColDef]="defaultColDef"
+                     [rowData]="rowData"
+                     rowSelection="multiple"
+                     (selectionChanged)="onCheckBoxChange()"
+                     (rowDataChanged)="onRowDataChanged($event)"
+                     (gridReady)="onGridReady($event)"
+                     (rowDoubleClicked)="onRowEdit($event)"
+                     #agGrid></ag-grid-angular>
+
+</ion-content>
+
+<ion-footer>
+    <ion-grid class="summary">
+        <ion-row>
+            <ion-col>
+                Type
+            </ion-col>
+            <ion-col>
+                Total Weight
+            </ion-col>
+            <ion-col>
+                Total before tax
+            </ion-col>
+            <ion-col>
+                Total CGST
+            </ion-col>
+            <ion-col>
+                Total SGST
+            </ion-col>
+            <ion-col>
+                Total after tax
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                GOLD
+            </ion-col>
+            <ion-col>
+<!--                {{goldDetails.totalWeight | number: '1.3-3'}}-->
+            </ion-col>
+            <ion-col>
+<!--                {{goldDetails.totalBeforeTax | indianCurrency}}-->
+            </ion-col>
+            <ion-col>
+<!--                {{ goldDetails.totalCgst |  indianCurrency}}-->
+            </ion-col>
+            <ion-col>
+<!--                {{goldDetails.totalSgst | indianCurrency}}-->
+            </ion-col>
+            <ion-col>
+<!--                {{goldDetails.totalAfterTax | indianCurrency}}-->
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                SILVER
+            </ion-col>
+            <ion-col>
+<!--                {{silverDetails.totalWeight | number: '1.3-3'}}-->
+            </ion-col>
+            <ion-col>
+<!--                {{silverDetails.totalBeforeTax | indianCurrency}}-->
+            </ion-col>
+            <ion-col>
+<!--                {{ silverDetails.totalCgst |  indianCurrency}}-->
+            </ion-col>
+            <ion-col>
+<!--                {{ silverDetails.totalSgst | indianCurrency}}-->
+            </ion-col>
+            <ion-col>
+<!--                {{ silverDetails.totalAfterTax | indianCurrency}}-->
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-footer>
+
+

@@ -2,6 +2,10 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
+    {
+        path: 'huid',
+        loadChildren: () => import('./huid/huid.module').then( m => m.HuidPageModule)
+    },
   {
     path: 'invoice',
     loadChildren: () => import('./invoice/invoice.module').then( m => m.InvoicePageModule)

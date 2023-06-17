@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Huid Details</ion-title>
+    <ion-buttons slot="primary">
+      <ion-button (click)="onCancel()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding ion-text-center">
+  <form [formGroup]="huidForm">
+      <ion-item>
+          <ion-label position="floating">Date</ion-label>
+          <ion-input type="Date" formControlName="createdOn"></ion-input>
+      </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Huid Number <span *ngIf="isInvalid && huidForm.controls.huidNumber.invalid"> *required</span></ion-label>
+      <ion-input type="text" formControlName="huidNumber"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Item Name <span *ngIf="isInvalid && huidForm.controls.itemName.invalid"> *required</span></ion-label>
+      <ion-input type="text" formControlName="itemName"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Weight <span *ngIf="isInvalid && huidForm.controls.grossWeight.invalid"> *required</span></ion-label>
+      <ion-input type="number" formControlName="grossWeight"></ion-input>
+    </ion-item>
+
+    <ion-button type="button"
+                color="primary"
+                expand="block" (click)="onSubmit()">Add</ion-button>
+    <ion-button (click)="resetValues()"
+                color="danger"
+                expand="block">Reset</ion-button>
+  </form>
+</ion-content>

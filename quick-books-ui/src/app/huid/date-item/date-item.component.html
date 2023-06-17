@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Saled On</ion-title>
+    <ion-buttons slot="primary">
+      <ion-button (click)="onCancel()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding ion-text-center">
+  <form [formGroup]="dateForm">
+      <ion-item>
+          <ion-label position="floating">Date</ion-label>
+          <ion-input type="Date" formControlName="saledOn"></ion-input>
+      </ion-item>
+
+    <ion-button type="button"
+                color="primary"
+                (click)="onSubmit()">Sale</ion-button>
+    <ion-button (click)="onCancel()"
+                color="danger">Cancel</ion-button>
+  </form>
+</ion-content>

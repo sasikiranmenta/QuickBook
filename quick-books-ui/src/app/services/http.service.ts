@@ -22,6 +22,7 @@ export class HttpService {
   }
 
   post(urlPath: string, body: any = {}, options: any = {}): Observable<any> {
+      console.log("posting data", body);
     return this.httpClient.post(this.baseUrl + urlPath, body, options);
   }
 

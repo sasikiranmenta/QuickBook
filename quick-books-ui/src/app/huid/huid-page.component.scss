@@ -1,0 +1,38 @@
+ion-icon {
+  height: 100%;
+}
+
+.summary {
+  ion-col {
+    border-width: 1px;
+    border-style: solid;
+    border-color: grey;
+  }
+
+}
+
+.error {
+    @extend .message-class;
+    background-color: red;
+}
+
+.success {
+    @extend .message-class;
+    background-color: green;
+}
+
+.message-class {
+    position: fixed;
+    color: var(--ion-color-primary-contrast);
+    font-weight: 600;
+    left: 30%;
+}
+
+
+ion-checkbox{
+    margin-right: 5px;
+}
+
+ion-text{
+    margin-right: 5px;
+}
