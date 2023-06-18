@@ -3,14 +3,14 @@ import {
     ColDef,
     FilterChangedEvent,
     GridReadyEvent,
-    RowDataChangedEvent,
+    RowDataChangedEvent, RowDataUpdatedEvent,
     RowDoubleClickedEvent
 } from 'ag-grid-community';
 import {ViewInvoicesService} from '../services/view.invoices.service';
 import {AgGridAngular} from 'ag-grid-angular';
 import {IndianCurrency} from '../pipe/indian-currency.pipe';
 import {DatePipe, formatDate} from '@angular/common';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {Invoice, TotalValue} from '../invoice/invoice';
 import {AlertController, PopoverController} from '@ionic/angular';
 import {Router} from '@angular/router';
@@ -35,7 +35,7 @@ export class ViewInvoicePage implements OnInit {
 
     template = '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>';
 
-    dateGroup: FormGroup;
+    dateGroup: UntypedFormGroup;
 
     silverDetails: TotalValue = {
         totalAfterTax: 0, totalBeforeTax: 0, totalCgst: 0, totalIgst: 0, totalSgst: 0, totalWeight: 0
@@ -161,7 +161,8 @@ export class ViewInvoicePage implements OnInit {
         });
     }
 
-    onRowDataChanged($event: RowDataChangedEvent) {
+    onRowDataChanged($event: RowDataUpdatedEvent) {
+        console.log("changed");
         this.setTotal();
     }
 
@@ -229,9 +230,9 @@ export class ViewInvoicePage implements OnInit {
     }
 
     initForm(financialStartDate: Date, currentDate: Date) {
-        this.dateGroup = new FormGroup({
-            fromDate: new FormControl(formatDate(financialStartDate, 'yyyy-MM-dd', 'en'), Validators.required),
-            toDate: new FormControl(formatDate(currentDate, 'yyyy-MM-dd', 'en'), Validators.required)
+        this.dateGroup = new UntypedFormGroup({
+            fromDate: new UntypedFormControl(formatDate(financialStartDate, 'yyyy-MM-dd', 'en'), Validators.required),
+            toDate: new UntypedFormControl(formatDate(currentDate, 'yyyy-MM-dd', 'en'), Validators.required)
         });
     }
 

@@ -44,10 +44,16 @@ public class MailService {
             helper.setFrom("xyz@gmail.com");
             helper.setText(body);
             mimeMessage.setSubject(subject);
-            FileSystemResource file1 = new FileSystemResource(attachment1);
-            FileSystemResource file2 = new FileSystemResource(attachment2);
-            helper.addAttachment("noGst.pdf", file1);
-            helper.addAttachment("onlyGst.pdf", file2);
+
+            if(attachment1 != null) {
+                FileSystemResource file1 = new FileSystemResource(attachment1);
+                helper.addAttachment(file1.getFilename(), file1);
+            }
+
+            if(attachment2 != null) {
+                FileSystemResource file2 = new FileSystemResource(attachment2);
+                helper.addAttachment("onlyGst.pdf", file2);
+            }
         };
         try {
             mailSender.send(preparator);

@@ -10,10 +10,9 @@ import {HttpClientModule} from '@angular/common/http';
 import {CurrencyPipe} from '@angular/common';
 
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [],
-  imports: [BrowserModule, HttpClientModule, IonicModule.forRoot(), AppRoutingModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, CurrencyPipe],
-  bootstrap: [AppComponent],
+    declarations: [AppComponent],
+    imports: [BrowserModule, HttpClientModule, IonicModule.forRoot(), AppRoutingModule],
+    providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, CurrencyPipe],
+    bootstrap: [AppComponent]
 })
 export class AppModule {}

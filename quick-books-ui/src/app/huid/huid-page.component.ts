@@ -8,14 +8,16 @@ import {
 } from 'ag-grid-community';
 import {AgGridAngular} from 'ag-grid-angular';
 import {DatePipe, formatDate} from '@angular/common';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {TotalValue} from '../invoice/invoice';
-import {AlertController, ModalController} from '@ionic/angular';
+import {AlertController, ModalController, PopoverController} from '@ionic/angular';
 import {HuidItemComponent} from "./item/huid-item.component";
 import {HuidService} from "../services/huid.service";
 import {HuidItem} from "./item/huidItem";
 import {SaleCellRendererComponent} from "./sale-cell-renderer/sale-cell-renderer.component";
 import {HuidRequestBody} from "./item/huid-request-body";
+import {HuidSummary} from "./item/huidResponse";
+import {EmailComponent} from "../view-invoice/email/email.component";
 
 @Component({
     selector: 'app-view-invoice', templateUrl: './huid-page.component.html', styleUrls: ['./huid-page.component.scss'],
@@ -33,8 +35,10 @@ export class HuidPage implements OnInit {
     emailLoading = false;
     dateRangeFilter = 'saled';
     template = '<span class="ag-overlay-loading-center">Please wait while data is loading</span>';
+    pageSummary: HuidSummary;
+    summaryLoading: boolean = false;
 
-    dateGroup: FormGroup;
+    dateGroup: UntypedFormGroup;
 
     silverDetails: TotalValue = {
         totalAfterTax: 0, totalBeforeTax: 0, totalCgst: 0, totalIgst: 0, totalSgst: 0, totalWeight: 0
@@ -62,10 +66,11 @@ export class HuidPage implements OnInit {
     constructor(private huidService: HuidService,
                 private datePipe: DatePipe,
                 private alertController: AlertController,
-                private modalController: ModalController) {
+                private modalController: ModalController, private popoverController: PopoverController) {
     }
 
     ngOnInit() {
+        this.summaryLoading = true;
         this.intializeTotalsToZero();
         const currentDate = new Date();
         const financialStartDate = this.getFinancialStartDate(currentDate);
@@ -115,6 +120,7 @@ export class HuidPage implements OnInit {
     }
 
     getHuidData() {
+        this.summaryLoading = true;
         let requestBody: HuidRequestBody = {
             from:  new Date(this.dateGroup.value.fromDate),
             to: new Date(this.dateGroup.value.toDate),
@@ -123,7 +129,9 @@ export class HuidPage implements OnInit {
             includeStockData: this.includeInstockData
         }
         this.huidService.getAllHuid(requestBody).subscribe((response) => {
-            this.rowData = response;
+            this.rowData = response.data;
+            this.pageSummary = response.summary;
+            this.summaryLoading = false;
         });
     }
 
@@ -162,15 +170,6 @@ export class HuidPage implements OnInit {
         this.huidService.persistHuid(item).subscribe(() => this.getHuidData());
     }
 
-    onDateChange() {
-        // if (this.dateGroup.valid) {
-        //     const fromDate: Date = new Date(this.dateGroup.value.fromDate);
-        //     const toDate: Date = new Date(this.dateGroup.value.toDate);
-        //     this.getHuidData(fromDate, toDate, this.includeGstBills, this.showOnlyGstBills);
-        //     this.intializeTotalsToZero();
-        // }
-    }
-
     intializeTotalsToZero() {
         this.goldDetails.totalBeforeTax = 0;
         this.goldDetails.totalCgst = 0;
@@ -189,10 +188,10 @@ export class HuidPage implements OnInit {
     }
 
     initForm(financialStartDate: Date, currentDate: Date) {
-        this.dateGroup = new FormGroup({
-            fromDate: new FormControl(formatDate(financialStartDate, 'yyyy-MM-dd', 'en'), Validators.required),
-            toDate: new FormControl(formatDate(currentDate, 'yyyy-MM-dd', 'en'), Validators.required),
-            dateRangeOn: new FormControl('SALED')
+        this.dateGroup = new UntypedFormGroup({
+            fromDate: new UntypedFormControl(formatDate(financialStartDate, 'yyyy-MM-dd', 'en'), Validators.required),
+            toDate: new UntypedFormControl(formatDate(currentDate, 'yyyy-MM-dd', 'en'), Validators.required),
+            dateRangeOn: new UntypedFormControl('SALED')
         });
     }
 
@@ -210,48 +209,37 @@ export class HuidPage implements OnInit {
         this.getHuidData();
     }
 
-    setSelectedInvoices() {
-
-    }
-
-    getPdfWithSelectedInvoices() {
-
-    }
-
-    // showOnlyGstBillsCheckBoxChange() {
-    //     if (!this.showOnlyGstBills) {
-    //         this.includeGstCheckBoxChange(false);
-    //     } else {
-    //         this.setGstIncludedData(this.includeGstBills, !this.showOnlyGstBills);
-    //     }
-    // }
-
-    // includeGstCheckBoxChange(fromTemplate: boolean) {
-    //     if (fromTemplate && this.showOnlyGstBills) {
-    //         if (this.showOnlyGstBills && this.includeGstBills) {
-    //             this.showOnlyGstBills = false;
-    //         }
-    //     } else if (!fromTemplate) {
-    //         if (!this.showOnlyGstBills === true) {
-    //             this.includeGstBills = true;
-    //         }
-    //         this.setGstIncludedData(this.includeGstBills, !this.showOnlyGstBills);
-    //         return;
-    //     }
-    //     this.setGstIncludedData(!this.includeGstBills, this.showOnlyGstBills);
-    // }
-
-    // setGstIncludedData(includeGst: boolean, showOnlyGst: boolean) {
-    //     if (this.dateGroup.valid) {
-    //         const fromDate: Date = new Date(this.dateGroup.value.fromDate);
-    //         const toDate: Date = new Date(this.dateGroup.value.toDate);
-    //         this.getHuidData(fromDate, toDate, includeGst, showOnlyGst);
-    //         this.intializeTotalsToZero();
-    //     }
-    // }
 
     sendEmail(event) {
 
+        let requestBody: HuidRequestBody = {
+            from:  new Date(this.dateGroup.value.fromDate),
+            to: new Date(this.dateGroup.value.toDate),
+            applyDateRangeOn: this.dateGroup.value.dateRangeOn,
+            includeSaledData: this.includeSaledData,
+            includeStockData: this.includeInstockData
+        };
+
+        this.popoverController.create({
+            component: EmailComponent,
+            event,
+            showBackdrop: false
+        }).then((el) => {
+            el.present();
+            return el.onDidDismiss();
+        }).then((data) => {
+            if (data.role === 'success') {
+                this.emailLoading = true;
+                this.huidService.sendEmail(requestBody, data.data)
+                    .subscribe(() => {
+                        this.emailLoading = false;
+                        this.setMessage(`Mail sent to ${data.data} successfully`, 'success');
+                    }, () => {
+                        this.emailLoading = false;
+                        this.setMessage(`Error sending mail. Check internet connection`, 'error');
+                    });
+            }
+        });
     }
 
     showModal(data?: HuidItem) {
@@ -280,5 +268,16 @@ export class HuidPage implements OnInit {
         }, 4000);
     }
 
+    getPdfWithSelectedDateRange() {
+        let requestBody: HuidRequestBody = {
+            from:  new Date(this.dateGroup.value.fromDate),
+            to: new Date(this.dateGroup.value.toDate),
+            applyDateRangeOn: this.dateGroup.value.dateRangeOn,
+            includeSaledData: this.includeSaledData,
+            includeStockData: this.includeInstockData
+        }
+
+        this.huidService.downloadPDF(requestBody);
+    }
 }
 

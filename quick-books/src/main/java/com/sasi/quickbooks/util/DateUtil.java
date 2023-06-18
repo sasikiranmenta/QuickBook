@@ -20,4 +20,10 @@ public class DateUtil {
         }
         return "";
     }
+
+    public static String convertFormatLetterFormat(Date date, String format) {
+        SimpleDateFormat df = new SimpleDateFormat(format);
+        df = new SimpleDateFormat(QuickBookConstants.FORMAT_DD_MMM_yyyy);
+        return df.format(date);
+    }
 }

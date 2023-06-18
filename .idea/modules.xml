@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/QuickBooks.iml" filepath="$PROJECT_DIR$/QuickBooks.iml" />
+      <module fileurl="file://$PROJECT_DIR$/quick-books-ui/quick-books-ui.iml" filepath="$PROJECT_DIR$/quick-books-ui/quick-books-ui.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Item} from './item';
 import {ModalController} from '@ionic/angular';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-item',
@@ -13,7 +13,7 @@ export class ItemComponent implements OnInit {
   @Input() editItemData: Item;
 
   isInvalid = false;
-  itemInvoiceForm: FormGroup;
+  itemInvoiceForm: UntypedFormGroup;
 
   constructor(private modalController: ModalController) {
   }
@@ -79,11 +79,11 @@ export class ItemComponent implements OnInit {
       ratePerGram = this.editItemData.ratePerGram;
       totalAmount = this.editItemData.amount;
     }
-      this.itemInvoiceForm = new FormGroup({
-      goodsDescription: new FormControl(goodsDescription, Validators.required),
-      itemWeight: new FormControl(itemWeight, Validators.required),
-      weightPerGram: new FormControl(ratePerGram, Validators.required),
-      amount: new FormControl(totalAmount)
+      this.itemInvoiceForm = new UntypedFormGroup({
+      goodsDescription: new UntypedFormControl(goodsDescription, Validators.required),
+      itemWeight: new UntypedFormControl(itemWeight, Validators.required),
+      weightPerGram: new UntypedFormControl(ratePerGram, Validators.required),
+      amount: new UntypedFormControl(totalAmount)
     });
   }
 }

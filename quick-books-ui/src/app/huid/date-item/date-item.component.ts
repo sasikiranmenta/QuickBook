@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ModalController} from '@ionic/angular';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {formatDate} from "@angular/common";
 
 @Component({
@@ -12,7 +12,7 @@ export class DateItemComponent implements OnInit {
 
     date = new Date();
 
-    dateForm: FormGroup;
+    dateForm: UntypedFormGroup;
 
     constructor(private modalController: ModalController) {
     }
@@ -32,8 +32,8 @@ export class DateItemComponent implements OnInit {
 
 
     private initForm() {
-        this.dateForm = new FormGroup({
-            saledOn: new FormControl(formatDate(this.date, 'yyyy-MM-dd', 'en'), Validators.required),
+        this.dateForm = new UntypedFormGroup({
+            saledOn: new UntypedFormControl(formatDate(this.date, 'yyyy-MM-dd', 'en'), Validators.required),
         });
     }
 }

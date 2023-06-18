@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ModalController} from '@ionic/angular';
 import {ItemComponent} from './item/item.component';
 import {Item} from './item/item';
@@ -13,7 +13,7 @@ import {ActivatedRoute, Router} from '@angular/router';
     selector: 'app-invoice', templateUrl: './invoice.page.html', styleUrls: ['./invoice.page.scss'],
 })
 export class InvoicePage implements OnInit {
-    invoiceForm: FormGroup;
+    invoiceForm: UntypedFormGroup;
     itemDetailsArray: Array<Item>;
     invoiceId = '';
     isInvalid: boolean;
@@ -289,23 +289,23 @@ export class InvoicePage implements OnInit {
     }
 
     private initFormControls(tempInvoice: Invoice, paymentMode: string) {
-        this.invoiceForm = new FormGroup({
-            customerName: new FormControl(tempInvoice.customerName, Validators.required),
-            address: new FormControl(tempInvoice.address, Validators.maxLength(254)),
-            state: new FormControl(tempInvoice.state, Validators.required),
-            stateCode: new FormControl(tempInvoice.stateCode, Validators.required),
-            identificationNumber: new FormControl(tempInvoice.identificationNumber),
-            billDate: new FormControl(formatDate(tempInvoice.billDate, 'yyyy-MM-dd', 'en'), Validators.required),
-            amountBeforeTax: new FormControl(tempInvoice.amountBeforeTax, Validators.required),
-            paymentType: new FormControl(tempInvoice.paymentType, Validators.required),
-            paymentMode: new FormControl(paymentMode, Validators.required),
-            cgstAmount: new FormControl(tempInvoice.cgstAmount, Validators.required),
-            sgstAmount: new FormControl(tempInvoice.sgstAmount, Validators.required),
-            igstAmount: new FormControl(tempInvoice.igstAmount, Validators.required),
-            invoiceType: new FormControl(tempInvoice.invoiceType, Validators.required),
-            totalAmountAfterTax: new FormControl(tempInvoice.totalAmountAfterTax, Validators.required),
-            phoneNumber: new FormControl(tempInvoice.phoneNumber),
-            identificationNumberType: new FormControl(tempInvoice.identificationNumberType)
+        this.invoiceForm = new UntypedFormGroup({
+            customerName: new UntypedFormControl(tempInvoice.customerName, Validators.required),
+            address: new UntypedFormControl(tempInvoice.address, Validators.maxLength(254)),
+            state: new UntypedFormControl(tempInvoice.state, Validators.required),
+            stateCode: new UntypedFormControl(tempInvoice.stateCode, Validators.required),
+            identificationNumber: new UntypedFormControl(tempInvoice.identificationNumber),
+            billDate: new UntypedFormControl(formatDate(tempInvoice.billDate, 'yyyy-MM-dd', 'en'), Validators.required),
+            amountBeforeTax: new UntypedFormControl(tempInvoice.amountBeforeTax, Validators.required),
+            paymentType: new UntypedFormControl(tempInvoice.paymentType, Validators.required),
+            paymentMode: new UntypedFormControl(paymentMode, Validators.required),
+            cgstAmount: new UntypedFormControl(tempInvoice.cgstAmount, Validators.required),
+            sgstAmount: new UntypedFormControl(tempInvoice.sgstAmount, Validators.required),
+            igstAmount: new UntypedFormControl(tempInvoice.igstAmount, Validators.required),
+            invoiceType: new UntypedFormControl(tempInvoice.invoiceType, Validators.required),
+            totalAmountAfterTax: new UntypedFormControl(tempInvoice.totalAmountAfterTax, Validators.required),
+            phoneNumber: new UntypedFormControl(tempInvoice.phoneNumber),
+            identificationNumberType: new UntypedFormControl(tempInvoice.identificationNumberType)
         });
     }
 

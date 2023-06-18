@@ -51,7 +51,7 @@
                      [rowData]="rowData"
                      rowSelection="multiple"
                      (selectionChanged)="onCheckBoxChange()"
-                     (rowDataChanged)="onRowDataChanged($event)"
+                     (rowDataUpdated)="onRowDataChanged($event)"
                      (gridReady)="onGridReady($event)"
                      (rowDoubleClicked)="onRowEdit($event)"
                      #agGrid></ag-grid-angular>

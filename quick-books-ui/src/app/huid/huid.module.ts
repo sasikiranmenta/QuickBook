@@ -13,6 +13,7 @@ import {SaleCellRendererComponent} from "./sale-cell-renderer/sale-cell-renderer
 import {DateItemComponent} from "./date-item/date-item.component";
 import {ConfirmItemComponent} from "./confirm-item/confirm-item.component";
 import {NgSelectModule} from "@ng-select/ng-select";
+import {AddModelComponent} from "./add-model/add-model.component";
 
 @NgModule({
     imports: [
@@ -24,7 +25,7 @@ import {NgSelectModule} from "@ng-select/ng-select";
         ReactiveFormsModule,
         NgSelectModule
     ],
-    declarations: [HuidPage, ConfirmItemComponent, HuidItemComponent, SaleCellRendererComponent,DateItemComponent],
+    declarations: [HuidPage, AddModelComponent, ConfirmItemComponent, HuidItemComponent, SaleCellRendererComponent,DateItemComponent],
     exports: [],
     providers: [DatePipe]
 })

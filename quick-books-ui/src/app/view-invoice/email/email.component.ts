@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {PopoverController} from '@ionic/angular';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 
 @Component({
     selector: 'app-email',
@@ -9,13 +9,13 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 })
 export class EmailComponent implements OnInit {
 
-    emailForm: FormGroup;
+    emailForm: UntypedFormGroup;
     constructor(private popoverController: PopoverController) {
     }
 
     ngOnInit() {
-        this.emailForm = new FormGroup({
-            emailId: new FormControl('', Validators.email)});
+        this.emailForm = new UntypedFormGroup({
+            emailId: new UntypedFormControl('', Validators.email)});
     }
 
     onSendMail() {

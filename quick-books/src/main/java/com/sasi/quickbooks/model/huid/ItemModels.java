@@ -8,6 +8,7 @@ import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+import java.util.Set;
 
 @Document(collection = "itemModels")
 @Getter
@@ -16,5 +17,5 @@ import java.util.List;
 public class ItemModels {
     @Id
     ItemTypeEnum itemType;
-    List<String> models;
+    Set<String> models;
 }

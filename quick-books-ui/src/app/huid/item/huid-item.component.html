@@ -1,62 +1,73 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Huid Details</ion-title>
-    <ion-buttons slot="primary">
-      <ion-button (click)="onCancel()">
-        <ion-icon name="close"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-title>Huid Details</ion-title>
+        <ion-buttons slot="primary">
+            <ion-button (click)="onCancel()">
+                <ion-icon name="close"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding ion-text-center">
-  <form [formGroup]="huidForm">
+<ion-content class="ion-padding ion-text-center" *ngIf=!isLoading>
+    <form [formGroup]="huidForm">
 
-      <ion-item lines="none">
-          <ion-grid class="ion-no-padding">
-              <ion-row class="ion-align-items-center">
-                  <ion-col size="3">
-                      <ion-label position="floating">Date</ion-label>
-                      <ion-input type="Date" formControlName="createdOn"></ion-input>
-                  </ion-col>
-                  <ion-col offset="2" size="2" class="ion-justify-content-center">
-                      <ion-label>Item type</ion-label>
-                  </ion-col>
-                  <ion-col>
-                      <select name="date-range-on" formControlName="itemType">
-                          <option value="GOLD">GOLD</option>
-                          <option value="SILVER">SILVER</option>
-                      </select>
-                  </ion-col>
-              </ion-row>
-          </ion-grid>
-      </ion-item>
-<!--      <ion-item>-->
-<!--          -->
-<!--      </ion-item>-->
+        <ion-item lines="none">
+            <ion-grid class="ion-no-padding">
+                <ion-row class="ion-align-items-center">
+                    <ion-col size="3">
+                        <ion-label position="floating">Date</ion-label>
+                        <ion-input type="Date" formControlName="createdOn"></ion-input>
+                    </ion-col>
+                    <ion-col offset="2" size="2" class="ion-justify-content-center">
+                        <ion-label>Item type</ion-label>
+                    </ion-col>
+                    <ion-col>
+                        <select name="date-range-on" formControlName="itemType" (change)="onItemTypeChanged()">
+                            <option value="GOLD">GOLD</option>
+                            <option value="SILVER">SILVER</option>
+                        </select>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-item>
 
-    <ion-item>
-      <ion-label position="floating">Huid Number <span *ngIf="isInvalid && huidForm.controls.huidNumber.invalid"> *required</span></ion-label>
-      <ion-input type="text" formControlName="huidNumber"></ion-input>
-    </ion-item>
+        <ion-item lines="none">
+            <ion-grid class="ion-no-padding">
+                <ion-row class="ion-padding-top">
+                    <ion-col class="ion-align-items-center">
+                        <ion-label>Select Item Name</ion-label>
+                    </ion-col>
+                    <ion-col class="ion-justify-content-start">
+                        <ng-select [items]="itemModel.models" appendTo="body" formControlName="itemName"
+                                   placeholder=""></ng-select>
+                    </ion-col>
+                    <ion-col>
+                        <ion-button (click)="onAddNewModel()">Add new model</ion-button>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-item>
 
-    <ion-item>
-      <ion-label position="floating">Item Name <span *ngIf="isInvalid && huidForm.controls.itemName.invalid"> *required</span></ion-label>
-      <ion-input type="text" formControlName="itemName"></ion-input>
-    </ion-item>
+        <ion-item>
+            <ion-label position="floating">Huid Number <span *ngIf="isInvalid && huidForm.controls.huidNumber.invalid"> *required</span>
+            </ion-label>
+            <ion-input type="text" formControlName="huidNumber"></ion-input>
+        </ion-item>
 
 
+        <ion-item>
+            <ion-label position="floating">Weight <span *ngIf="isInvalid && huidForm.controls.grossWeight.invalid"> *required</span>
+            </ion-label>
+            <ion-input type="number" formControlName="grossWeight"></ion-input>
+        </ion-item>
 
-    <ion-item>
-      <ion-label position="floating">Weight <span *ngIf="isInvalid && huidForm.controls.grossWeight.invalid"> *required</span></ion-label>
-      <ion-input type="number" formControlName="grossWeight"></ion-input>
-    </ion-item>
-
-    <ion-button type="button"
-                color="primary"
-                expand="block" (click)="onSubmit()">Add</ion-button>
-    <ion-button (click)="resetValues()"
-                color="danger"
-                expand="block">Reset</ion-button>
-  </form>
+        <ion-button type="button"
+                    color="primary"
+                    expand="block" (click)="onSubmit()">{{ isEditMode ? 'Update' : 'Add' }}</ion-button>
+        <ion-button (click)="resetValues()"
+                    color="danger"
+                    expand="block">Reset
+        </ion-button>
+    </form>
 </ion-content>

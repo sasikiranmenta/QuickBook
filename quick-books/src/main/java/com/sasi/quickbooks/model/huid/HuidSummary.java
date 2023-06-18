@@ -1,15 +1,17 @@
 package com.sasi.quickbooks.model.huid;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter
+@Builder
 public class HuidSummary {
     Date from;
     Date to;
-    List<HuidSummaryDetail> details;
+    HuidSummaryDetail stockDetails;
+    HuidSummaryDetail saleDetails;
 }

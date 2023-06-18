@@ -8,8 +8,24 @@ import lombok.Setter;
 @Getter
 @Setter
 public class HuidSummaryDetail {
-    float totalWeight;
-    float totalItems;
-    ItemTypeEnum itemType;
-    HuidItemStatusEnum status;
+    float totalGoldWeight;
+    int totalGoldItems;
+    float totalSilverWeight;
+    int totalSilverItems;
+
+    public void incrementGoldWeight(float weight) {
+        totalGoldWeight += weight;
+    }
+
+    public void incrementSilverWeight(float weight) {
+        totalSilverWeight += weight;
+    }
+
+    public void incrementSilverItems() {
+        totalSilverItems++;
+    }
+
+    public void incrementGoldItems() {
+        totalGoldItems++;
+    }
 }

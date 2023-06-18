@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {ModalController} from '@ionic/angular';
 import {getNewPaymentDetailStateMap, PaymentModeDetail} from './payment-mode';
 import {PaymentMode} from '../invoice';
@@ -17,7 +17,7 @@ export class PaymentModeComponent implements OnInit {
     paymentModeStateMap: Map<string, PaymentModeDetail> = new Map<string, PaymentModeDetail>();
     showError = false;
     remainingAmount = 0;
-    paymentModeGroup: FormGroup;
+    paymentModeGroup: UntypedFormGroup;
 
     constructor(private modalController: ModalController) {
     }
@@ -64,11 +64,11 @@ export class PaymentModeComponent implements OnInit {
     }
 
     private initForm() {
-        this.paymentModeGroup = new FormGroup({});
+        this.paymentModeGroup = new UntypedFormGroup({});
         this.paymentModeStateMap.forEach((paymentModeDetailValue) => {
             this.paymentModeGroup.addControl(
                 paymentModeDetailValue.name,
-                new FormControl(paymentModeDetailValue.amount === 0 ? undefined : paymentModeDetailValue.amount));
+                new UntypedFormControl(paymentModeDetailValue.amount === 0 ? undefined : paymentModeDetailValue.amount));
         });
     }
 

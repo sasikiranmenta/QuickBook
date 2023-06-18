@@ -1,14 +1,10 @@
 package com.sasi.quickbooks.controller;
 
 import com.itextpdf.text.DocumentException;
-import com.sasi.quickbooks.dto.InvoiceIDDto;
 import com.sasi.quickbooks.model.huid.Huid;
-import com.sasi.quickbooks.model.invoice.Invoice;
+import com.sasi.quickbooks.model.huid.HuidResponse;
 import com.sasi.quickbooks.model.requestbody.HuidRequestBody;
 import com.sasi.quickbooks.service.HuidService;
-import com.sasi.quickbooks.service.InvoiceConfigService;
-import com.sasi.quickbooks.service.QuickBookInvoiceService;
-import com.sasi.quickbooks.service.SummaryReportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,8 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.List;
 
 @RestController
 @RequestMapping("quick-book/huid")
@@ -40,32 +34,28 @@ public class HuidController {
 
 
     @RequestMapping(value = "/getByHuidNumber", method = RequestMethod.GET)
-    public ResponseEntity<Huid> getInvoiceNumber(@RequestParam(name = "huidNumber") String number) throws ParseException {
+    public ResponseEntity<Huid> getByHuidNumber(@RequestParam(name = "huidNumber") String number) throws ParseException {
         return ResponseEntity.status(HttpStatus.OK).body(huidService.findByHuidNumber(number));
     }
 
-//    @RequestMapping(value = "/updateInvoice", method = RequestMethod.POST)
-//    public ResponseEntity updateInvoice(@RequestBody @Valid Invoice invoice, @RequestParam(name = "print") Boolean print,
-//                                        HttpServletResponse response) throws DocumentException, IOException {
-//        this.quickBookInvoiceService.updateInvoice(invoice, print, response);
-//        if (print) {
-//            return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).build();
-//        }
-//        return ResponseEntity.ok().build();
-//    }
+
+    @RequestMapping(value = "/downloadData", method = RequestMethod.POST)
+    public ResponseEntity getBillsForInvoices(@RequestBody HuidRequestBody requestBody, HttpServletResponse response) throws DocumentException, IOException {
+        this.huidService.downloadHuidData(requestBody, response);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).build();
+    }
 
     @RequestMapping(value = "/fetchAllHuid", method = RequestMethod.POST)
-    public List<Huid> getAllHuid(@RequestBody HuidRequestBody requestBody) {
+    public HuidResponse getAllHuid(@RequestBody HuidRequestBody requestBody) {
         return this.huidService.fetchAllHuid(requestBody);
     }
 
-//    @RequestMapping(value = "/emailSummary", method = RequestMethod.GET)
-//    public ResponseEntity emailSummaryReport(@RequestParam(name = "fromDate") String fromDate, @RequestParam(name = "toDate") String toDate,
-//                                             @RequestParam(name = "emailId") String emailId) throws ParseException {
-//        if (this.summaryReportService.sendSummaryReport(fromDate, toDate, emailId)) {
-//            return ResponseEntity.ok().build();
-//        } else {
-//            return ResponseEntity.internalServerError().build();
-//        }
-//    }
+    @RequestMapping(value = "/emailSummary", method = RequestMethod.POST)
+    public ResponseEntity emailSummaryReport(@RequestBody HuidRequestBody requestBody, @RequestParam(name = "emailId") String emailId) throws ParseException {
+        if (this.huidService.sendHuidEmail(requestBody, emailId)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }
